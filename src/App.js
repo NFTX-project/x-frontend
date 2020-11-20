@@ -8,30 +8,15 @@ import {
   SITE_STATUS_UNLOADED,
 } from "./symbols";
 import { getWeb3 } from "./web3-utils";
-
-/* from={{ opacity: 0, scale: 0.98 }}
-        to={{ opacity: 1, scale: 1 }} */
-
 import { web3Providers } from "./environment";
-// import { pollConnectivity } from "./utils";
 import { Main, useTheme } from "@aragon/ui";
-// import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import MainView from "./components/_archived/MainView/MainView";
+// import MainView from "./components/_archived/MainView/MainView";
+import Onboarding from "./components/Onboarding/Onboarding";
 
 function App() {
   const theme = useTheme();
   const web3 = getWeb3(web3Providers.default);
-  /* const props = useSpring({
-    from: { opacity: 0, scale: 0.98 },
-    to: { opacity: 1, scale: 1 },
-  }); */
-  /* const [connection, setConnection] = useState(false);
-  useEffect(() => {
-    pollConnectivity([web3Providers.default], (connected) =>
-      setConnection(connected)
-    );
-  }, []); */
   return (
     <Spring
       from={{ opacity: 0, scale: 0.98 }}
@@ -50,14 +35,7 @@ function App() {
               transform: scale.interpolate((v) => `scale3d(${v}, ${v}, 1)`),
             }}
           >
-            <div css="position: relative; z-index: 0">
-              {/* TODO: setup SITESTATUS and VISIBLE */}
-              <MainView
-                siteStatus={SITE_STATUS_READY}
-                visible={true}
-                web3={web3}
-              />
-            </div>
+            <Onboarding />
           </animated.div>
         </animated.div>
       )}
@@ -69,10 +47,11 @@ export default function WrapAppWithProvider() {
   return (
     <UseWalletProvider chainId={4}>
       <div
+        className="app-wrapper"
         css={`
-          /* fix for bug causing Main to render with small width */
           & > div:first-child > div:first-child > div:first-child {
             width: 100vw;
+            padding-bottom: 0;
           }
         `}
       >
@@ -149,8 +128,8 @@ const nftxTheme = {
   controlDisabled: "#4d3f6f",
   controlSurface: "#faf9fc",
   controlUnder: "#f3f1f7",
-  accent: "#0886e5",
-  accentStart: "#32d4ff",
+  accent: "#b4496f",
+  accentStart: "#f27070",
   accentEnd: "#0886e5",
   accentContent: "#FFFFFF",
   floating: "#1c2539",

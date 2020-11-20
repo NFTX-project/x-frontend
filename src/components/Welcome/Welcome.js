@@ -1,22 +1,24 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
-import { useWallet } from "use-wallet";
+import { Link, DropDown, GU, Layout, Split, useTheme } from "@aragon/ui";
+import Header from "../Header/Header";
 
-import WelcomeTopBar from "./WelcomeTopBar";
-
-function Welcome({ selectorNetworks, web3 }) {
+const Welcome = React.memo(function Welcome() {
   const theme = useTheme();
 
-  const {
-    account,
-    balance,
-    isContract: isContractAccount,
-    web3: walletWeb3,
-  } = useWallet();
-
   return (
-    <div css="position: relative; z-index: 1">
-      <WelcomeTopBar />
-    </div>
+    <Layout
+      breakpoints={{
+        medium: 84 * GU,
+        large: 112 * GU,
+      }}
+    >
+      <Header
+        title="Welcome to NFTX"
+        subtitle="A community-owned protocol for NFT indexes on Ethereum"
+      />
+    </Layout>
   );
-}
+});
+
+export default Welcome;
