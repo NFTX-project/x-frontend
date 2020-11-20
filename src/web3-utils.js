@@ -3,6 +3,24 @@ import Web3 from "web3";
 // Cache web3 instances used in the app
 const web3Cache = new WeakMap();
 
+// Filter the value we get from getBalance() before passing it to BN.js.
+// This is because passing some values to BN.js can lead to an infinite loop
+// when .toString() is called. Returns "-1" when the value is invalid.
+//
+// See https://github.com/indutny/bn.js/issues/186
+export function filterBalanceValue(value) {
+  if (value === null) {
+    return "-1";
+  }
+  if (typeof value === "object") {
+    value = String(value);
+  }
+  if (typeof value === "string") {
+    return /^[0-9]+$/.test(value) ? value : "-1";
+  }
+  return "-1";
+}
+
 /**
  * Get cached web3 instance
  * @param {Web3.Provider} provider Web3 provider

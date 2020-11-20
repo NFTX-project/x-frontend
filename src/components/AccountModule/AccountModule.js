@@ -11,8 +11,14 @@ import {
   useSyncInfo,
   useWalletConnectionDetails,
 } from "./connection-hooks";
+import AccountModulePopover from "./AccountModulePopover";
 import ButtonConnect from "./ButtonConnect";
 import ButtonAccount from "./ButtonAccount";
+
+import ProvidersScreen from "./AccountModuleProvidersScreen";
+import ConnectingScreen from "./AccountModuleConnectingScreen";
+import ConnectedScreen from "./AccountModuleConnectedScreen";
+import ErrorScreen from "./AccountModuleErrorScreen";
 
 const SCREENS = [
   { id: "providers", title: "Use account from" },
@@ -29,6 +35,8 @@ function AccountModule() {
   const wallet = useWallet();
 
   const { account, activating, providerInfo } = wallet;
+
+  console.log("providerInfo", providerInfo);
 
   const clearError = useCallback(() => setActivationError(null), []);
 
@@ -138,6 +146,67 @@ function AccountModule() {
       ) : (
         <ButtonConnect onClick={toggle} />
       )}
+      <AccountModulePopover
+        direction={direction}
+        heading={screen.title}
+        keys={({ screenId }) => screenId + activating + activationError.name}
+        onClose={handlePopoverClose}
+        onOpen={open}
+        opener={buttonRef.current}
+        screenId={screenId}
+        screenData={{
+          account,
+          activating: activatingDelayed,
+          activationError,
+          providerInfo,
+          screenId,
+        }}
+        screenKey={({
+          account,
+          activating,
+          activationError,
+          providerInfo,
+          screenId,
+        }) =>
+          (activationError ? activationError.name : "") +
+          account +
+          activating +
+          providerInfo.id +
+          screenId
+        }
+        visible={opened}
+      >
+        {({ account, screenId, activating, activationError, providerInfo }) => {
+          if (screenId === "connecting") {
+            return (
+              <ConnectingScreen
+                providerId={activating}
+                onCancel={handleCancelConnection}
+              />
+            );
+          }
+          if (screenId === "connected") {
+            return (
+              <ConnectedScreen
+                account={account}
+                clientConnectionStatus={clientConnectionStatus}
+                clientListening={clientListening}
+                clientOnline={clientOnline}
+                clientSyncDelay={clientSyncDelay}
+                providerInfo={providerInfo}
+                walletConnectionStatus={walletConnectionStatus}
+                walletListening={walletListening}
+                walletOnline={walletListening}
+                walletSyncDelay={walletSyncDelay}
+              />
+            );
+          }
+          if (screenId === "error") {
+            return <ErrorScreen error={activationError} onBack={clearError} />;
+          }
+          return <ProvidersScreen onActivate={handleActivate} />;
+        }}
+      </AccountModulePopover>
     </div>
   );
 }

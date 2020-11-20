@@ -6,6 +6,7 @@ const networkType = getEthNetworkType();
 
 const networkConfig = getNetworkConfig(networkType);
 export const network = networkConfig.settings;
+export const providers = networkConfig.providers;
 
 export const defaultEthNode =
   getDefaultEthNode() || networkConfig.nodes.defaultEth;

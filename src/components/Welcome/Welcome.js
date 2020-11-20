@@ -15,7 +15,7 @@ const Welcome = React.memo(function Welcome() {
     >
       <Header
         title="Welcome to NFTX"
-        subtitle="A community-owned protocol for NFT indexes on Ethereum"
+        subtitle="A community-owned protocol for NFT index funds on Ethereum"
       />
     </Layout>
   );
