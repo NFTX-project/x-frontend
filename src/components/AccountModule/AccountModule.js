@@ -19,6 +19,7 @@ import ProvidersScreen from "./AccountModuleProvidersScreen";
 import ConnectingScreen from "./AccountModuleConnectingScreen";
 import ConnectedScreen from "./AccountModuleConnectedScreen";
 import ErrorScreen from "./AccountModuleErrorScreen";
+import { getProviderFromUseWalletId } from "../../ethereum-providers";
 
 const SCREENS = [
   { id: "providers", title: "Use account from" },
@@ -34,7 +35,9 @@ function AccountModule() {
   const buttonRef = useRef();
   const wallet = useWallet();
 
-  const { account, activating, providerInfo } = wallet;
+  // const { account, activating, providerInfo } = wallet;
+  const { account, activated, activating } = wallet;
+  const providerInfo = getProviderFromUseWalletId(activated);
 
   console.log("providerInfo", providerInfo);
 

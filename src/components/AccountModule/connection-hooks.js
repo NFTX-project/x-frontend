@@ -261,7 +261,8 @@ export function useSyncState(
     };
   }
 
-  if (balance.lt(minimumTransactionBalance) && balance.gtn(-1)) {
+  const _balance = new BN(balance);
+  if (_balance.lt(minimumTransactionBalance) && _balance.gtn(-1)) {
     return {
       header: "Synced",
       info: currentBlock ? `:current block ${currentBlock}` : "",
