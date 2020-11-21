@@ -20,6 +20,7 @@ import ConnectingScreen from "./AccountModuleConnectingScreen";
 import ConnectedScreen from "./AccountModuleConnectedScreen";
 import ErrorScreen from "./AccountModuleErrorScreen";
 import { getProviderFromUseWalletId } from "../../ethereum-providers";
+import { shortenAddress } from "../../../../aragon-client/src/web3-utils";
 
 const SCREENS = [
   { id: "providers", title: "Use account from" },
@@ -216,8 +217,7 @@ function AccountModule() {
 
 function useConnectionInfo() {
   const wallet = useWallet();
-  // const { name: label } = useLocalIdentity(wallet.account || '')
-  const label = "labelHere";
+  const label = shortenAddress(wallet.account || "");
 
   const {
     isListening: walletListening,
