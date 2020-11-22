@@ -13,6 +13,7 @@ import { Main, useTheme } from "@aragon/ui";
 
 // import MainView from "./components/_archived/MainView/MainView";
 import Onboarding from "./components/Onboarding/Onboarding";
+import GlobalPreferences from "./components/GlobalPreferences/GlobalPreferences";
 
 function App() {
   const theme = useTheme();
