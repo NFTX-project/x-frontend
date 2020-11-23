@@ -1,25 +1,32 @@
 import React from "react";
-import { DataView } from "@aragon/ui";
+import { DataView, ContextMenu, ContextMenuItem } from "@aragon/ui";
 
 function Bounties() {
   return (
     <div
       className="xtokens-wrapper"
       css={`
-        max-width: 1000px;
+        max-width: 950px;
+        width: 80%;
         margin: auto;
       `}
     >
       <DataView
-        fields={["XToken", "Offer"]}
+        fields={["XToken", "Reward", "Reward", "Filled","Remaining", ""]}
         entries={[
-          { ticker: "PUNK-BASIC", offer: "480" },
-          { ticker: "PUNK-ATTR-4", offer: "610" },
-          { ticker: "PUNK-ATTR-5", offer: "1150" },
-          { ticker: "PUNK-ZOMBIE", offer: "4640" },
+          { ticker: "PUNK-BASIC", maxReward: "3", remaining: "50" },
+          { ticker: "PUNK-ATTR-4", maxReward: "4", remaining: "20" },
+          { ticker: "PUNK-ATTR-5", maxReward: "10", remaining: "6" },
+          { ticker: "PUNK-ZOMBIE", maxReward: "30", remaining: "3" },
         ]}
-        renderEntry={({ ticker, offer }) => {
-          return [<div>{ticker}</div>, <div>{offer}</div>];
+        renderEntry={({ ticker, maxReward, remaining }) => {
+          return [<div>{ticker}</div>, <div>{maxReward/2}</div>,<div>{maxReward}</div>, <div>{remaining-2}</div>,<div>{remaining}</div>];
+        }}
+        renderEntryActions={(entry, index) => {
+          return <ContextMenu>
+          <ContextMenuItem>Some Action</ContextMenuItem>
+          <ContextMenuItem>Another Action</ContextMenuItem>
+        </ContextMenu>
         }}
       />
     </div>
