@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import { getDefaultEthNode, getEthNetworkType } from "./local-settings";
+import { getDefaultEthNode, getEthNetworkType, getIpfsGateway } from "./local-settings";
 import { getNetworkConfig } from "./network-config";
 
 const networkType = getEthNetworkType();
@@ -14,3 +14,7 @@ export const defaultEthNode =
 export const web3Providers = {
   default: new Web3.providers.WebsocketProvider(defaultEthNode),
 };
+
+export const ipfsDefaultConf = {
+  gateway: getIpfsGateway(),
+}

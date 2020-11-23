@@ -10,6 +10,12 @@ import {
 import { getWeb3 } from "./web3-utils";
 import { web3Providers } from "./environment";
 import { Main, useTheme } from "@aragon/ui";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 // import MainView from "./components/_archived/MainView/MainView";
 import Onboarding from "./components/Onboarding/Onboarding";
@@ -37,6 +43,7 @@ function App() {
             }}
           >
             <Onboarding />
+            <GlobalPreferences />
           </animated.div>
         </animated.div>
       )}
@@ -46,21 +53,23 @@ function App() {
 
 export default function WrapAppWithProvider() {
   return (
-    <UseWalletProvider chainId={4}>
-      <div
-        className="app-wrapper"
-        css={`
-          & > div:first-child > div:first-child > div:first-child {
-            width: 100vw;
-            padding-bottom: 0;
-          }
-        `}
-      >
-        <Main theme={nftxTheme}>
-          <App />
-        </Main>
-      </div>
-    </UseWalletProvider>
+    <Router>
+      <UseWalletProvider chainId={4}>
+        <div
+          className="app-wrapper"
+          css={`
+            & > div:first-child > div:first-child > div:first-child {
+              width: 100vw;
+              padding-bottom: 0;
+            }
+          `}
+        >
+          <Main theme={nftxTheme}>
+            <App />
+          </Main>
+        </div>
+      </UseWalletProvider>
+    </Router>
   );
 }
 

@@ -105,6 +105,10 @@ export function getEthNetworkType() {
   return getLocalSetting(ETH_NETWORK_TYPE) || "rinkeby";
 }
 
+export function getIpfsGateway() {
+  return getLocalSetting(IPFS_GATEWAY) || 'https://ipfs.eth.aragon.network/ipfs'
+}
+
 export function getPortisDappId() {
   return getLocalSetting(PORTIS_DAPP_ID) || "";
 }

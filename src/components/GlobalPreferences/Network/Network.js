@@ -18,7 +18,7 @@ import keycodes from "../../../keycodes";
 import { sanitizeNetworkType } from "../../../network-config";
 import { checkValidEthNode } from "../../../web3-utils";
 
-function Network({ wrapper }) {
+function Network() {
   const {
     ethNode,
     ipfsGateway,
@@ -28,7 +28,7 @@ function Network({ wrapper }) {
     handleEthNodeChange,
     handleIpfsGatewayChange,
     network,
-  } = useNetwork(wrapper);
+  } = useNetwork();
   const theme = useTheme();
   const { layoutName } = useLayout();
   const compact = layoutName === "small";

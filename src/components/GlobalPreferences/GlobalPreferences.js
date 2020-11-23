@@ -110,7 +110,7 @@ GlobalPreferencesContent.propTypes = {
 };
 
 function useGlobalPreferences() {
-  const { pathname } = useLocation();
+  const { pathname } = window.location;
   console.log("pathname", pathname);
   const [, section = "", subsection = ""] = pathname.split("/");
   // const { preferences } = routing;
