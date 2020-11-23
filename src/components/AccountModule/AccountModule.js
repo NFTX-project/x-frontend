@@ -40,8 +40,6 @@ function AccountModule() {
   const { account, activated, activating } = wallet;
   const providerInfo = getProviderFromUseWalletId(activated);
 
-  console.log("providerInfo", providerInfo);
-
   const clearError = useCallback(() => setActivationError(null), []);
 
   const open = useCallback(() => setOpened(true), []);

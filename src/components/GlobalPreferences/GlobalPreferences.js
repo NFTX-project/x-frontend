@@ -16,7 +16,7 @@ import {
 } from "@aragon/ui";
 import { Transition, animated } from "react-spring";
 // import { AragonType, AppType } from '../../prop-types'
-// import { useEsc } from "../../hooks";
+import { useEsc } from "../../hooks";
 // import { useRouting } from '../../routing'
 import Network from "./Network/Network";
 // import SharedIdentities from "./SharedIdentities/SharedIdentities";
@@ -52,7 +52,8 @@ function GlobalPreferencesContent({
 
   const closePreferences = useCallback(
     () => {
-      console.log("TODO closePreferences");
+      window.location.hash =
+        window.location.hash.split("?preferences")[0] || "";
       /* routing.update((locator) => ({ ...locator, preferences: {} })); */
     },
     [
@@ -60,8 +61,7 @@ function GlobalPreferencesContent({
     ]
   );
 
-  console.log("TODO useEsc(closePreferences");
-  // useEsc(closePreferences);
+  useEsc(closePreferences);
 
   const container = useRef();
   useEffect(() => {
@@ -110,10 +110,15 @@ GlobalPreferencesContent.propTypes = {
 };
 
 function useGlobalPreferences() {
-  const { pathname } = window.location;
-  console.log("pathname", pathname);
-  const [, section = "", subsection = ""] = pathname.split("/");
-  // const { preferences } = routing;
+  const location = useLocation();
+  console.log(location);
+  const { search } = location;
+
+  /* useEffect(() => {
+    console.log("changed window.location");
+  }, [hash, location]); */
+
+  const [, section = "", subsection = ""] = search.split("/");
 
   const handleNavigation = useCallback(
     (index) => {
@@ -127,8 +132,6 @@ function useGlobalPreferences() {
       /* routing */
     ]
   );
-
-  // const { subsection } = preferences;
 
   const sectionIndex = SECTION_PATHS.findIndex(
     (_section) => _section === section

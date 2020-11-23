@@ -10,12 +10,7 @@ import {
 import { getWeb3 } from "./web3-utils";
 import { web3Providers } from "./environment";
 import { Main, useTheme } from "@aragon/ui";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 // import MainView from "./components/_archived/MainView/MainView";
 import Onboarding from "./components/Onboarding/Onboarding";
