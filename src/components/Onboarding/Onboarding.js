@@ -6,6 +6,7 @@ import throttle from "lodash.throttle";
 
 import OnboardingTopBar from "./OnboardingTopBar";
 import Welcome from "../Welcome/Welcome";
+import Bounties from "../Bounties/Bounties";
 
 function Onboarding({ selectorNetworks, web3 }) {
   const theme = useTheme();
@@ -55,6 +56,7 @@ function Onboarding({ selectorNetworks, web3 }) {
           `}
         >
           <Welcome />
+          <Bounties />
         </div>
       </div>
     </div>

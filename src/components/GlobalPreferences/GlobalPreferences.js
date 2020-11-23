@@ -111,7 +111,6 @@ GlobalPreferencesContent.propTypes = {
 
 function useGlobalPreferences() {
   const location = useLocation();
-  console.log(location);
   const { search } = location;
 
   /* useEffect(() => {
