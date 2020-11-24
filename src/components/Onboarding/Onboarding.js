@@ -6,7 +6,7 @@ import throttle from "lodash.throttle";
 
 import OnboardingTopBar from "./OnboardingTopBar";
 import Welcome from "../Welcome/Welcome";
-import Bounties from "../Bounties/Bounties";
+import XTokens from "../XTokens/XTokens";
 
 function Onboarding({ selectorNetworks, web3 }) {
   const theme = useTheme();
@@ -56,20 +56,54 @@ function Onboarding({ selectorNetworks, web3 }) {
           `}
         >
           <Welcome />
-          <Bounties
+          <XTokens
             title="CryptoPunks"
             entries={[
-              { ticker: "PUNK-BASIC", maxRewardEth: "3", remaining: "50" },
-              { ticker: "PUNK-ATTR-4", maxRewardEth: "4", remaining: "20" },
-              { ticker: "PUNK-ATTR-5", maxRewardEth: "10", remaining: "6" },
-              { ticker: "PUNK-ZOMBIE", maxRewardEth: "30", remaining: "3" },
+              { ticker: "PUNK-BASIC", supply: "0" },
+              { ticker: "PUNK-ATTR-4", supply: "0" },
+              { ticker: "PUNK-ATTR-5", supply: "0" },
+              { ticker: "PUNK-ZOMBIE", supply: "0" },
             ]}
           />
-          <br />
-          <Bounties
-            title="Autoglyphs"
-            entries={[{ ticker: "GLYPH", maxRewardEth: "16", remaining: "9" }]}
+          
+          <XTokens
+            title="CryptoKitties"
+            entries={[
+              { ticker: "KITTY-GEN-0", supply: "0" },
+              { ticker: "KITTY-GEN-0-FAST", supply: "0" },
+              { ticker: "KITTY-FANCY", supply: "0" },
+              { ticker: "KITTY-FOUNDER", supply: "0" },
+            ]}
           />
+          
+          <XTokens
+            title="Autoglyphs"
+            entries={[{ ticker: "GLYPH", supply: "0" }]}
+          />
+          <XTokens
+            title="Axie Infinity"
+            entries={[
+              { ticker: "AXIE-MYSTIC-1", supply: "0" },
+              { ticker: "AXIE-MYSTIC-2", supply: "0" },
+            ]}
+          />
+          
+          <XTokens
+            title="Avastars"
+            entries={[
+              { ticker: "AVASTAR-RANK-25", supply: "0" },
+              { ticker: "AVASTAR-RANK-50", supply: "0" },
+              { ticker: "AVASTAR-RANK-75", supply: "0" },
+            ]}
+          /> 
+          <XTokens
+            title="Joyworld"
+            entries={[
+              { ticker: "JOY", supply: "0" },
+            ]}
+          /> 
+          
+          <br />
         </div>
       </div>
     </div>
