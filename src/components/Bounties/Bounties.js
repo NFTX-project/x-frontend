@@ -1,7 +1,8 @@
 import React from "react";
-import { DataView, ContextMenu, ContextMenuItem } from "@aragon/ui";
+import PropTypes from "prop-types";
+import { DataView, ContextMenu, ContextMenuItem, Header } from "@aragon/ui";
 
-function Bounties() {
+function Bounties({ title, entries }) {
   return (
     <div
       className="xtokens-wrapper"
@@ -11,26 +12,43 @@ function Bounties() {
         margin: auto;
       `}
     >
+      {title && <Header primary={title} />}
       <DataView
-        fields={["XToken", "Reward", "Reward", "Filled","Remaining", ""]}
-        entries={[
-          { ticker: "PUNK-BASIC", maxReward: "3", remaining: "50" },
-          { ticker: "PUNK-ATTR-4", maxReward: "4", remaining: "20" },
-          { ticker: "PUNK-ATTR-5", maxReward: "10", remaining: "6" },
-          { ticker: "PUNK-ZOMBIE", maxReward: "30", remaining: "3" },
-        ]}
-        renderEntry={({ ticker, maxReward, remaining }) => {
-          return [<div>{ticker}</div>, <div>{maxReward/2}</div>,<div>{maxReward}</div>, <div>{remaining-2}</div>,<div>{remaining}</div>];
+        fields={["XToken", "Reward", "Max Reward", "Filled", "Remaining", ""]}
+        entries={entries}
+        renderEntry={({ ticker, maxRewardEth, remaining }) => {
+          const maxReward = maxRewardEth * 150;
+          return [
+            <div>{ticker}</div>,
+            <div>{maxReward / 2}</div>,
+            <div>{maxReward}</div>,
+            <div>{remaining - 2}</div>,
+            <div>{remaining}</div>,
+          ];
         }}
         renderEntryActions={(entry, index) => {
-          return <ContextMenu>
-          <ContextMenuItem>Some Action</ContextMenuItem>
-          <ContextMenuItem>Another Action</ContextMenuItem>
-        </ContextMenu>
+          return (
+            <ContextMenu>
+              <ContextMenuItem>Some Action</ContextMenuItem>
+              <ContextMenuItem>Another Action</ContextMenuItem>
+            </ContextMenu>
+          );
         }}
       />
     </div>
   );
 }
+
+export const BountyType = PropTypes.shape({
+  ticker: PropTypes.string.isRequired,
+  maxReward: PropTypes.string.isRequired,
+  filled: PropTypes.string.isRequired,
+  remaining: PropTypes.string.isRequired,
+});
+
+Bounties.propTypes = {
+  title: PropTypes.string,
+  entries: PropTypes.arrayOf(BountyType),
+};
 
 export default Bounties;

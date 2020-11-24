@@ -56,7 +56,20 @@ function Onboarding({ selectorNetworks, web3 }) {
           `}
         >
           <Welcome />
-          <Bounties />
+          <Bounties
+            title="CryptoPunks"
+            entries={[
+              { ticker: "PUNK-BASIC", maxRewardEth: "3", remaining: "50" },
+              { ticker: "PUNK-ATTR-4", maxRewardEth: "4", remaining: "20" },
+              { ticker: "PUNK-ATTR-5", maxRewardEth: "10", remaining: "6" },
+              { ticker: "PUNK-ZOMBIE", maxRewardEth: "30", remaining: "3" },
+            ]}
+          />
+          <br />
+          <Bounties
+            title="Autoglyphs"
+            entries={[{ ticker: "GLYPH", maxRewardEth: "16", remaining: "9" }]}
+          />
         </div>
       </div>
     </div>
