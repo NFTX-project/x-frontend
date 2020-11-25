@@ -13,7 +13,7 @@ import { Main, useTheme } from "@aragon/ui";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 // import MainView from "./components/_archived/MainView/MainView";
-import Onboarding from "./components/Onboarding/Onboarding";
+import Site from "./components/Site/Site";
 import GlobalPreferences from "./components/GlobalPreferences/GlobalPreferences";
 
 function App() {
@@ -37,7 +37,7 @@ function App() {
               transform: scale.interpolate((v) => `scale3d(${v}, ${v}, 1)`),
             }}
           >
-            <Onboarding />
+            <Site />
             <GlobalPreferences />
           </animated.div>
         </animated.div>
@@ -111,7 +111,7 @@ const nftxTheme = {
   badgeContent: "#ffffff",
   badgePressed: "#5c4c82",
   tagIdentifier: "#874090",
-  tagIdentifierContent: "#f0a1ff",
+  tagIdentifierContent: "#D1D0FF",
   tagNew: "#353f5e",
   tagNewContent: "#2da1c9",
   tagIndicator: "#524179",

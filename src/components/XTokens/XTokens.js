@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { DataView, ContextMenu, ContextMenuItem, Header } from "@aragon/ui";
 
-function XTokens({ title, entries }) {
+function XTokens({ title, entries, handleMint, handleRedeem }) {
   return (
     <div
       className="xtokens-wrapper"
@@ -15,21 +15,24 @@ function XTokens({ title, entries }) {
     >
       {title && <Header primary={title} />}
       <DataView
-        fields={["ERC20", "Price", "Supply", ""]}
+        fields={["Ticker", "Price", "Supply", ""]}
         entries={entries}
         renderEntry={({ ticker, supply }) => {
-          return [
-            <div>{ticker}</div>,
-            <div>N/A</div>,
-            <div>{supply}</div>,
-          ];
+          return [<div>{ticker}</div>, <div>N/A</div>, <div>{supply}</div>];
         }}
         renderEntryActions={(entry, index) => {
           return (
             <ContextMenu>
-              <ContextMenuItem>Mint</ContextMenuItem>
-              <ContextMenuItem>Redeem</ContextMenuItem>
-              <ContextMenuItem>Manage</ContextMenuItem>
+              <ContextMenuItem
+                onClick={() => handleMint(entry.vaultId, entry.ticker)}
+              >
+                Mint
+              </ContextMenuItem>
+              <ContextMenuItem
+                onClick={() => handleRedeem(entry.vaultId, entry.ticker)}
+              >
+                Redeem
+              </ContextMenuItem>
             </ContextMenu>
           );
         }}
@@ -38,16 +41,17 @@ function XTokens({ title, entries }) {
   );
 }
 
-export const BountyType = PropTypes.shape({
-  ticker: PropTypes.string.isRequired,
-  maxReward: PropTypes.string.isRequired,
-  filled: PropTypes.string.isRequired,
-  remaining: PropTypes.string.isRequired,
+export const XTokenType = PropTypes.shape({
+  ticker: PropTypes.string,
+  supply: PropTypes.string,
+  vaultId: PropTypes.string,
 });
 
 XTokens.propTypes = {
   title: PropTypes.string,
-  entries: PropTypes.arrayOf(BountyType),
+  entries: PropTypes.arrayOf(XTokenType),
+  handleMint: PropTypes.func,
+  handleRedeem: PropTypes.func,
 };
 
 export default XTokens;

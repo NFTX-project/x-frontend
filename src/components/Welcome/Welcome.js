@@ -12,6 +12,11 @@ const Welcome = React.memo(function Welcome() {
         medium: 84 * GU,
         large: 112 * GU,
       }}
+      css={`
+        & > header {
+          margin-top: 10px;
+        }
+      `}
     >
       <Header
         title="Welcome to NFTX"

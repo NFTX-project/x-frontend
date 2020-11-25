@@ -4,7 +4,7 @@ import { Button, GU, IconSettings, useTheme } from "@aragon/ui";
 import AccountModule from "../AccountModule/AccountModule";
 import HomeButton from "../HomeButton/HomeButton";
 
-function OnboardingTopBar({ status, solid }) {
+function TopBar({ status, solid }) {
   const theme = useTheme();
 
   const handleSettingsClick = useCallback(() => {
@@ -21,14 +21,13 @@ function OnboardingTopBar({ status, solid }) {
   return (
     <React.Fragment>
       <div
-        className="xxx"
         css={`
           position: absolute;
           z-index: 2;
           top: 0;
           left: 0;
           right: 0;
-          height: ${8.5 * GU}px;
+          height: ${8 * GU}px;
           background: ${theme.surface.alpha(solid ? 0.8 : 0)};
           transition: background 150ms ease-in-out;
           backdrop-filter: blur(6px);
@@ -47,7 +46,7 @@ function OnboardingTopBar({ status, solid }) {
         <HomeButton
           css={`
             position: absolute;
-            top: ${1 * GU}px;
+            top: ${1 * GU + 3}px;
             left: ${1 * GU}px;
           `}
         />
@@ -85,8 +84,8 @@ function OnboardingTopBar({ status, solid }) {
   );
 }
 
-OnboardingTopBar.propTypes = {
+TopBar.propTypes = {
   solid: PropTypes.bool,
 };
 
-export default OnboardingTopBar;
+export default TopBar;
