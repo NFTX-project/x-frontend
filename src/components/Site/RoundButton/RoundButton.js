@@ -8,25 +8,25 @@ function RoundButton({ text, link }) {
 
   const theme = useTheme();
   const button = (
-    <Tag
-      mode="new"
-      css={`
-        margin: 0 26px;
-        transform: scale(1.5);
-        color: white;
-        background-color: ${theme.surface};
-        font-size: 10px;
-        color: ${theme.tagIdentifierContent} !important;
-        border: ${location.pathname === link
-          ? `0.8px solid ${theme.tagIdentifierContent}`
-          : "none"};
-      `}
-    >
+    
+    <div css={`
+      color: white;
+      background-color: ${theme.surface};
+      font-size: 15px;
+      color: ${theme.tagIdentifierContent};
+      text-transform: uppercase;
+      border: 1px solid ${location.pathname === link
+        ? theme.tagIdentifierContent
+        : 'rgba(0,0,0,0)'};
+      padding: 4px 15px;
+      border-radius: 20px;
+      box-sizing: content-box;
+    `}>
       {text}
-    </Tag>
+    </div>
   );
   if (link) {
-    return <Link to={link}>{button}</Link>;
+    return <Link to={link} css={`margin: 0 10px; text-decoration: none; border-radius: 20px;`}>{button}</Link>;
   } else {
     return button;
   }

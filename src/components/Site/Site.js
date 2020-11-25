@@ -79,15 +79,9 @@ function Site({ selectorNetworks, web3 }) {
           <Welcome />
           <div
             css={`
-              text-align: center;
+              display: flex;
+              justify-content: center;
               transform: translateY(-24px);
-              & > span {
-                margin: 0 26px;
-                transform: scale(1.5);
-                color: white;
-                background-color: #423660;
-                font-size: 10px;
-              }
             `}
           >
             <RoundButton text="Homepage" link="/" />
