@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import { InvalidNetworkType, InvalidURI, NoConnection } from './errors'
+import { InvalidNetworkType, InvalidURI, NoConnection } from "./errors";
 
 // Cache web3 instances used in the app
 const web3Cache = new WeakMap();
@@ -22,7 +22,19 @@ export function filterBalanceValue(value) {
   return "-1";
 }
 
-const websocketRegex = /^wss?:\/\/.+/
+/**
+ * Check address equality without checksums
+ * @param {string} first First address
+ * @param {string} second Second address
+ * @returns {boolean} Address equality
+ */
+export function addressesEqual(first, second) {
+  first = first && first.toLowerCase();
+  second = second && second.toLowerCase();
+  return first === second;
+}
+
+const websocketRegex = /^wss?:\/\/.+/;
 
 /**
  * Check if the ETH node at the given URI is compatible for the current environment
@@ -36,30 +48,30 @@ const websocketRegex = /^wss?:\/\/.+/
 export async function checkValidEthNode(uri, expectedNetworkType) {
   // Must be websocket connection
   if (!websocketRegex.test(uri)) {
-    throw new InvalidURI('The URI must use the WebSocket protocol')
+    throw new InvalidURI("The URI must use the WebSocket protocol");
   }
 
   try {
-    const web3 = new Web3(uri)
-    const connectedNetworkType = await web3.eth.net.getNetworkType()
+    const web3 = new Web3(uri);
+    const connectedNetworkType = await web3.eth.net.getNetworkType();
     if (web3.currentProvider.disconnect) {
-      web3.currentProvider.disconnect()
+      web3.currentProvider.disconnect();
     } else {
       // Older versions of web3's providers didn't expose a generic interface for disconnecting
-      web3.currentProvider.connection.close()
+      web3.currentProvider.connection.close();
     }
 
     if (connectedNetworkType !== expectedNetworkType) {
-      throw new InvalidNetworkType()
+      throw new InvalidNetworkType();
     }
   } catch (err) {
     if (err instanceof InvalidNetworkType) {
-      throw err
+      throw err;
     }
-    throw new NoConnection()
+    throw new NoConnection();
   }
 
-  return true
+  return true;
 }
 
 /**

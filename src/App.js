@@ -11,10 +11,20 @@ import { getWeb3 } from "./web3-utils";
 import { web3Providers } from "./environment";
 import { Main, useTheme } from "@aragon/ui";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { FavoriteFundsProvider } from "./contexts/FavoriteFundsContext";
 
 // import MainView from "./components/_archived/MainView/MainView";
 import Site from "./components/Site/Site";
 import GlobalPreferences from "./components/GlobalPreferences/GlobalPreferences";
+
+const SELECTOR_NETWORKS = [
+  ["main", "Ethereum Mainnet", "https://client.aragon.org/"],
+  [
+    "rinkeby",
+    "Ethereum Testnet (Rinkeby)",
+    "https://rinkeby.client.aragon.org/",
+  ],
+];
 
 function App() {
   const theme = useTheme();
@@ -37,8 +47,10 @@ function App() {
               transform: scale.interpolate((v) => `scale3d(${v}, ${v}, 1)`),
             }}
           >
-            <Site />
-            <GlobalPreferences />
+            <FavoriteFundsProvider>
+              <Site selectorNetworks={SELECTOR_NETWORKS} />
+              <GlobalPreferences />
+            </FavoriteFundsProvider>
           </animated.div>
         </animated.div>
       )}

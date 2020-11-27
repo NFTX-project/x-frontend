@@ -2,23 +2,21 @@ import React from "react";
 import PropTypes from "prop-types";
 import { DataView, ContextMenu, ContextMenuItem, Header } from "@aragon/ui";
 
-function XTokens({ title, entries, handleMint, handleRedeem }) {
+function Funds({ title, entries, handleMint, handleRedeem }) {
   return (
-    <div
-      className="xtokens-wrapper"
-      css={`
-        max-width: 950px;
-        width: 80%;
-        margin: auto;
-        margin-bottom: 25px;
-      `}
-    >
+    <div>
       {title && <Header primary={title} />}
       <DataView
-        fields={["Ticker", "Price", "Supply", ""]}
+        fields={["Ticker", "Price", "Supply", "TVL", "Volume", ""]}
         entries={entries}
         renderEntry={({ ticker, supply }) => {
-          return [<div>{ticker}</div>, <div>N/A</div>, <div>{supply}</div>];
+          return [
+            <div>{ticker}</div>,
+            <div>N/A</div>,
+            <div>{supply}</div>,
+            <div>N/A</div>,
+            <div>N/A</div>,
+          ];
         }}
         renderEntryActions={(entry, index) => {
           return (
@@ -41,17 +39,17 @@ function XTokens({ title, entries, handleMint, handleRedeem }) {
   );
 }
 
-export const XTokenType = PropTypes.shape({
+export const FundType = PropTypes.shape({
   ticker: PropTypes.string,
   supply: PropTypes.string,
   vaultId: PropTypes.string,
 });
 
-XTokens.propTypes = {
+Funds.propTypes = {
   title: PropTypes.string,
-  entries: PropTypes.arrayOf(XTokenType),
+  entries: PropTypes.arrayOf(FundType),
   handleMint: PropTypes.func,
   handleRedeem: PropTypes.func,
 };
 
-export default XTokens;
+export default Funds;
