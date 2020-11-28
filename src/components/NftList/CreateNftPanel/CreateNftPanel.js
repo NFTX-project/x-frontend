@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { DropDown, TextInput, Button } from "@aragon/ui";
+import { DropDown, TextInput, Button, AddressField } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import erc721 from "../../../contracts/ERC721.json";
@@ -38,19 +38,56 @@ function CreateNftPanel() {
       .on("receipt", (receipt) => setTxReceipt(receipt));
   };
 
-  if (txHash && !txReceipt) {
-    return (
-      <div>
-        <Loader
-          type="Puff"
-          color="#00BFFF"
-          height={100}
-          width={100}
-          timeout={3000} //3 secs
+  return (
+    <div>
+      <div
+        css={`
+          margin-top: 28px;
+          margin-bottom: 20px;
+        `}
+      >
+        Transaction in progress...
+      </div>
+      <div
+        css={`
+          position: relative;
+          & > div > div:first-child {
+          }
+        `}
+      >
+        <div
+          css={`
+            position: absolute;
+            z-index: 100;
+            top: 2px;
+            left: 11px;
+            color: #201143;
+            font-size: 28px;
+            font-weight: 200;
+          `}
+        >
+          #
+        </div>
+
+        <AddressField
+          address="0xec81be6cb447f1b7a66fd4574fd4dfa87813ce39f51c04886c12dd2a8ecd7f24"
+          autofocus={false}
         />
       </div>
-    );
-  } else {
+      <Loader
+        type="ThreeDots"
+        color="#201143"
+        width={150}
+        css={`
+          margin-top: 50px;
+          display: flex;
+          justify-content: center;
+        `}
+      />
+    </div>
+  );
+
+  /* if (!txHash) {
     return (
       <div>
         <DropDown
@@ -88,7 +125,15 @@ function CreateNftPanel() {
         />
       </div>
     );
-  }
+  } else if (txHash && !txReceipt) {
+    return (
+      <div>
+        <Loader type="Puff" color="#A9416E" height={100} width={100} />
+      </div>
+    );
+  } else {
+    return <div>DONE</div>;
+  } */
 }
 
 export default CreateNftPanel;
