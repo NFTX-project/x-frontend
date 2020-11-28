@@ -28,7 +28,8 @@ const SELECTOR_NETWORKS = [
 
 function App() {
   const theme = useTheme();
-  const web3 = getWeb3(web3Providers.default);
+  // const web3 = getWeb3(web3Providers.default);
+
   return (
     <Spring
       from={{ opacity: 0, scale: 0.98 }}

@@ -14,15 +14,10 @@ import RoundButton from "./RoundButton/RoundButton";
 import HomePage from "../HomePage/HomePage";
 import NftList from "../NftList/NftList";
 
-function Site({ selectorNetworks, web3 }) {
+function Site({ selectorNetworks }) {
   const theme = useTheme();
 
-  const {
-    account,
-    balance,
-    isContract: isContractAccount,
-    web3: walletWeb3,
-  } = useWallet();
+  // const { account, balance, isContract: isContractAccount } = useWallet();
 
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
