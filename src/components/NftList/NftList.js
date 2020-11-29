@@ -8,20 +8,41 @@ import {
   Button,
   AddressField,
   SidePanel,
+  IconStarFilled,
+  IconStar,
 } from "@aragon/ui";
 
 import CreateNftPanel from "./CreateNftPanel/CreateNftPanel";
+import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 
 function NftList() {
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
 
+  const {
+    favoriteNFTs,
+    isAddressFavorited,
+    removeFavoriteByAddress,
+    addFavorite,
+  } = useFavoriteNFTs();
+
   const entries = [
     {
       name: "CryptoPunks",
-      supply: "0",
       address: "0xa10234D171fb300A741F1981b550c8CA391EA74f",
+    },
+    {
+      name: "Autoglyphs",
+      address: "0xa10214D17cfb300A741F1981b550c8CA391EA74f",
+    },
+    {
+      name: "Avastars",
+      address: "0xa10234D171fb30aA741F1981b553c8CA391EA74f",
+    },
+    {
+      name: "Joyworld",
+      address: "0xa10234D111fb310A741F1981b550c8CA391EA74f",
     },
   ];
 
@@ -29,7 +50,7 @@ function NftList() {
 
   const handleClickCreate = () => {
     setPanelTitle("Create NFT");
-    setInnerPanel(<CreateNftPanel />);
+    setInnerPanel(<CreateNftPanel closePanel={() => setPanelOpened(false)} />);
     setPanelOpened(true);
   };
 
@@ -40,13 +61,31 @@ function NftList() {
         secondary={<Button label="Create NFT" onClick={handleClickCreate} />}
       />
       <DataView
-        fields={["Name", "Supply", "Address", ""]}
-        entries={entries}
+        fields={["Name", "Contract Address", ""]}
+        entries={favoriteNFTs.concat(
+          entries.filter(
+            (e) => !favoriteNFTs.find((f) => f.address === e.address)
+          )
+        )}
         renderEntry={({ name, supply, address }) => {
           return [
             <div>{name}</div>,
-            <div>{supply}</div>,
             <AddressField address={address} autofocus={false} />,
+            <div
+              css={`
+                & > svg {
+                }
+                cursor: pointer;
+                padding: 5px;
+              `}
+              onClick={() =>
+                isAddressFavorited(address)
+                  ? removeFavoriteByAddress(address)
+                  : addFavorite({ name, address })
+              }
+            >
+              {isAddressFavorited(address) ? <IconStarFilled /> : <IconStar />}
+            </div>,
           ];
         }}
         renderEntryActions={(entry, index) => {

@@ -9,9 +9,10 @@ function FavoritesMenuItemButton(props) {
         display: flex;
         align-items: center;
         height: ${7 * GU}px;
-        color: ${theme.surfaceContent};
+        padding: 0 ${1.5 * GU}px;
         background: ${theme.surface};
         ${textStyle("body2")}
+        color: ${theme.tagIdentifierContent};
         border-radius: 0;
         &:active {
           background: ${theme.surfacePressed};

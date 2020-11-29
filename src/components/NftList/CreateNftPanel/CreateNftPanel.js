@@ -1,12 +1,22 @@
 import React, { useState, useRef } from "react";
-import { DropDown, TextInput, Button, AddressField } from "@aragon/ui";
+import {
+  DropDown,
+  TextInput,
+  Button,
+  AddressField,
+  IconCheck,
+} from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import erc721 from "../../../contracts/ERC721.json";
 import Loader from "react-loader-spinner";
+import HashField from "../../HashField/HashField";
+import { useFavoriteNFTs } from "../../../contexts/FavoriteNFTsContext";
 
-function CreateNftPanel() {
+function CreateNftPanel({ closePanel }) {
   const { account } = useWallet();
+
+  const { addFavorite } = useFavoriteNFTs();
 
   const { current: web3 } = useRef(new Web3(window.ethereum));
 
@@ -35,59 +45,21 @@ function CreateNftPanel() {
       )
       .on("error", (error) => setTxError(error))
       .on("transactionHash", (txHash) => setTxHash(txHash))
-      .on("receipt", (receipt) => setTxReceipt(receipt));
+      .on("receipt", (receipt) => {
+        setTxReceipt(receipt);
+        console.log(receipt);
+      });
   };
 
-  return (
-    <div>
-      <div
-        css={`
-          margin-top: 28px;
-          margin-bottom: 20px;
-        `}
-      >
-        Transaction in progress...
-      </div>
-      <div
-        css={`
-          position: relative;
-          & > div > div:first-child {
-          }
-        `}
-      >
-        <div
-          css={`
-            position: absolute;
-            z-index: 100;
-            top: 2px;
-            left: 11px;
-            color: #201143;
-            font-size: 28px;
-            font-weight: 200;
-          `}
-        >
-          #
-        </div>
+  const handleViewNFT = () => {
+    addFavorite({ name: name, address: txReceipt.contractAddress });
+    closePanel();
+    setTimeout(() => {
+      window.location.hash = "/erc721/" + txReceipt.contractAddress;
+    }, 300);
+  };
 
-        <AddressField
-          address="0xec81be6cb447f1b7a66fd4574fd4dfa87813ce39f51c04886c12dd2a8ecd7f24"
-          autofocus={false}
-        />
-      </div>
-      <Loader
-        type="ThreeDots"
-        color="#201143"
-        width={150}
-        css={`
-          margin-top: 50px;
-          display: flex;
-          justify-content: center;
-        `}
-      />
-    </div>
-  );
-
-  /* if (!txHash) {
+  if (!txHash) {
     return (
       <div>
         <DropDown
@@ -128,12 +100,52 @@ function CreateNftPanel() {
   } else if (txHash && !txReceipt) {
     return (
       <div>
-        <Loader type="Puff" color="#A9416E" height={100} width={100} />
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Transaction in progress...
+        </div>
+        <HashField hash={txHash} />
+        <Loader
+          type="ThreeDots"
+          color="#201143"
+          width={150}
+          css={`
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+          `}
+        />
       </div>
     );
   } else {
-    return <div>DONE</div>;
-  } */
+    return (
+      <div>
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Contract deployed succesfully
+          <IconCheck
+            css={`
+              transform: translate(5px, 5px) scale(1.2);
+              color: #5ac994;
+            `}
+          />
+        </div>
+        <Button
+          label="View Updated NFT List"
+          wide={true}
+          onClick={handleViewNFT}
+        />
+      </div>
+    );
+  }
 }
 
 export default CreateNftPanel;

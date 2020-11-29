@@ -86,13 +86,7 @@ function FavoritesMenuItem({
           </div>
         </div>
       </FavoritesMenuItemButton>
-      <FavoritesMenuItemButton
-        css={`
-          padding: 0 ${1.5 * GU}px;
-          color: ${theme.tagIdentifierContent};
-        `}
-        onClick={handleFavoriteClick}
-      >
+      <FavoritesMenuItemButton onClick={handleFavoriteClick}>
         {favorited ? <IconStarFilled /> : <IconStar />}
       </FavoritesMenuItemButton>
     </div>

@@ -63,9 +63,9 @@ class FavoriteFundsProvider extends React.Component {
     }
   };
 
-  removeFavoriteByAddress = (address) => {
+  removeFavoriteByAddress = (addr) => {
     const fundIndex = this.state.favoriteFunds.findIndex(({ address }) =>
-      addressesEqual(address, address)
+      addressesEqual(address, addr)
     );
     if (fundIndex > -1) {
       const favs = storedList.remove(fundIndex);

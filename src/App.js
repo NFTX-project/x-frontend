@@ -12,6 +12,7 @@ import { web3Providers } from "./environment";
 import { Main, useTheme } from "@aragon/ui";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { FavoriteFundsProvider } from "./contexts/FavoriteFundsContext";
+import { FavoriteNFTsProvider } from "./contexts/FavoriteNFTsContext";
 
 // import MainView from "./components/_archived/MainView/MainView";
 import Site from "./components/Site/Site";
@@ -49,8 +50,10 @@ function App() {
             }}
           >
             <FavoriteFundsProvider>
-              <Site selectorNetworks={SELECTOR_NETWORKS} />
-              <GlobalPreferences />
+              <FavoriteNFTsProvider>
+                <Site selectorNetworks={SELECTOR_NETWORKS} />
+                <GlobalPreferences />
+              </FavoriteNFTsProvider>
             </FavoriteFundsProvider>
           </animated.div>
         </animated.div>
