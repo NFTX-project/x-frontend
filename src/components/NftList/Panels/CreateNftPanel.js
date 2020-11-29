@@ -28,8 +28,6 @@ function CreateNftPanel({ closePanel }) {
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
-  console.log("account", account);
-
   const handleDeploy = () => {
     const nftContract = new web3.eth.Contract(erc721.abi);
     nftContract
@@ -62,21 +60,13 @@ function CreateNftPanel({ closePanel }) {
   if (!txHash) {
     return (
       <div>
-        <DropDown
-          items={["Anyone can mint", "Only owner can mint"]}
-          placeholder={"Anyone can mint"}
-          onChange={() => console.log("changed")}
-          wide
-          css={`
-            margin: 20px 0 15px;
-          `}
-        />
         <TextInput
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Name (e.g. CryptoGems)"
           wide={true}
           css={`
+            margin-top: 20px;
             margin-bottom: 10px;
           `}
         />
@@ -90,7 +80,7 @@ function CreateNftPanel({ closePanel }) {
           `}
         />
         <Button
-          label={"Deploy ERC20"}
+          label={"Deploy ERC721"}
           wide={true}
           disabled={!name || !symbol || !account}
           onClick={handleDeploy}

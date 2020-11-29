@@ -11,9 +11,10 @@ import {
   IconStarFilled,
   IconStar,
 } from "@aragon/ui";
-
-import CreateNftPanel from "./CreateNftPanel/CreateNftPanel";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
+import CreateNftPanel from "./Panels/CreateNftPanel";
+import MintNftPanel from "./Panels/MintNftPanel";
+import TransferNftPanel from "./Panels/TransferNftPanel";
 
 function NftList() {
   const [panelTitle, setPanelTitle] = useState("");
@@ -46,11 +47,23 @@ function NftList() {
     },
   ];
 
-  const handleMint = () => console.log("clicked");
-
   const handleClickCreate = () => {
     setPanelTitle("Create NFT");
     setInnerPanel(<CreateNftPanel closePanel={() => setPanelOpened(false)} />);
+    setPanelOpened(true);
+  };
+
+  const handleMint = (vaultId, name) => {
+    setPanelTitle(`Mint ${name}`);
+    setInnerPanel(<MintNftPanel closePanel={() => setPanelOpened(false)} />);
+    setPanelOpened(true);
+  };
+
+  const handleTransfer = (vaultId, name) => {
+    setPanelTitle(`Transfer ${name}`);
+    setInnerPanel(
+      <TransferNftPanel closePanel={() => setPanelOpened(false)} />
+    );
     setPanelOpened(true);
   };
 
@@ -95,6 +108,11 @@ function NftList() {
                 onClick={() => handleMint(entry.vaultId, entry.ticker)}
               >
                 Mint
+              </ContextMenuItem>
+              <ContextMenuItem
+                onClick={() => handleTransfer(entry.vaultId, entry.ticker)}
+              >
+                Transfer
               </ContextMenuItem>
             </ContextMenu>
           );
