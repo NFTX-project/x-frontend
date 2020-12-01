@@ -132,6 +132,19 @@ export const networkConfigs = {
 };
 
 export function getNetworkConfig(type) {
+  console.log("type", type);
+  console.log("networkConfigs[type]", networkConfigs[type]);
+  if (!networkConfigs[type]) {
+    console.log("networkConfigs", networkConfigs);
+    console.log("other", {
+      ...networkConfigs.unknown,
+      settings: {
+        ...networkConfigs.unknown.settings,
+        name: `Unsupported network (${type})`,
+      },
+    });
+  }
+
   return (
     networkConfigs[type] || {
       ...networkConfigs.unknown,

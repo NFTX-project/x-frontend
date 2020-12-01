@@ -11,43 +11,51 @@ import {
   IconStarFilled,
   IconStar,
 } from "@aragon/ui";
-import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
-import CreateNftPanel from "../InnerPanels/CreateNftPanel";
-import MintNftPanel from "../InnerPanels/MintNftPanel";
-import TransferNftPanel from "../InnerPanels/TransferNftPanel";
+import { useFavoriteFunds } from "../../contexts/FavoriteFundsContext";
+import MintNftPanel from "./Panels/MintFundPanel";
+import TransferNftPanel from "./Panels/BurnFundPanel";
+import CreateErc20Panel from "../InnerPanels/CreateErc20Panel";
+import CreateFundPanel from "../InnerPanels/CreateFundPanel";
 
-function NftList() {
+function D1FundList() {
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
 
   const {
-    favoriteNFTs,
+    favoriteFunds,
     isAddressFavorited,
     removeFavoriteByAddress,
     addFavorite,
-  } = useFavoriteNFTs();
+  } = useFavoriteFunds();
 
   const entries = [
     {
-      name: "CryptoPunks",
+      ticker: "PUNK-BASIC",
       address: "0xcC495748Df37dCfb0C1041a6FDfA257D350aFD60",
+      vaultId: 0,
     },
-    {
-      name: "Autoglyphs",
-      address: "0x476895959C3E2a775a433B0DFA7744Ec9726b6bc",
-    },
-    {
-      name: "CryptoKitties",
-      address: "0xc860383974FB0D4b1FCD988024c3632C23b506f7",
-    },
-    { name: "Avastar", address: "0xD8f9c5A7d228b99e7307FA37872A339359ED111B" },
-    { name: "JOYWORLD", address: "0x50BBddbF12A97B2BfbCC7B728Eb08Dc40d123FAd" },
   ];
 
   const handleClickCreate = () => {
-    setPanelTitle("Create NFT");
-    setInnerPanel(<CreateNftPanel closePanel={() => setPanelOpened(false)} />);
+    setPanelTitle("Create a D1 Fund (Step 1/2)");
+    setInnerPanel(
+      <CreateErc20Panel
+        onContinue={(tokenAddress) => {
+          setPanelOpened(false);
+          setTimeout(() => {
+            setPanelTitle("Create a D1 Fund (Step 2/2)");
+            setInnerPanel(
+              <CreateFundPanel
+                tokenAddress={tokenAddress}
+                closePanel={() => setPanelOpened(false)}
+              />
+            );
+            setPanelOpened(true);
+          }, 500);
+        }}
+      />
+    );
     setPanelOpened(true);
   };
 
@@ -62,13 +70,10 @@ function NftList() {
     setPanelOpened(true);
   };
 
-  const handleTransfer = (address, name) => {
+  const handleTransfer = (vaultId, name) => {
     setPanelTitle(`${name} ▸ Transfer`);
     setInnerPanel(
-      <TransferNftPanel
-        contractAddress={address}
-        closePanel={() => setPanelOpened(false)}
-      />
+      <TransferNftPanel closePanel={() => setPanelOpened(false)} />
     );
     setPanelOpened(true);
   };
@@ -76,19 +81,22 @@ function NftList() {
   return (
     <div>
       <Header
-        primary="NFT List"
-        secondary={<Button label="Create NFT" onClick={handleClickCreate} />}
+        primary="D1 Funds"
+        secondary={
+          <Button label="Create D1 Fund" onClick={handleClickCreate} />
+        }
       />
       <DataView
-        fields={["Name", "Contract Address", ""]}
-        entries={favoriteNFTs.concat(
+        fields={["Ticker", "Token Address", ""]}
+        entries={favoriteFunds.concat(
           entries.filter(
-            (e) => !favoriteNFTs.find((f) => f.address === e.address)
+            (e) => !favoriteFunds.find((f) => f.address === e.address)
           )
         )}
-        renderEntry={({ name, supply, address }) => {
+        renderEntry={(entry) => {
+          const { ticker, address } = entry;
           return [
-            <div>{name}</div>,
+            <div>{ticker}</div>,
             <AddressField address={address} autofocus={false} />,
             <div
               css={`
@@ -100,7 +108,7 @@ function NftList() {
               onClick={() =>
                 isAddressFavorited(address)
                   ? removeFavoriteByAddress(address)
-                  : addFavorite({ name, address })
+                  : addFavorite(entry)
               }
             >
               {isAddressFavorited(address) ? <IconStarFilled /> : <IconStar />}
@@ -141,10 +149,10 @@ export const NftType = PropTypes.shape({
   address: PropTypes.string,
 });
 
-NftList.propTypes = {
+D1FundList.propTypes = {
   title: PropTypes.string,
   entries: PropTypes.arrayOf(NftType),
   handleMint: PropTypes.func,
 };
 
-export default NftList;
+export default D1FundList;

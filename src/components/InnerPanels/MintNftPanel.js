@@ -8,33 +8,30 @@ import {
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import erc721 from "../../../contracts/ERC721.json";
+import erc721Pub from "../../contracts/ERC721Public.json";
 import Loader from "react-loader-spinner";
-import HashField from "../../HashField/HashField";
-import { useFavoriteNFTs } from "../../../contexts/FavoriteNFTsContext";
+import HashField from "../HashField/HashField";
+import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 
-function MintNftPanel({ closePanel }) {
+function MintNftPanel({ contractAddress, closePanel }) {
   const { account } = useWallet();
 
   const { addFavorite } = useFavoriteNFTs();
 
   const { current: web3 } = useRef(new Web3(window.ethereum));
 
-  const [name, setName] = useState("");
-  const [symbol, setSymbol] = useState("");
+  const [tokenId, setTokenId] = useState("");
+  const [recipient, setRecipient] = useState("");
 
   const [txStatus, setTxStatus] = useState(null);
   const [txHash, setTxHash] = useState(null);
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
-  const handleDeploy = () => {
-    const nftContract = new web3.eth.Contract(erc721.abi);
-    nftContract
-      .deploy({
-        data: erc721.bytecode,
-        arguments: [name, symbol],
-      })
+  const handleMint = (tokenId, recipient) => {
+    const nftContract = new web3.eth.Contract(erc721Pub.abi, contractAddress);
+    nftContract.methods
+      .mint(tokenId, recipient)
       .send(
         {
           from: account,
@@ -50,39 +47,40 @@ function MintNftPanel({ closePanel }) {
   };
 
   const handleViewNFT = () => {
-    addFavorite({ name: name, address: txReceipt.contractAddress });
     closePanel();
-    setTimeout(() => {
-      window.location.hash = "/erc721/" + txReceipt.contractAddress;
-    }, 300);
   };
 
   if (!txHash) {
     return (
-      <div>
+      <div
+        css={`
+          margin-top: 20px;
+        `}
+      >
         <TextInput
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Name (e.g. CryptoGems)"
+          value={tokenId}
+          onChange={(event) => setTokenId(event.target.value)}
+          placeholder="Token ID (e.g. 42)"
           wide={true}
           css={`
             margin-bottom: 10px;
           `}
         />
         <TextInput
-          value={symbol}
-          onChange={(event) => setSymbol(event.target.value)}
-          placeholder="Symbol (e.g. GEMS)"
+          value={recipient}
+          onChange={(event) => setRecipient(event.target.value)}
+          placeholder="Recipient (e.g. 0x0bf7...D63a)"
           wide={true}
           css={`
             margin-bottom: 20px;
           `}
         />
+
         <Button
-          label={"Deploy ERC20"}
+          label={"Mint NFT"}
           wide={true}
-          disabled={!name || !symbol || !account}
-          onClick={handleDeploy}
+          disabled={!tokenId || !recipient || !account}
+          onClick={() => handleMint(tokenId, recipient)}
         />
       </div>
     );
@@ -119,7 +117,7 @@ function MintNftPanel({ closePanel }) {
             margin-bottom: 20px;
           `}
         >
-          Contract deployed succesfully
+          NFT minted succesfully
           <IconCheck
             css={`
               transform: translate(5px, 5px) scale(1.2);
@@ -127,11 +125,7 @@ function MintNftPanel({ closePanel }) {
             `}
           />
         </div>
-        <Button
-          label="View Updated NFT List"
-          wide={true}
-          onClick={handleViewNFT}
-        />
+        <Button label="Return to List" wide={true} onClick={handleViewNFT} />
       </div>
     );
   }

@@ -4,8 +4,8 @@ import { network } from "../../environment";
 import WelcomeAction from "../WelcomeAction/WelcomeAction";
 import Suggestions from "./Suggestions/Suggestions";
 import { useSuggestedFunds } from "../../suggested-funds";
-import CreateD1PanelA from "./CreateD1Panel/CreateD1PanelA";
-import CreateD2Panel from "./CreateD2Panel/CreateD2Panel";
+import CreateD1PanelA from "../CreateD1Panel/CreateD1PanelA";
+import CreateD2Panel from "../CreateD2Panel/CreateD2Panel";
 
 import actionCreate from "./assets/action-create.png";
 import actionOpen from "./assets/action-open.png";

@@ -8,15 +8,13 @@ import {
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import erc721 from "../../../contracts/ERC721.json";
+import erc20 from "../../contracts/XToken.json";
 import Loader from "react-loader-spinner";
-import HashField from "../../HashField/HashField";
-import { useFavoriteNFTs } from "../../../contexts/FavoriteNFTsContext";
+import HashField from "../HashField/HashField";
+import addresses from "../../addresses/rinkeby.json";
 
-function MintNftPanel({ closePanel }) {
+function CreateErc20Panel({ onContinue }) {
   const { account } = useWallet();
-
-  const { addFavorite } = useFavoriteNFTs();
 
   const { current: web3 } = useRef(new Web3(window.ethereum));
 
@@ -29,11 +27,11 @@ function MintNftPanel({ closePanel }) {
   const [txError, setTxError] = useState(null);
 
   const handleDeploy = () => {
-    const nftContract = new web3.eth.Contract(erc721.abi);
-    nftContract
+    const tokenContract = new web3.eth.Contract(erc20.abi);
+    tokenContract
       .deploy({
-        data: erc721.bytecode,
-        arguments: [name, symbol],
+        data: erc20.bytecode,
+        arguments: [name, symbol, addresses.nftxProxy],
       })
       .send(
         {
@@ -49,21 +47,21 @@ function MintNftPanel({ closePanel }) {
       });
   };
 
-  const handleViewNFT = () => {
-    addFavorite({ name: name, address: txReceipt.contractAddress });
-    closePanel();
-    setTimeout(() => {
-      window.location.hash = "/erc721/" + txReceipt.contractAddress;
-    }, 300);
-  };
-
   if (!txHash) {
     return (
       <div>
+        <div
+          css={`
+            margin-top: 20px;
+            margin-bottom: 10px;
+          `}
+        >
+          Deploy an ERC20 fund token
+        </div>
         <TextInput
           value={name}
           onChange={(event) => setName(event.target.value)}
-          placeholder="Name (e.g. CryptoGems)"
+          placeholder="Name (e.g. Punk-Basic)"
           wide={true}
           css={`
             margin-bottom: 10px;
@@ -72,10 +70,10 @@ function MintNftPanel({ closePanel }) {
         <TextInput
           value={symbol}
           onChange={(event) => setSymbol(event.target.value)}
-          placeholder="Symbol (e.g. GEMS)"
+          placeholder="Symbol (e.g. PUNK-BASIC)"
           wide={true}
           css={`
-            margin-bottom: 20px;
+            margin-bottom: 15px;
           `}
         />
         <Button
@@ -127,14 +125,10 @@ function MintNftPanel({ closePanel }) {
             `}
           />
         </div>
-        <Button
-          label="View Updated NFT List"
-          wide={true}
-          onClick={handleViewNFT}
-        />
+        <Button label="Continue" wide={true} onClick={onContinue} />
       </div>
     );
   }
 }
 
-export default MintNftPanel;
+export default CreateErc20Panel;

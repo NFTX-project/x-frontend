@@ -8,10 +8,10 @@ import {
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import erc721 from "../../../contracts/ERC721.json";
+import erc721 from "../../contracts/ERC721Public.json";
 import Loader from "react-loader-spinner";
-import HashField from "../../HashField/HashField";
-import { useFavoriteNFTs } from "../../../contexts/FavoriteNFTsContext";
+import HashField from "../HashField/HashField";
+import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 
 function CreateNftPanel({ closePanel }) {
   const { account } = useWallet();
@@ -22,6 +22,8 @@ function CreateNftPanel({ closePanel }) {
 
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
+  const [minTokenId, setMinTokenId] = useState("");
+  const [maxTokenId, setMaxTokenId] = useState("");
 
   const [txStatus, setTxStatus] = useState(null);
   const [txHash, setTxHash] = useState(null);
@@ -33,7 +35,7 @@ function CreateNftPanel({ closePanel }) {
     nftContract
       .deploy({
         data: erc721.bytecode,
-        arguments: [name, symbol],
+        arguments: [name, symbol, minTokenId, maxTokenId],
       })
       .send(
         {
@@ -52,9 +54,6 @@ function CreateNftPanel({ closePanel }) {
   const handleViewNFT = () => {
     addFavorite({ name: name, address: txReceipt.contractAddress });
     closePanel();
-    setTimeout(() => {
-      window.location.hash = "/erc721/" + txReceipt.contractAddress;
-    }, 300);
   };
 
   if (!txHash) {
@@ -74,6 +73,24 @@ function CreateNftPanel({ closePanel }) {
           value={symbol}
           onChange={(event) => setSymbol(event.target.value)}
           placeholder="Symbol (e.g. GEMS)"
+          wide={true}
+          css={`
+            margin-bottom: 10px;
+          `}
+        />
+        <TextInput
+          value={minTokenId}
+          onChange={(event) => setMinTokenId(event.target.value)}
+          placeholder="Minimum token ID (e.g. 0)"
+          wide={true}
+          css={`
+            margin-bottom: 10px;
+          `}
+        />
+        <TextInput
+          value={maxTokenId}
+          onChange={(event) => setMaxTokenId(event.target.value)}
+          placeholder="Maximum token ID (e.g. 9999)"
           wide={true}
           css={`
             margin-bottom: 20px;

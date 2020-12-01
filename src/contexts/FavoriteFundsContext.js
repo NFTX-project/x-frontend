@@ -14,8 +14,9 @@ const filterFavoritesFunds = (funds) =>
     funds
       .filter((fund) => fund && fund.address)
       .map((fund) => ({
-        name: fund.name || "",
+        ticker: fund.ticker || "",
         address: fund.address,
+        vaultId: fund.vaultId,
       })),
     (fund) => fund.address.toLowerCase()
   );
@@ -56,8 +57,9 @@ class FavoriteFundsProvider extends React.Component {
     if (fundIndex === -1) {
       this.setState({
         favoriteFunds: storedList.add({
-          name: fund.name,
+          ticker: fund.ticker,
           address: fund.address,
+          vaultId: fund.vaultId,
         }),
       });
     }
