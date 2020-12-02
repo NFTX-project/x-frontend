@@ -108,6 +108,19 @@ function CreateErc20Panel({ onContinue }) {
         />
       </div>
     );
+  } else if (txError) {
+    return (
+      <div>
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Error occured. Check console.
+        </div>
+      </div>
+    );
   } else {
     return (
       <div>
@@ -125,7 +138,11 @@ function CreateErc20Panel({ onContinue }) {
             `}
           />
         </div>
-        <Button label="Continue" wide={true} onClick={onContinue} />
+        <Button
+          label="Continue"
+          wide={true}
+          onClick={() => onContinue(txReceipt.contractAddress, symbol)}
+        />
       </div>
     );
   }

@@ -113,6 +113,19 @@ function TransferNftPanel({ contractAddress, closePanel }) {
         />
       </div>
     );
+  } else if (txError) {
+    return (
+      <div>
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Error occured. Check console.
+        </div>
+      </div>
+    );
   } else {
     return (
       <div>

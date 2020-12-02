@@ -23,7 +23,6 @@ function MintNftPanel({ contractAddress, closePanel }) {
   const [tokenId, setTokenId] = useState("");
   const [recipient, setRecipient] = useState("");
 
-  const [txStatus, setTxStatus] = useState(null);
   const [txHash, setTxHash] = useState(null);
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
@@ -106,6 +105,19 @@ function MintNftPanel({ contractAddress, closePanel }) {
             justify-content: center;
           `}
         />
+      </div>
+    );
+  } else if (txError) {
+    return (
+      <div>
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Error occured. Check console.
+        </div>
       </div>
     );
   } else {

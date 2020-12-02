@@ -8,10 +8,10 @@ import {
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import erc721Pub from "../../contracts/ERC721Public.json";
+import Nftx from "../../contracts/NFTX.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
-import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
+import addresses from "../../addresses/rinkeby.json";
 
 function CreateFundPanel({ tokenAddress, onContinue }) {
   const { account } = useWallet();
@@ -20,18 +20,15 @@ function CreateFundPanel({ tokenAddress, onContinue }) {
 
   const [nftAddress, setNftAddress] = useState("");
 
-  const [txStatus, setTxStatus] = useState(null);
   const [txHash, setTxHash] = useState(null);
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
   const handleCreate = () => {
-    const nftContract = new web3.eth.Contract(erc721.abi);
-    nftContract
-      .deploy({
-        data: erc721.bytecode,
-        arguments: [name, symbol, minTokenId, maxTokenId],
-      })
+    const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
+    // window.nftx = nftx;
+    nftx.methods
+      .createVault(tokenAddress, nftAddress, false)
       .send(
         {
           from: account,
@@ -46,30 +43,95 @@ function CreateFundPanel({ tokenAddress, onContinue }) {
       });
   };
 
-  return (
-    <div
-      css={`
-        margin-top: 20px;
-      `}
-    >
-      <TextInput
-        value={nftAddress}
-        onChange={(event) => setNftAddress(event.target.value)}
-        placeholder="NFT contract address (e.g. 0x0bf7...D63a)"
-        wide={true}
+  if (!txHash) {
+    return (
+      <div
         css={`
-          margin-bottom: 10px;
+          margin-top: 20px;
         `}
-      />
+      >
+        <TextInput
+          value={nftAddress}
+          onChange={(event) => setNftAddress(event.target.value)}
+          placeholder="NFT contract address (e.g. 0x0bf7...D63a)"
+          wide={true}
+          css={`
+            margin-bottom: 15px;
+          `}
+        />
 
-      <Button
-        label={"Create Fund"}
-        wide={true}
-        disabled={!nftAddress || !account}
-        onClick={() => console.log("TODO")}
-      />
-    </div>
-  );
+        <Button
+          label={"Create Fund"}
+          wide={true}
+          disabled={!nftAddress || !account}
+          onClick={handleCreate}
+        />
+      </div>
+    );
+  } else if (txHash && !txReceipt) {
+    return (
+      <div>
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Transaction in progress...
+        </div>
+        <HashField hash={txHash} />
+        <Loader
+          type="ThreeDots"
+          color="#201143"
+          width={150}
+          css={`
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+          `}
+        />
+      </div>
+    );
+  } else if (txError) {
+    return (
+      <div>
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Error occured. Check console.
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <div
+          css={`
+            margin-top: 28px;
+            margin-bottom: 20px;
+          `}
+        >
+          Fund created succesfully
+          <IconCheck
+            css={`
+              transform: translate(5px, 5px) scale(1.2);
+              color: #5ac994;
+            `}
+          />
+        </div>
+        <Button
+          label="View Updated NFT List"
+          wide={true}
+          onClick={() =>
+            onContinue(txReceipt.events.NewVault.returnValues.vaultId)
+          }
+        />
+      </div>
+    );
+  }
 }
 
 export default CreateFundPanel;
