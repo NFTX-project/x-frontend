@@ -21,6 +21,7 @@ import ManageFundPanel from "../InnerPanels/ManageFundPanel";
 import Web3 from "web3";
 import Nftx from "../../contracts/NFTX.json";
 import XStore from "../../contracts/XStore.json";
+import XToken from "../../contracts/XToken.json";
 import addresses from "../../addresses/rinkeby.json";
 
 function D1FundList() {
@@ -33,17 +34,22 @@ function D1FundList() {
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
 
-  const [chainData, setChainData] = useState(null);
+  const [chainData, setChainData] = useState({});
+  const [tableEntries, setTableEntries] = useState([]);
 
   useEffect(() => {
     setTimeout(() => {
       const allDone = () => {
-        console.log("here", resRemaining);
         return resRemaining === 0;
       };
       const data = {};
       let resRemaining = 0;
+      const update = (data) => {
+        setChainData(data);
+        setTableEntries(getAllEntries());
+      };
       getAllEntries().forEach((entry) => {
+        const fundToken = new web3.eth.Contract(XToken.abi, entry.address);
         data[entry.address] = {};
         resRemaining += 1;
         xStore.methods
@@ -52,7 +58,16 @@ function D1FundList() {
           .then((retVal) => {
             data[entry.address].isFinalized = retVal.toString();
             resRemaining -= 1;
-            allDone() && setChainData(data);
+            allDone() && update(data);
+          });
+        resRemaining += 1;
+        fundToken.methods
+          .totalSupply()
+          .call({ from: account })
+          .then((retVal) => {
+            data[entry.address].totalSupply = retVal;
+            resRemaining -= 1;
+            allDone() && update(data);
           });
       });
     }, 500);
@@ -172,14 +187,14 @@ function D1FundList() {
       />
       <DataView
         status="loading"
-        fields={["Ticker", "Token Address", "Finalized", ""]}
-        entries={chainData ? getAllEntries() : []}
+        fields={["Ticker", "Token Address", "Supply", ""]}
+        entries={tableEntries}
         renderEntry={(entry) => {
           const { ticker, address, vaultId } = entry;
           return [
             <div>{ticker}</div>,
             <AddressField address={address} autofocus={false} />,
-            <div>{"test"}</div>,
+            <div>{chainData[address] && chainData[address].totalSupply}</div>,
             <div
               css={`
                 & > svg {
