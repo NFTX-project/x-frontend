@@ -20,7 +20,7 @@ import ConnectingScreen from "./AccountModuleConnectingScreen";
 import ConnectedScreen from "./AccountModuleConnectedScreen";
 import ErrorScreen from "./AccountModuleErrorScreen";
 import { getProviderFromUseWalletId } from "../../ethereum-providers";
-import { shortenAddress } from "../../../../aragon-client/src/web3-utils";
+import { shortenAddress } from "../../web3-utils";
 
 const SCREENS = [
   { id: "providers", title: "Use account from" },
