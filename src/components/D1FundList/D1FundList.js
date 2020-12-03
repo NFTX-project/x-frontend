@@ -36,8 +36,33 @@ function D1FundList() {
   const entries = [
     {
       ticker: "PUNK-BASIC",
-      address: "0x73BF4793785A75a59863e8578794129b844C4Dc6",
+      address: "0x7974566f15E3e456fE1eA617358Be4bDB1a10C05",
+      vaultId: 0,
+    },
+    {
+      ticker: "PUNK-ATTR-4",
+      address: "0xaeE76c0bD1ABa53DC44bC797385b4311aB8e4B36",
       vaultId: 1,
+    },
+    {
+      ticker: "PUNK-ATTR-5",
+      address: "0x82C99f2FAE45438355922AfA143E39D970277f82",
+      vaultId: 2,
+    },
+    {
+      ticker: "PUNK-ZOMBIE",
+      address: "0x2df3365037e71eAA70aC30b0d712882008C86B93",
+      vaultId: 3,
+    },
+    {
+      ticker: "GLYPH",
+      address: "0x50Fcdf958847E08be3C2CdABC30111E23D7B068C",
+      vaultId: 4,
+    },
+    {
+      ticker: "JOY",
+      address: "0x65766FffBa5e5Eb63a482E4002e4956c29965b04",
+      vaultId: 5,
     },
   ];
 

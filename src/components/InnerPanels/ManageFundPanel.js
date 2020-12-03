@@ -72,7 +72,7 @@ function ManageFundPanel({ vaultId, closePanel }) {
 
   const handleSetIsEligible = () => {
     nftx.methods
-      .setIsEligible(vaultId, nftIds, areEligible)
+      .setIsEligible(vaultId, JSON.parse(nftIds), areEligible)
       .send(
         {
           from: account,
@@ -88,6 +88,7 @@ function ManageFundPanel({ vaultId, closePanel }) {
   };
 
   const handleSetNegateEligibility = () => {
+    console.log("here");
     nftx.methods
       .setNegateEligibility(vaultId, shouldNegate)
       .send(
@@ -161,7 +162,7 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Change Token Name"}
             wide={true}
-            disabled={!account || !newName}
+            disabled={!account}
             onClick={handleChangeTokenName}
             css={`
               margin-top: 5px;
@@ -182,7 +183,7 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Change Token Symbol"}
             wide={true}
-            disabled={!account || !newSymbol}
+            disabled={!account}
             onClick={handleChangeTokenSymbol}
             css={`
               margin-top: 5px;
@@ -212,7 +213,7 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Set NFT Eligibility"}
             wide={true}
-            disabled={!account || !nftIds || !areEligible}
+            disabled={!account}
             onClick={handleSetIsEligible}
             css={`
               margin-top: 5px;
@@ -233,7 +234,7 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Negate Eligibility"}
             wide={true}
-            disabled={!account || !shouldNegate}
+            disabled={!account}
             onClick={handleSetNegateEligibility}
             css={`
               margin-top: 5px;
