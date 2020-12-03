@@ -1,4 +1,5 @@
 import blankDaoImage from "./images/blankdao.svg";
+import rinkebyFunds from "../data/rinkebyD1Funds.json";
 
 const TEMPLATE_D1 = "D1 Fund";
 
@@ -16,56 +17,14 @@ export const KnownFunds = {
     ].map((fund) => [fund.address.toLowerCase(), fund])
   ),
   rinkeby: new Map(
-    [
-      {
-        address: "0x67757a18eda83125270ef94dcec7658eb39bd8a5",
-        domain: "",
-        name: "PUNK-BASIC",
-        image: null,
-        recommended: true,
-        template: TEMPLATE_D1,
-      },
-      {
-        address: "0x62757a18eda83125270ef94dcec7651eb39bd8a5",
-        domain: "",
-        name: "PUNK-ZOMBIE",
-        image: null,
-        recommended: true,
-        template: TEMPLATE_D1,
-      },
-      {
-        address: "0x67752a18eda83125170ef94dcec7658eb39bd8a5",
-        domain: "",
-        name: "KITTY-GEN-0",
-        image: null,
-        recommended: true,
-        template: TEMPLATE_D1,
-      },
-      {
-        address: "0x67757a18eda83125270ef94dcec9658eb39bd8a5",
-        domain: "",
-        name: "AXIE-MYSTIC-1",
-        image: null,
-        recommended: true,
-        template: TEMPLATE_D1,
-      },
-      {
-        address: "0x67757a18eda83120270ef94dcec7658eb39bd8a5",
-        domain: "",
-        name: "AVASTAR-RANK-50",
-        image: null,
-        recommended: true,
-        template: TEMPLATE_D1,
-      },
-      {
-        address: "0x67757a18eda83120570ef94dcec7658eb39b78a5",
-        domain: "",
-        name: "GLYPH",
-        image: null,
-        recommended: true,
-        template: TEMPLATE_D1,
-      },
-    ].map((fund) => [fund.address.toLowerCase(), fund])
+    rinkebyFunds
+      .map((entry) => {
+        entry.name = entry.ticker;
+        entry.recommended = true;
+        entry.template = TEMPLATE_D1;
+        return entry;
+      })
+      .map((fund) => [fund.address.toLowerCase(), fund])
   ),
 };
 

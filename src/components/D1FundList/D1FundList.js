@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useWallet } from "use-wallet";
 import PropTypes from "prop-types";
 import {
   DataView,
@@ -19,12 +20,43 @@ import CreateFundPanel from "../InnerPanels/CreateFundPanel";
 import ManageFundPanel from "../InnerPanels/ManageFundPanel";
 import Web3 from "web3";
 import Nftx from "../../contracts/NFTX.json";
+import XStore from "../../contracts/XStore.json";
 import addresses from "../../addresses/rinkeby.json";
 
 function D1FundList() {
+  const { account } = useWallet();
+  const { current: web3 } = useRef(new Web3(window.ethereum));
+  const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
+  const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
+
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
+
+  const [chainData, setChainData] = useState(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const allDone = () => {
+        console.log("here", resRemaining);
+        return resRemaining === 0;
+      };
+      const data = {};
+      let resRemaining = 0;
+      getAllEntries().forEach((entry) => {
+        data[entry.address] = {};
+        resRemaining += 1;
+        xStore.methods
+          .isFinalized(entry.vaultId)
+          .call({ from: account })
+          .then((retVal) => {
+            data[entry.address].isFinalized = retVal.toString();
+            resRemaining -= 1;
+            allDone() && setChainData(data);
+          });
+      });
+    }, 500);
+  }, []);
 
   const {
     favoriteFunds,
@@ -65,6 +97,11 @@ function D1FundList() {
       vaultId: 5,
     },
   ];
+
+  const getAllEntries = () =>
+    favoriteFunds.concat(
+      entries.filter((e) => !favoriteFunds.find((f) => f.address === e.address))
+    );
 
   const handleClickCreate = () => {
     setPanelTitle("Create a D1 Fund (Step 1/2)");
@@ -134,18 +171,15 @@ function D1FundList() {
         }
       />
       <DataView
-        fields={["Ticker", "Token Address", "vid", ""]}
-        entries={favoriteFunds.concat(
-          entries.filter(
-            (e) => !favoriteFunds.find((f) => f.address === e.address)
-          )
-        )}
+        status="loading"
+        fields={["Ticker", "Token Address", "Finalized", ""]}
+        entries={chainData ? getAllEntries() : []}
         renderEntry={(entry) => {
           const { ticker, address, vaultId } = entry;
           return [
             <div>{ticker}</div>,
             <AddressField address={address} autofocus={false} />,
-            <div>{vaultId}</div>,
+            <div>{"test"}</div>,
             <div
               css={`
                 & > svg {
