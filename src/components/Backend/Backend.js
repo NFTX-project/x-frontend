@@ -29,28 +29,13 @@ function Backend() {
 
   const handleReadNftx = () => {
     setPanelTitle(`NFTX ▸ Read`);
-    setInnerPanel(
-      <NftxReadPanel />
-    );
+    setInnerPanel(<NftxReadPanel />);
     setPanelOpened(true);
   };
 
   const handleWriteNftx = () => {
     setPanelTitle(`NFTX ▸ Write`);
-    setInnerPanel(
-      <NftxWritePanel />
-    );
-    setPanelOpened(true);
-  };
-
-  const handleTransfer = (address, name) => {
-    setPanelTitle(`${name} ▸ Transfer`);
-    setInnerPanel(
-      <TransferNftPanel
-        contractAddress={address}
-        closePanel={() => setPanelOpened(false)}
-      />
-    );
+    setInnerPanel(<NftxWritePanel />);
     setPanelOpened(true);
   };
 
@@ -80,14 +65,10 @@ function Backend() {
         renderEntryActions={(entry, index) => {
           return (
             <ContextMenu>
-              <ContextMenuItem
-                onClick={handleReadNftx}
-              >
+              <ContextMenuItem onClick={handleReadNftx}>
                 Read...
               </ContextMenuItem>
-              <ContextMenuItem
-                onClick={() => handleTransfer(entry.address, entry.name)}
-              >
+              <ContextMenuItem onClick={handleWriteNftx}>
                 Write...
               </ContextMenuItem>
             </ContextMenu>

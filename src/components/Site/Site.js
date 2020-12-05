@@ -80,7 +80,7 @@ function Site({ selectorNetworks }) {
               <Landing selectorNetworks={selectorNetworks} />
             </Route>
 
-            <Route path="/">
+            <Route path="/" exact>
               <D1FundList />
             </Route>
             <Route path="/nft-list">

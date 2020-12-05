@@ -23,66 +23,70 @@ function ManageFundPanel() {
 
   const [vaultId, setVaultId] = useState("");
   const [nftId, setNftId] = useState("");
-  
-  
-  // const [tokenId, setTokenId] = useState("");
-  // const [recipient, setRecipient] = useState("");
-
-  // const [txStatus, setTxStatus] = useState(null);
-  const [txHash, setTxHash] = useState(null);
-  const [txReceipt, setTxReceipt] = useState(null);
-  const [txError, setTxError] = useState(null);
 
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
 
-  const getIsEligible = () => {
-    
-  };
+  const [funcParams, setFuncParams] = useState(JSON.parse("[[]]"));
+  const [returnVals, setReturnVals] = useState(JSON.parse("[[]]"));
 
-  
+  const getIsEligible = () => {};
 
-  
+  console.log(Nftx.abi);
 
   return (
     <div
       css={`
         & > div {
           margin-top: 25px;
-          margin-bottom: 10px;
+          margin-bottom: 40px;
         }
       `}
     >
-      <div>
-        <TextInput
-          value={vaultId}
-          onChange={(event) => setVaultId(event.target.value)}
-          placeholder="vaultId (e.g. 6)"
-          wide={true}
-          css={`
-            margin-bottom: 10px;
-          `}
-        />
-        <TextInput
-          value={nftId}
-          onChange={(event) => setNftId(event.target.value)}
-          placeholder="nftId (e.g. 42)"
-          wide={true}
-          css={`
-            margin-bottom: 10px;
-          `}
-        />
-        <Button
-          label={"Get isEligibile"}
-          wide={true}
-          disabled={!account}
-          onClick={getIsEligible}
-          css={`
-            margin-top: 5px;
-            margin-bottom: 15px;
-          `}
-        />
-      </div>
-      
+      {Nftx.abi
+        .filter(
+          (item) =>
+            item.type === "function" && !item.stateMutability.includes("view")
+        )
+        .map((func, i) => (
+          <div key={i}>
+            {func.inputs.map((input, _i) => (
+              <TextInput
+                key={_i}
+                value={(funcParams[i] && funcParams[i][_i]) || ""}
+                onChange={(event) => {
+                  const newFuncParams = JSON.parse(JSON.stringify(funcParams));
+                  if (!newFuncParams[i]) {
+                    newFuncParams[i] = [];
+                  }
+                  newFuncParams[i][_i] = event.target.value;
+                  setFuncParams(newFuncParams);
+                }}
+                placeholder={`${input.name} (${input.type})`}
+                wide={true}
+                css={`
+                  margin-bottom: 10px;
+                `}
+              />
+            ))}
+            <Button
+              label={func.name}
+              wide={true}
+              disabled={!account}
+              onClick={() => {
+                console.log(func.name);
+                nftx.methods[func.name](...funcParams[i])
+                  .send({ from: account })
+                  .then((receipt) => {
+                    console.log("receipt", receipt);
+                  });
+              }}
+              css={`
+                margin-top: 5px;
+                margin-bottom: 15px;
+              `}
+            />
+          </div>
+        ))}
     </div>
   );
 }
