@@ -61,10 +61,10 @@ function Site({ selectorNetworks }) {
               transform: translateY(-24px);
             `}
           >
-            <RoundButton text="Homepage" link="/" />
+            <RoundButton text="Landing" link="/" />
             <RoundButton text="D1 Funds" link="/d1-funds" />
-            <RoundButton text="Bounties" link="/bounties" />
             <RoundButton text="NFT List" link="/nft-list" />
+            <RoundButton text="Backend" link="/backend" />
           </div>
           <div
             className="xtokens-wrapper"

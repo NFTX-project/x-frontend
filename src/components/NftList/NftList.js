@@ -41,6 +41,7 @@ function NftList() {
       name: "CryptoKitties",
       address: "0xc860383974FB0D4b1FCD988024c3632C23b506f7",
     },
+    { name: "Axie", address: "0xCf4CeD73Cdc2725cbE8DCd837CE2F46716D5b6D3" },
     { name: "Avastar", address: "0xD8f9c5A7d228b99e7307FA37872A339359ED111B" },
     { name: "JOYWORLD", address: "0x50BBddbF12A97B2BfbCC7B728Eb08Dc40d123FAd" },
   ];

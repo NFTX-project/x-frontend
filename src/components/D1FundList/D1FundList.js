@@ -11,6 +11,8 @@ import {
   SidePanel,
   IconStarFilled,
   IconStar,
+  IconCircleCheck,
+  IconCircleMinus,
 } from "@aragon/ui";
 import { useFavoriteFunds } from "../../contexts/FavoriteFundsContext";
 import MintNftPanel from "./Panels/MintFundPanel";
@@ -83,33 +85,85 @@ function D1FundList() {
   const entries = [
     {
       ticker: "PUNK-BASIC",
-      address: "0x7974566f15E3e456fE1eA617358Be4bDB1a10C05",
+      address: "0xC88F0D30E1D738Ed5B74b777eca03a9A613F7B29",
       vaultId: 0,
     },
     {
       ticker: "PUNK-ATTR-4",
-      address: "0xaeE76c0bD1ABa53DC44bC797385b4311aB8e4B36",
+      address: "0x5b56285416374065CB60FB46F9FfCa4dE92a6D67",
       vaultId: 1,
     },
     {
       ticker: "PUNK-ATTR-5",
-      address: "0x82C99f2FAE45438355922AfA143E39D970277f82",
+      address: "0xa4059D5773FC1451CC29269958537DAF18672BBb",
       vaultId: 2,
     },
     {
       ticker: "PUNK-ZOMBIE",
-      address: "0x2df3365037e71eAA70aC30b0d712882008C86B93",
+      address: "0x464eFf1c8066800102EcDcb4bA9fE897a29D17Ee",
       vaultId: 3,
     },
+
     {
-      ticker: "GLYPH",
-      address: "0x50Fcdf958847E08be3C2CdABC30111E23D7B068C",
+      ticker: "KITTY-GEN-0",
+      address: "0x0c31B027ae697810eb0655327cE49f02C1AaFf07",
       vaultId: 4,
     },
     {
-      ticker: "JOY",
-      address: "0x65766FffBa5e5Eb63a482E4002e4956c29965b04",
+      ticker: "KITTY-GEN-0-F",
+      address: "0x4190217cBd75EA52a6Bb2d6F2e94AB0d7a07c613",
       vaultId: 5,
+    },
+    {
+      ticker: "KITTY-FANCY",
+      address: "0xCa5A75D49E0d3B27D415c67891d6755aD1b5Bdfe",
+      vaultId: 6,
+    },
+    {
+      ticker: "KITTY-FOUNDER",
+      address: "0x5E11E15F8437593da2403EbC679C19a62066DA06",
+      vaultId: 7,
+    },
+    {
+      ticker: "AXIE-ORIGIN",
+      address: "0x536E8ffC58473450E0B9E785E9052Ae02EA04c87",
+      vaultId: 8,
+    },
+    {
+      ticker: "AXIE-MYSTIC-1",
+      address: "0x4f4aEcb0455f2977CcB7758366C212f94840c14d",
+      vaultId: 9,
+    },
+    {
+      ticker: "AXIE-MYSTIC-2",
+      address: "0x7056d1f97E94DA343D97C65709cdd51c178b1F06",
+      vaultId: 10,
+    },
+
+    {
+      ticker: "AVASTR-RANK-25",
+      address: "0x8d7751860957d8dd448E2d0921279e028c178DE1",
+      vaultId: 11,
+    },
+    {
+      ticker: "AVASTR-RANK-50",
+      address: "0xA2dA2C6Eaa1B3eD098Caf11bd75c2a79542036e7",
+      vaultId: 12,
+    },
+    {
+      ticker: "AVASTR-RANK-75",
+      address: "0xb33b7Bc97cd1e3ABD51c9fEA60528e2B74CF5d26",
+      vaultId: 13,
+    },
+    {
+      ticker: "GLYPH",
+      address: "0xae046E463cca3a3FbEFA6f93adB02714f359c97C",
+      vaultId: 14,
+    },
+    {
+      ticker: "JOY",
+      address: "0xe9d6516Fb6E7Db555E6194CC131dC82B8056C8CB",
+      vaultId: 15,
     },
   ];
 
@@ -187,13 +241,22 @@ function D1FundList() {
       />
       <DataView
         status="loading"
-        fields={["Ticker", "Token Address", "Supply", ""]}
+        fields={["Ticker", "Token Address", "Finalized", "Supply", ""]}
         entries={tableEntries}
+        entriesPerPage={20}
         renderEntry={(entry) => {
           const { ticker, address, vaultId } = entry;
           return [
             <div>{ticker}</div>,
             <AddressField address={address} autofocus={false} />,
+            <div>
+              {chainData[address] &&
+              chainData[address].isFinalized === "true" ? (
+                <IconCircleCheck />
+              ) : (
+                <IconCircleMinus />
+              )}
+            </div>,
             <div>{chainData[address] && chainData[address].totalSupply}</div>,
             <div
               css={`
