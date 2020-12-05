@@ -11,6 +11,7 @@ import RoundButton from "./RoundButton/RoundButton";
 import HomePage from "../HomePage/HomePage";
 import NftList from "../NftList/NftList";
 import D1FundList from "../D1FundList/D1FundList";
+import Backend from "../Backend/Backend";
 
 function Site({ selectorNetworks }) {
   const theme = useTheme();
@@ -84,6 +85,9 @@ function Site({ selectorNetworks }) {
             </Route>
             <Route path="/nft-list">
               <NftList />
+            </Route>
+            <Route path="/backend">
+              <Backend />
             </Route>
           </div>
         </div>
