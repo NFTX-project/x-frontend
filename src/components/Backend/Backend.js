@@ -17,6 +17,8 @@ import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 import CreateNftPanel from "../InnerPanels/CreateNftPanel";
 import MintNftPanel from "../InnerPanels/MintNftPanel";
 import TransferNftPanel from "../InnerPanels/TransferNftPanel";
+import NftxReadPanel from "./NftxReadPanel";
+import NftxWritePanel from "./NftxWritePanel";
 
 import addresses from "../../addresses/rinkeby.json";
 
@@ -25,13 +27,18 @@ function Backend() {
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
 
-  const handleMint = (address, name) => {
-    setPanelTitle(`${name} ▸ Mint`);
+  const handleReadNftx = () => {
+    setPanelTitle(`NFTX ▸ Read`);
     setInnerPanel(
-      <MintNftPanel
-        contractAddress={address}
-        closePanel={() => setPanelOpened(false)}
-      />
+      <NftxReadPanel />
+    );
+    setPanelOpened(true);
+  };
+
+  const handleWriteNftx = () => {
+    setPanelTitle(`NFTX ▸ Write`);
+    setInnerPanel(
+      <NftxWritePanel />
     );
     setPanelOpened(true);
   };
@@ -74,7 +81,7 @@ function Backend() {
           return (
             <ContextMenu>
               <ContextMenuItem
-                onClick={() => handleMint(entry.address, entry.name)}
+                onClick={handleReadNftx}
               >
                 Read...
               </ContextMenuItem>

@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { Box } from "@aragon/ui";
-import FavoritesMenu from "../../../components/FavoritesMenu/FavoritesMenu";
-import FundIcon from "../../../components/FundIcon/FundIcon";
+import FavoritesMenu from "../../FavoritesMenu/FavoritesMenu";
+import FundIcon from "../../FundIcon/FundIcon";
 import { useFavoriteFunds } from "../../../contexts/FavoriteFundsContext";
 import { network } from "../../../environment";
 import { getKnownFunds } from "../../../known-funds";

@@ -8,7 +8,7 @@ import throttle from "lodash.throttle";
 import TopBar from "../TopBar/TopBar";
 import Welcome from "../Welcome/Welcome";
 import RoundButton from "./RoundButton/RoundButton";
-import HomePage from "../HomePage/HomePage";
+import Landing from "../Landing/Landing";
 import NftList from "../NftList/NftList";
 import D1FundList from "../D1FundList/D1FundList";
 import Backend from "../Backend/Backend";
@@ -62,8 +62,8 @@ function Site({ selectorNetworks }) {
               transform: translateY(-24px);
             `}
           >
-            <RoundButton text="Landing" link="/" />
-            <RoundButton text="D1 Funds" link="/d1-funds" />
+            <RoundButton text="Landing" link="/landing" />
+            <RoundButton text="D1 Funds" link="/" />
             <RoundButton text="NFT List" link="/nft-list" />
             <RoundButton text="Backend" link="/backend" />
           </div>
@@ -76,11 +76,11 @@ function Site({ selectorNetworks }) {
               margin-bottom: 25px;
             `}
           >
-            <Route path="/" exact>
-              <HomePage selectorNetworks={selectorNetworks} />
+            <Route path="/landing">
+              <Landing selectorNetworks={selectorNetworks} />
             </Route>
 
-            <Route path="/d1-funds">
+            <Route path="/">
               <D1FundList />
             </Route>
             <Route path="/nft-list">

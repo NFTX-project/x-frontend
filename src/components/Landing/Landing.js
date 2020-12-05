@@ -10,7 +10,7 @@ import CreateD2Panel from "../CreateD2Panel/CreateD2Panel";
 import actionCreate from "./assets/action-create.png";
 import actionOpen from "./assets/action-open.png";
 
-function HomePage({ selectorNetworks }) {
+function Landing({ selectorNetworks }) {
   const selectorNetworksSorted = useMemo(() => {
     return selectorNetworks
       .map(([type, name, url]) => ({ type, name, url }))
@@ -110,4 +110,4 @@ function HomePage({ selectorNetworks }) {
   );
 }
 
-export default HomePage;
+export default Landing;
