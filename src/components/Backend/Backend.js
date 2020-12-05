@@ -12,6 +12,7 @@ import {
   IconStar,
   IconCircleCheck,
   IconCircleMinus,
+  Info,
 } from "@aragon/ui";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 import CreateNftPanel from "../InnerPanels/CreateNftPanel";
@@ -19,6 +20,7 @@ import MintNftPanel from "../InnerPanels/MintNftPanel";
 import TransferNftPanel from "../InnerPanels/TransferNftPanel";
 import NftxReadPanel from "./NftxReadPanel";
 import NftxWritePanel from "./NftxWritePanel";
+import XStoreReadPanel from "./XStoreReadPanel";
 
 import addresses from "../../addresses/rinkeby.json";
 
@@ -35,7 +37,27 @@ function Backend() {
 
   const handleWriteNftx = () => {
     setPanelTitle(`NFTX ▸ Write`);
-    setInnerPanel(<NftxWritePanel />);
+    setInnerPanel(<NftxWritePanel closePanel={() => setPanelOpened(false)} />);
+    setPanelOpened(true);
+  };
+
+  const handleReadXStore = () => {
+    setPanelTitle(`XStore ▸ Read`);
+    setInnerPanel(<XStoreReadPanel />);
+    setPanelOpened(true);
+  };
+
+  const handleWriteXStore = () => {
+    setPanelTitle(`XStore ▸ Write`);
+    setInnerPanel(
+      <div
+        css={`
+          margin-top: 20px;
+        `}
+      >
+        <Info>There are no callable write functions for XStore</Info>
+      </div>
+    );
     setPanelOpened(true);
   };
 
@@ -65,10 +87,18 @@ function Backend() {
         renderEntryActions={(entry, index) => {
           return (
             <ContextMenu>
-              <ContextMenuItem onClick={handleReadNftx}>
+              <ContextMenuItem
+                onClick={
+                  entry.name === "NFTX" ? handleReadNftx : handleReadXStore
+                }
+              >
                 Read...
               </ContextMenuItem>
-              <ContextMenuItem onClick={handleWriteNftx}>
+              <ContextMenuItem
+                onClick={
+                  entry.name === "NFTX" ? handleWriteNftx : handleWriteXStore
+                }
+              >
                 Write...
               </ContextMenuItem>
             </ContextMenu>

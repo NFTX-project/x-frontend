@@ -8,31 +8,23 @@ import {
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import Nftx from "../../contracts/NFTX.json";
+import XStore from "../../contracts/XStore.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 import addresses from "../../addresses/rinkeby.json";
 
-function ManageFundPanel() {
+function XStoreReadPanel() {
   const { account } = useWallet();
 
   // const { addFavorite } = useFavoriteNFTs();
 
   const { current: web3 } = useRef(new Web3(window.ethereum));
 
-  const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
+  const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
 
   const [funcParams, setFuncParams] = useState(JSON.parse("[[]]"));
-
-  const [txHash, setTxHash] = useState(null);
-  const [txReceipt, setTxReceipt] = useState(null);
-  const [txError, setTxError] = useState(null);
-  
-
-  const getIsEligible = () => {};
-
-  console.log(Nftx.abi);
+  const [returnVals, setReturnVals] = useState(JSON.parse("[[]]"));
 
   return (
     <div
@@ -43,15 +35,18 @@ function ManageFundPanel() {
         }
       `}
     >
-      {Nftx.abi
+      {XStore.abi
         .filter(
           (item) =>
-            item.type === "function" && !item.stateMutability.includes("view")
+            item.type === "function" && item.stateMutability.includes("view")
         )
         .map((func, i) => (
           <div key={i}>
             {func.inputs.map((input, _i) => (
               <TextInput
+                css={`
+                  margin-bottom: 10px;
+                `}
                 key={_i}
                 value={(funcParams[i] && funcParams[i][_i]) || ""}
                 onChange={(event) => {
@@ -64,33 +59,52 @@ function ManageFundPanel() {
                 }}
                 placeholder={`${input.name} (${input.type})`}
                 wide={true}
-                css={`
-                  margin-bottom: 10px;
-                `}
               />
             ))}
             <Button
-              label={func.name}
-              wide={true}
-              disabled={!account}
-              onClick={() => {
-                console.log(func.name);
-                nftx.methods[func.name](...funcParams[i])
-                  .send({ from: account })
-                  .then((receipt) => {
-                    setTxReceipt(receipt);
-                    console.log("receipt", receipt);
-                  });
-              }}
               css={`
                 margin-top: 5px;
                 margin-bottom: 15px;
               `}
+              label={func.name}
+              wide={true}
+              disabled={!account}
+              onClick={() => {
+                xStore.methods[func.name](...funcParams[i])
+                  .call({ from: account })
+                  .then((...retValues) => {
+                    const newReturnVals = JSON.parse(
+                      JSON.stringify(returnVals)
+                    );
+                    newReturnVals[i] = retValues[0];
+                    setReturnVals(newReturnVals);
+                  });
+              }}
             />
+            {func.outputs.map((output, _i) => (
+              <TextInput
+                css={`
+                  margin-bottom: 10px;
+                `}
+                key={_i}
+                value={(returnVals[i] && returnVals[i][_i]) || returnVals[i]}
+                onChange={(event) => {
+                  if (event.target.value === "") {
+                    const newReturnVals = JSON.parse(
+                      JSON.stringify(returnVals)
+                    );
+                    newReturnVals[i] = newReturnVals[i].map(() => "");
+                    setReturnVals(newReturnVals);
+                  }
+                }}
+                placeholder={`${output.name} (${output.type})`}
+                wide={true}
+              />
+            ))}
           </div>
         ))}
     </div>
   );
 }
 
-export default ManageFundPanel;
+export default XStoreReadPanel;
