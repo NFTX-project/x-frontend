@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   DataView,
@@ -14,6 +14,8 @@ import {
   IconCircleMinus,
   Info,
 } from "@aragon/ui";
+import Web3 from "web3";
+import { useWallet } from "use-wallet";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 import CreateNftPanel from "../InnerPanels/CreateNftPanel";
 import MintNftPanel from "../InnerPanels/MintNftPanel";
@@ -21,6 +23,7 @@ import TransferNftPanel from "../InnerPanels/TransferNftPanel";
 import NftxReadPanel from "./NftxReadPanel";
 import NftxWritePanel from "./NftxWritePanel";
 import XStoreReadPanel from "./XStoreReadPanel";
+import XStoreEvents from "./XStoreEvents";
 
 import addresses from "../../addresses/rinkeby.json";
 
@@ -28,6 +31,8 @@ function Backend() {
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
+
+  const [nftxEvents, setNFTXEvents] = useState([]);
 
   const handleReadNftx = () => {
     setPanelTitle(`NFTX ▸ Read`);
@@ -104,6 +109,26 @@ function Backend() {
             </ContextMenu>
           );
         }}
+        renderEntryExpansion={(entry, index) => {
+          return entry.name === "NFTX" ? (
+            <div
+              css={`
+                padding: 15px 0;
+              `}
+            >
+              Implementation address:{" "}
+              <span
+                css={`
+                  margin-left: 10px;
+                  font-size: 14px;
+                  font-family: aragon-ui-monospace, monospace;
+                `}
+              >
+                0xa10234D171fb300A741F1981b550c8CA391EA74f
+              </span>
+            </div>
+          ) : null;
+        }}
       />
       <SidePanel
         title={panelTitle}
@@ -112,6 +137,13 @@ function Backend() {
       >
         {innerPanel}
       </SidePanel>
+      <Header
+        primary="NFTX Events"
+        css={`
+          margin-top: 20px;
+        `}
+      />
+      <XStoreEvents />
     </div>
   );
 }
