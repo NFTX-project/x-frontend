@@ -23,6 +23,7 @@ import TransferNftPanel from "../InnerPanels/TransferNftPanel";
 import NftxReadPanel from "./NftxReadPanel";
 import NftxWritePanel from "./NftxWritePanel";
 import XStoreReadPanel from "./XStoreReadPanel";
+import NftxEvents from './NftxEvents';
 import XStoreEvents from "./XStoreEvents";
 
 import addresses from "../../addresses/rinkeby.json";
@@ -139,6 +140,13 @@ function Backend() {
       </SidePanel>
       <Header
         primary="NFTX Events"
+        css={`
+          margin-top: 20px;
+        `}
+      />
+      <NftxEvents />
+      <Header
+        primary="XStore Events"
         css={`
           margin-top: 20px;
         `}

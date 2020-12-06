@@ -20,7 +20,6 @@ function NftxEvents() {
       .getPastEvents("allEvents", { fromBlock: 7664346, toBlock: "latest" })
       .then((result) => {
         const _events = result.reverse().slice(0, Math.min(25, result.length));
-        console.log("events", _events);
         setEvents(_events);
       });
   }, []);

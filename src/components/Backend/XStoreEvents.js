@@ -20,31 +20,9 @@ function XStoreEvents() {
       .getPastEvents("allEvents", { fromBlock: 7664346, toBlock: "latest" })
       .then((result) => {
         const _events = result.reverse().slice(0, Math.min(25, result.length));
-        console.log("events", _events);
         setEvents(_events);
       });
   }, []);
-
-  /* useEffect(() => {
-    const acc = [];
-    let count = { num: 0 };
-    console.log("AAAAAAAAA");
-    for (let i = 0; i < events.length; i++) {
-      console.log("BBBB", i);
-      const event = events[i];
-      const prevAnswer = acc.find(
-        (elem) => elem.blockNumber == event.blockNumber
-      );
-      web3.eth.getBlock(7664378).then(({ timestamp }) => {
-        console.log("CCCCCC");
-        acc[i] = timestamp + "000";
-        count.num = count.num + 1;
-        if (count.num === events.length) {
-          setEventTimes(acc);
-        }
-      });
-    }
-  }, [events]); */
 
   return (
     <div>
