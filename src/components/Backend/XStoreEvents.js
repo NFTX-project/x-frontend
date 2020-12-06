@@ -19,8 +19,13 @@ function XStoreEvents() {
     xStore
       .getPastEvents("allEvents", { fromBlock: 7664346, toBlock: "latest" })
       .then((result) => {
-        const _events = result.reverse().slice(0, Math.min(25, result.length));
+        if (result.length > 25) {
+          const _events = result.slice(result.length - 25, result.length).reverse();
+          setEvents(_events);
+        } else {
+          const _events = result.reverse().slice(0, Math.min(25, result.length));
         setEvents(_events);
+        }
       });
   }, []);
 
