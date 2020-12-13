@@ -1,0 +1,32 @@
+[
+  {
+    "ticker": "PUNK-BASIC",
+    "address": "0x69BbE2FA02b4D90A944fF328663667DC32786385",
+    "vaultId": 0
+  },
+  {
+    "ticker": "PUNK-ATTR-4",
+    "address": "0x49706a576bb823cdE3180C930F9947d59e2deD4D",
+    "vaultId": 1
+  },
+  {
+    "ticker": "PUNK-ATTR-5",
+    "address": "0xAB9c92A9337A1494C6D545E48187Fa37144403c8",
+    "vaultId": 2
+  },
+  {
+    "ticker": "PUNK-ZOMBIE",
+    "address": "0xF18ade29a225fAa555e475eE01F9Eb66eb4a3a74",
+    "vaultId": 3
+  },
+  {
+    "ticker": "GLYPH",
+    "address": "0xc8AA432112814B9CAB53811D4340Ed45482CB2b5",
+    "vaultId": 13
+  },
+  {
+    "ticker": "JOY",
+    "address": "0x4acC9c89F47f5330b2f4F412ef157E3016333f58",
+    "vaultId": 14
+  }
+]

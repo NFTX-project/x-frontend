@@ -125,7 +125,7 @@ function Backend() {
                   font-family: aragon-ui-monospace, monospace;
                 `}
               >
-                0xa10234D171fb300A741F1981b550c8CA391EA74f
+                0x3A2f04fAa1d39AcB088BecE5C2D6B00E81AFe868
               </span>
             </div>
           ) : null;

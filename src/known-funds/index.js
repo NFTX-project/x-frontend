@@ -1,23 +1,11 @@
 import blankDaoImage from "./images/blankdao.svg";
-import rinkebyFunds from "../data/rinkebyD1Funds.json";
+import mainnetFunds from "../data/mainnetD1Funds.json";
 
 const TEMPLATE_D1 = "D1 Fund";
 
 export const KnownFunds = {
   main: new Map(
-    [
-      {
-        address: "0x67757a18eda83125270ef94dcec7658eb39bd8a5",
-        domain: "",
-        name: "Rest-Main",
-        image: blankDaoImage,
-        recommended: true,
-        template: TEMPLATE_D1,
-      },
-    ].map((fund) => [fund.address.toLowerCase(), fund])
-  ),
-  rinkeby: new Map(
-    rinkebyFunds
+    mainnetFunds
       .map((entry) => {
         entry.name = entry.ticker;
         entry.recommended = true;
