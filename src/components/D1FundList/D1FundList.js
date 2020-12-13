@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 import { useWallet } from "use-wallet";
 import PropTypes from "prop-types";
 import {
@@ -13,10 +14,12 @@ import {
   IconStar,
   IconCircleCheck,
   IconCircleMinus,
+  FloatIndicator,
 } from "@aragon/ui";
 import { useFavoriteFunds } from "../../contexts/FavoriteFundsContext";
-import MintNftPanel from "./Panels/MintFundPanel";
-import TransferNftPanel from "./Panels/BurnFundPanel";
+import MintFundPanel from "../InnerPanels/MintFundPanel";
+import MintRequestPanel from "../InnerPanels/MintRequestPanel";
+import RedeemFundPanel from "../InnerPanels/RedeemFundPanel";
 import CreateErc20Panel from "../InnerPanels/CreateErc20Panel";
 import CreateFundPanel from "../InnerPanels/CreateFundPanel";
 import ManageFundPanel from "../InnerPanels/ManageFundPanel";
@@ -24,11 +27,20 @@ import Web3 from "web3";
 import Nftx from "../../contracts/NFTX.json";
 import XStore from "../../contracts/XStore.json";
 import XToken from "../../contracts/XToken.json";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
+import ApproveNftsPanel from "../InnerPanels/ApproveNftsPanel";
+import Web3Utils from "web3-utils";
 
 function D1FundList() {
+  const history = useHistory();
   const { account } = useWallet();
-  const { current: web3 } = useRef(new Web3(window.ethereum));
+  const injected = window.ethereum;
+  const provider =
+    injected && injected.chainId === "0x1"
+      ? injected
+      : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
+
+  const { current: web3 } = useRef(new Web3(provider));
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
 
@@ -37,133 +49,175 @@ function D1FundList() {
   const [innerPanel, setInnerPanel] = useState(<div></div>);
 
   const [chainData, setChainData] = useState({});
+  const [eligPrefsArr, setEligPrefsArr] = useState([]);
   const [tableEntries, setTableEntries] = useState([]);
 
   useEffect(() => {
     setTimeout(() => {
-      const allDone = () => {
-        return resRemaining === 0;
-      };
-      const data = {};
-      let resRemaining = 0;
-      const update = (data) => {
-        setChainData(data);
-        setTableEntries(getAllEntries());
-      };
-      getAllEntries().forEach((entry) => {
-        const fundToken = new web3.eth.Contract(XToken.abi, entry.address);
-        data[entry.address] = {};
-        resRemaining += 1;
-        xStore.methods
-          .isFinalized(entry.vaultId)
-          .call({ from: account })
-          .then((retVal) => {
-            data[entry.address].isFinalized = retVal.toString();
-            resRemaining -= 1;
-            allDone() && update(data);
-          });
+      fetchData();
+      fetchEligPrefs();
+    }, 500);
+  }, [account]);
+
+  const fetchData = () => {
+    const allDone = () => {
+      return resRemaining === 0;
+    };
+    const data = { hasBalances: false };
+    let resRemaining = 0;
+    const update = (data) => {
+      setChainData(data);
+      setTableEntries(getAllEntries());
+    };
+    getAllEntries().forEach((entry) => {
+      const fundToken = new web3.eth.Contract(XToken.abi, entry.address);
+      data[entry.vaultId] = {};
+      resRemaining += 1;
+      xStore.methods
+        .isFinalized(entry.vaultId)
+        .call({ from: account })
+        .then((retVal) => {
+          data[entry.vaultId].isFinalized = retVal.toString();
+          resRemaining -= 1;
+          allDone() && update(data);
+        });
+      resRemaining += 1;
+      fundToken.methods
+        .totalSupply()
+        .call({ from: account })
+        .then((retVal) => {
+          data[entry.vaultId].totalSupply = Web3Utils.fromWei(retVal);
+          resRemaining -= 1;
+          allDone() && update(data);
+        });
+      if (account) {
         resRemaining += 1;
         fundToken.methods
-          .totalSupply()
+          .balanceOf(account)
           .call({ from: account })
           .then((retVal) => {
-            data[entry.address].totalSupply = retVal;
+            data.hasBalances = true;
+            data[entry.vaultId].myBalance = Web3Utils.fromWei(retVal);
             resRemaining -= 1;
             allDone() && update(data);
           });
-      });
-    }, 500);
-  }, []);
+      }
+    });
+  };
+
+  const fetchEligPrefs = () => {
+    const data = [];
+    let count = 0;
+    const allEntries = getAllEntries();
+    const finish = () => {
+      count += 1;
+      if (count === allEntries.length * 2) {
+        setEligPrefsArr(data);
+      }
+    };
+    allEntries.forEach(({ vaultId }) => {
+      data[vaultId] = {};
+      xStore.methods
+        .allowMintRequests(vaultId)
+        .call({ from: account })
+        .then((retVal) => {
+          data[vaultId].allowMintRequests = retVal;
+          finish();
+        });
+      xStore.methods
+        .flipEligOnRedeem(vaultId)
+        .call({ from: account })
+        .then((retVal) => {
+          data[vaultId].flipEligOnRedeem = retVal;
+          finish();
+        });
+    });
+  };
 
   const {
     favoriteFunds,
     isAddressFavorited,
-    removeFavoriteByAddress,
+    removeFavoriteByVaultId,
     addFavorite,
   } = useFavoriteFunds();
 
   const entries = [
     {
       ticker: "PUNK-BASIC",
-      address: "0xC88F0D30E1D738Ed5B74b777eca03a9A613F7B29",
+      address: "0x69BbE2FA02b4D90A944fF328663667DC32786385",
       vaultId: 0,
     },
     {
       ticker: "PUNK-ATTR-4",
-      address: "0x5b56285416374065CB60FB46F9FfCa4dE92a6D67",
+      address: "0x49706a576bb823cdE3180C930F9947d59e2deD4D",
       vaultId: 1,
     },
     {
       ticker: "PUNK-ATTR-5",
-      address: "0xa4059D5773FC1451CC29269958537DAF18672BBb",
+      address: "0xAB9c92A9337A1494C6D545E48187Fa37144403c8",
       vaultId: 2,
     },
     {
       ticker: "PUNK-ZOMBIE",
-      address: "0x464eFf1c8066800102EcDcb4bA9fE897a29D17Ee",
+      address: "0xF18ade29a225fAa555e475eE01F9Eb66eb4a3a74",
       vaultId: 3,
+    },
+    {
+      ticker: "AXIE-ORIGIN",
+      address: "0x5b9F63F256FAC333bC2Bc73c7867BA4865a49729",
+      vaultId: 4,
+    },
+    {
+      ticker: "AXIE-MYSTIC-1",
+      address: "0xb10d6A165ed1ff64C02557213B2e060FDCb6244A",
+      vaultId: 5,
+    },
+    {
+      ticker: "AXIE-MYSTIC-2",
+      address: "0x6030021c45D4365A296c9e16A3901b4957061c21",
+      vaultId: 6,
     },
 
     {
       ticker: "KITTY-GEN-0",
-      address: "0x0c31B027ae697810eb0655327cE49f02C1AaFf07",
-      vaultId: 4,
-    },
-    {
-      ticker: "KITTY-GEN-0-F",
-      address: "0x4190217cBd75EA52a6Bb2d6F2e94AB0d7a07c613",
-      vaultId: 5,
-    },
-    {
-      ticker: "KITTY-FANCY",
-      address: "0xCa5A75D49E0d3B27D415c67891d6755aD1b5Bdfe",
-      vaultId: 6,
-    },
-    {
-      ticker: "KITTY-FOUNDER",
-      address: "0x5E11E15F8437593da2403EbC679C19a62066DA06",
+      address: "0x8712A5580995a1b0E10856e8C3E26B14C1CDF7b6",
       vaultId: 7,
     },
     {
-      ticker: "AXIE-ORIGIN",
-      address: "0x536E8ffC58473450E0B9E785E9052Ae02EA04c87",
+      ticker: "KITTY-GEN-0-F",
+      address: "0xc4bf60B93ac60dB9A45AD232368d50de0A354849",
       vaultId: 8,
     },
     {
-      ticker: "AXIE-MYSTIC-1",
-      address: "0x4f4aEcb0455f2977CcB7758366C212f94840c14d",
+      ticker: "KITTY-FOUNDER",
+      address: "0x77ECd352D737eBB9A7E7F35172f56da36D91e895",
       vaultId: 9,
-    },
-    {
-      ticker: "AXIE-MYSTIC-2",
-      address: "0x7056d1f97E94DA343D97C65709cdd51c178b1F06",
-      vaultId: 10,
     },
 
     {
-      ticker: "AVASTR-RANK-25",
-      address: "0x8d7751860957d8dd448E2d0921279e028c178DE1",
+      ticker: "AVASTR-BASIC",
+      address: "0xb5A0931b1B7F21C2F557fd4FDdCcb504e71AE32D",
+      vaultId: 10,
+    },
+    {
+      ticker: "AVASTR-RANK-30",
+      address: "0x59a82F0FF8E88804a34Dd467b7061F1986Fe1769",
       vaultId: 11,
     },
     {
-      ticker: "AVASTR-RANK-50",
-      address: "0xA2dA2C6Eaa1B3eD098Caf11bd75c2a79542036e7",
+      ticker: "AVASTR-RANK-60",
+      address: "0xabA49Db7E374cc6954401DC0A886E0B02670536e",
       vaultId: 12,
     },
     {
-      ticker: "AVASTR-RANK-75",
-      address: "0xb33b7Bc97cd1e3ABD51c9fEA60528e2B74CF5d26",
+      ticker: "GLYPH",
+      address: "0xc8AA432112814B9CAB53811D4340Ed45482CB2b5",
       vaultId: 13,
     },
     {
-      ticker: "GLYPH",
-      address: "0xae046E463cca3a3FbEFA6f93adB02714f359c97C",
-      vaultId: 14,
-    },
-    {
       ticker: "JOY",
-      address: "0xe9d6516Fb6E7Db555E6194CC131dC82B8056C8CB",
-      vaultId: 15,
+      address: "0x4acC9c89F47f5330b2f4F412ef157E3016333f58",
+      vaultId: 14,
     },
   ];
 
@@ -190,6 +244,9 @@ function D1FundList() {
                     vaultId: vaultId,
                   });
                   setPanelOpened(false);
+                  setTimeout(() => {
+                    window.location.hash = `/fund/${vaultId}`;
+                  }, 400);
                 }}
               />
             );
@@ -201,27 +258,77 @@ function D1FundList() {
     setPanelOpened(true);
   };
 
-  const handleMint = (address, name) => {
-    setPanelTitle(`${name} ▸ Mint`);
+  const closeAndOpenMintPanel = () => {};
+
+  const closeAndOpenRequestPanel = () => {};
+
+  const handleMint = (vaultId, ticker) => {
+    setPanelTitle(`${ticker} ▸ Mint`);
     setInnerPanel(
-      <MintNftPanel
-        contractAddress={address}
-        closePanel={() => setPanelOpened(false)}
+      <MintFundPanel
+        vaultId={vaultId}
+        ticker={ticker}
+        onContinue={() => {
+          setTableEntries([]);
+          fetchData();
+          setPanelOpened(false);
+        }}
+        allowFundRequests={
+          eligPrefsArr[vaultId] && eligPrefsArr[vaultId].allowFundRequests
+        }
+        onMakeRequest={() => {
+          setPanelOpened(false);
+          setTimeout(() => {
+            handleMintRequest(vaultId, ticker);
+          }, 500);
+        }}
       />
     );
     setPanelOpened(true);
   };
 
-  const handleRedeem = (vaultId, name) => {
-    setPanelTitle(`${name} ▸ Transfer`);
+  const handleMintRequest = (vaultId, ticker) => {
+    setPanelTitle(`${ticker} ▸ Request`);
     setInnerPanel(
-      <TransferNftPanel closePanel={() => setPanelOpened(false)} />
+      <MintRequestPanel
+        vaultId={vaultId}
+        ticker={ticker}
+        onContinue={() => {
+          setTableEntries([]);
+          fetchData();
+          setPanelOpened(false);
+        }}
+        onMintNow={() => {
+          setPanelOpened(false);
+          setTimeout(() => {
+            handleMint(vaultId, ticker);
+          }, 500);
+        }}
+      />
     );
     setPanelOpened(true);
   };
 
-  const handleManage = (vaultId, name) => {
-    setPanelTitle(`Manage ${name}`);
+  const handleRedeem = (vaultId, ticker, address) => {
+    setPanelTitle(`${ticker} ▸ Redeem`);
+    setInnerPanel();
+    setInnerPanel(
+      <RedeemFundPanel
+        vaultId={vaultId}
+        address={address}
+        ticker={ticker}
+        onContinue={() => {
+          setTableEntries([]);
+          fetchData();
+          setPanelOpened(false);
+        }}
+      />
+    );
+    setPanelOpened(true);
+  };
+
+  /* const handleManage = (vaultId, ticker) => {
+    setPanelTitle(`Manage ${ticker}`);
     setInnerPanel(
       <ManageFundPanel
         vaultId={vaultId}
@@ -229,10 +336,14 @@ function D1FundList() {
       />
     );
     setPanelOpened(true);
-  };
+  }; */
 
   return (
-    <div>
+    <div
+      css={`
+        padding-bottom: 10px;
+      `}
+    >
       <Header
         primary="D1 Funds"
         secondary={
@@ -241,23 +352,46 @@ function D1FundList() {
       />
       <DataView
         status="loading"
-        fields={["Ticker", "Token Address", "Finalized", "Supply", ""]}
+        fields={(() => {
+          const fields = [
+            "Ticker",
+            "Price",
+            "Volume",
+            "Supply",
+            "TVL",
+            "Final",
+            "",
+          ];
+          if (account && chainData.hasBalances) {
+            fields.splice(6, 0, "Bal");
+          }
+          return fields;
+        })()}
         entries={tableEntries}
         entriesPerPage={20}
         renderEntry={(entry) => {
           const { ticker, address, vaultId } = entry;
-          return [
-            <div>{ticker}</div>,
-            <AddressField address={address} autofocus={false} />,
+          const cells = [
+            <Link
+              css={`
+                text-decoration: none;
+              `}
+              to={`fund/${vaultId}`}
+            >
+              {ticker}
+            </Link>,
+            <div>TBD</div>,
+            <div>TBD</div>,
+            <div>{chainData[vaultId] && chainData[vaultId].totalSupply}</div>,
+            <div>TBD</div>,
             <div>
-              {chainData[address] &&
-              chainData[address].isFinalized === "true" ? (
+              {chainData[vaultId] &&
+              chainData[vaultId].isFinalized === "true" ? (
                 <IconCircleCheck />
               ) : (
                 <IconCircleMinus />
               )}
             </div>,
-            <div>{chainData[address] && chainData[address].totalSupply}</div>,
             <div
               css={`
                 & > svg {
@@ -267,32 +401,52 @@ function D1FundList() {
               `}
               onClick={() =>
                 isAddressFavorited(address)
-                  ? removeFavoriteByAddress(address)
+                  ? removeFavoriteByVaultId(vaultId)
                   : addFavorite(entry)
               }
             >
               {isAddressFavorited(address) ? <IconStarFilled /> : <IconStar />}
             </div>,
           ];
+          if (account && chainData.hasBalances) {
+            cells.splice(
+              6,
+              0,
+              <div>{chainData[vaultId] && chainData[vaultId].myBalance}</div>
+            );
+          }
+          return cells;
         }}
-        renderEntryActions={(entry, index) => {
-          // const entryOwner =
+        renderEntryActions={({ vaultId, ticker, address }, index) => {
           return (
             <ContextMenu>
               <ContextMenuItem
-                onClick={() => handleMint(entry.address, entry.ticker)}
+                onClick={() => {
+                  if (
+                    eligPrefsArr[vaultId] &&
+                    eligPrefsArr[vaultId].flipEligOnRedeem
+                  ) {
+                    handleMintRequest(vaultId, ticker);
+                  } else {
+                    handleMint(vaultId, ticker);
+                  }
+                }}
               >
-                Mint
+                {(eligPrefsArr[vaultId] &&
+                  (eligPrefsArr[vaultId].flipEligOnRedeem
+                    ? "Mint Request"
+                    : eligPrefsArr[vaultId].allowMintRequests
+                    ? "Mint / Request"
+                    : "")) ||
+                  "Mint"}
               </ContextMenuItem>
               <ContextMenuItem
-                onClick={() => handleRedeem(entry.address, entry.ticker)}
+                onClick={() => handleRedeem(vaultId, ticker, address)}
               >
                 Redeem
               </ContextMenuItem>
-              <ContextMenuItem
-                onClick={() => handleManage(entry.vaultId, entry.ticker)}
-              >
-                Manage...
+              <ContextMenuItem onClick={() => history.push(`/fund/${vaultId}`)}>
+                Inspect...
               </ContextMenuItem>
               {}
             </ContextMenu>

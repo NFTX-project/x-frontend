@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   DropDown,
   TextInput,
@@ -8,33 +8,47 @@ import {
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import erc721 from "../../../contracts/ERC721Public.json";
+import XStore from "../../contracts/XStore.json";
+import IErc721 from "../../contracts/IERC721.json";
 import Loader from "react-loader-spinner";
-import HashField from "../../HashField/HashField";
-import { useFavoriteNFTs } from "../../../contexts/FavoriteNFTsContext";
+import HashField from "../HashField/HashField";
+import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
+import addresses from "../../addresses/mainnet.json";
 
-function BurnFundPanel({ closePanel }) {
+function ApproveNftsPanel({ vaultId, ticker, closePanel }) {
   const { account } = useWallet();
+  const injected = window.ethereum;
+  const provider =
+    injected && injected.chainId === "0x1"
+      ? injected
+      : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
 
-  const { addFavorite } = useFavoriteNFTs();
-
-  const { current: web3 } = useRef(new Web3(window.ethereum));
+  const { current: web3 } = useRef(new Web3(provider));
 
   const [tokenId, setTokenId] = useState("");
-  const [recipient, setRecipient] = useState("");
 
   const [txStatus, setTxStatus] = useState(null);
   const [txHash, setTxHash] = useState(null);
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
-  const handleTransfer = () => {
-    const nftContract = new web3.eth.Contract(erc721.abi);
-    nftContract
-      .deploy({
-        data: erc721.bytecode,
-        arguments: [tokenId, recipient],
-      })
+  const [nftAddress, setNftAddress] = useState("");
+
+  const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
+
+  useEffect(() => {
+    xStore.methods
+      .nftAddress(vaultId)
+      .call({ from: account })
+      .then((retVal) => {
+        setNftAddress(retVal);
+      });
+  }, []);
+
+  const handleApproveAll = () => {
+    const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
+    nft.methods
+      .setApprovalForAll(addresses.nftxProxy, true)
       .send(
         {
           from: account,
@@ -45,16 +59,28 @@ function BurnFundPanel({ closePanel }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
+      });
+  };
+
+  const handleApproveIndividual = () => {
+    const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
+    nft.methods
+      .approve(addresses.nftxProxy, tokenId)
+      .send(
+        {
+          from: account,
+        },
+        (error, txHash) => {}
+      )
+      .on("error", (error) => setTxError(error))
+      .on("transactionHash", (txHash) => setTxHash(txHash))
+      .on("receipt", (receipt) => {
+        setTxReceipt(receipt);
       });
   };
 
   const handleViewNFT = () => {
-    addFavorite({ name: tokenId, address: txReceipt.contractAddress });
     closePanel();
-    setTimeout(() => {
-      window.location.hash = "/erc721/" + txReceipt.contractAddress;
-    }, 300);
   };
 
   if (!txHash) {
@@ -73,20 +99,22 @@ function BurnFundPanel({ closePanel }) {
             margin-bottom: 10px;
           `}
         />
-        <TextInput
-          value={recipient}
-          onChange={(event) => setRecipient(event.target.value)}
-          placeholder="Recipient (e.g. 0x0bf7...D63)"
-          wide={true}
-          css={`
-            margin-bottom: 20px;
-          `}
-        />
+
         <Button
-          label={"Transfer NFT"}
+          label={"Approve Individual NFT"}
           wide={true}
-          disabled={!tokenId || !recipient || !account}
-          onClick={handleTransfer}
+          disabled={!tokenId || !account}
+          onClick={handleApproveIndividual}
+        />
+
+        <Button
+          label={"Approve All NFTs"}
+          wide={true}
+          disabled={!tokenId || !account}
+          onClick={handleApproveAll}
+          css={`
+            margin-top: 40px;
+          `}
         />
       </div>
     );
@@ -123,7 +151,7 @@ function BurnFundPanel({ closePanel }) {
             margin-bottom: 20px;
           `}
         >
-          Contract deployed succesfully
+          Fund minted succesfully
           <IconCheck
             css={`
               transform: translate(5px, 5px) scale(1.2);
@@ -131,14 +159,10 @@ function BurnFundPanel({ closePanel }) {
             `}
           />
         </div>
-        <Button
-          label="View Updated NFT List"
-          wide={true}
-          onClick={handleViewNFT}
-        />
+        <Button label="Return to List" wide={true} onClick={handleViewNFT} />
       </div>
     );
   }
 }
 
-export default BurnFundPanel;
+export default ApproveNftsPanel;

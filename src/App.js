@@ -65,7 +65,7 @@ function App() {
 export default function WrapAppWithProvider() {
   return (
     <Router>
-      <UseWalletProvider chainId={4}>
+      <UseWalletProvider chainId={1}>
         <div
           className="app-wrapper"
           css={`

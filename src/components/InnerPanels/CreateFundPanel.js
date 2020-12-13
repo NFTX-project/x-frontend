@@ -11,7 +11,7 @@ import { useWallet } from "use-wallet";
 import Nftx from "../../contracts/NFTX.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
 function CreateFundPanel({ tokenAddress, onContinue }) {
   const { account } = useWallet();
@@ -39,7 +39,6 @@ function CreateFundPanel({ tokenAddress, onContinue }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
       });
   };
 
@@ -123,7 +122,7 @@ function CreateFundPanel({ tokenAddress, onContinue }) {
           />
         </div>
         <Button
-          label="View Updated NFT List"
+          label="View Fund"
           wide={true}
           onClick={() =>
             onContinue(txReceipt.events.NewVault.returnValues.vaultId)

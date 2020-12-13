@@ -12,7 +12,7 @@ import Nftx from "../../contracts/NFTX.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
 function ManageFundPanel() {
   const { account } = useWallet();
@@ -28,7 +28,7 @@ function ManageFundPanel() {
   const [vaultSize, setVaultSize] = useState("");
   const [owner, setOwner] = useState("");
   const [store, setStore] = useState("");
-  
+
   // const [tokenId, setTokenId] = useState("");
   // const [recipient, setRecipient] = useState("");
 
@@ -42,32 +42,30 @@ function ManageFundPanel() {
   const getIsEligible = () => {
     nftx.methods
       .isEligible(vaultId, nftId)
-      .call({from: account})
-      .then(retVal => setIsEligible(retVal))
+      .call({ from: account })
+      .then((retVal) => setIsEligible(retVal));
   };
 
   const getVaultSize = () => {
     nftx.methods
       .vaultSize(vaultId2)
-      .call({from: account})
-      .then(retVal => setVaultSize(retVal))
+      .call({ from: account })
+      .then((retVal) => setVaultSize(retVal));
   };
 
   const getOwner = () => {
     nftx.methods
       .owner()
-      .call({from: account})
-      .then(retVal => setOwner(retVal))
+      .call({ from: account })
+      .then((retVal) => setOwner(retVal));
   };
 
   const getStore = () => {
     nftx.methods
       .store()
-      .call({from: account})
-      .then(retVal => setStore(retVal))
+      .call({ from: account })
+      .then((retVal) => setStore(retVal));
   };
-
-  
 
   return (
     <div
@@ -109,7 +107,7 @@ function ManageFundPanel() {
         />
         <TextInput
           value={isEligible}
-          onChange={(event) => event.target.value === '' && setIsEligible('')}
+          onChange={(event) => event.target.value === "" && setIsEligible("")}
           placeholder="isEligible (bool)"
           wide={true}
           css={`
@@ -140,7 +138,7 @@ function ManageFundPanel() {
         />
         <TextInput
           value={vaultSize}
-          onChange={(event) => event.target.value === '' && setVaultSize('')}
+          onChange={(event) => event.target.value === "" && setVaultSize("")}
           placeholder="vaultSize (uint256)"
           wide={true}
           css={`
@@ -161,7 +159,7 @@ function ManageFundPanel() {
         />
         <TextInput
           value={owner}
-          onChange={(event) => event.target.value === '' && setOwner('')}
+          onChange={(event) => event.target.value === "" && setOwner("")}
           placeholder="owner (address)"
           wide={true}
           css={`
@@ -182,7 +180,7 @@ function ManageFundPanel() {
         />
         <TextInput
           value={store}
-          onChange={(event) => event.target.value === '' && setStore('')}
+          onChange={(event) => event.target.value === "" && setStore("")}
           placeholder="store (address)"
           wide={true}
           css={`

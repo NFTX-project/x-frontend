@@ -1,7 +1,7 @@
 import React from "react";
 import { ButtonBase, GU, useTheme, textStyle } from "@aragon/ui";
 
-function FavoritesMenuItemButton(props) {
+function FavoritesMenuItemButton({ disabled, ...props }) {
   const theme = useTheme();
   return (
     <ButtonBase
@@ -14,8 +14,9 @@ function FavoritesMenuItemButton(props) {
         ${textStyle("body2")}
         color: ${theme.tagIdentifierContent};
         border-radius: 0;
+        ${disabled ? "cursor: default;" : ""}
         &:active {
-          background: ${theme.surfacePressed};
+          ${disabled ? "" : `background: ${theme.surfacePressed};`}
         }
       `}
       {...props}

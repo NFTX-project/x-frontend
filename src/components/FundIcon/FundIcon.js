@@ -42,7 +42,7 @@ function FundIcon({ fundAddress, size }) {
   );
 }
 FundIcon.propTypes = {
-  orgAddress: EthereumAddressType.isRequired,
+  fundAddress: EthereumAddressType.isRequired,
   size: PropTypes.number,
 };
 FundIcon.defaultProps = {

@@ -13,7 +13,7 @@ import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 
-function MintNftPanel({ contractAddress, closePanel }) {
+function MintNftPanel({ contractAddress, onContinue }) {
   const { account } = useWallet();
 
   const { addFavorite } = useFavoriteNFTs();
@@ -46,7 +46,7 @@ function MintNftPanel({ contractAddress, closePanel }) {
   };
 
   const handleViewNFT = () => {
-    closePanel();
+    onContinue();
   };
 
   if (!txHash) {

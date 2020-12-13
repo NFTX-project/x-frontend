@@ -5,22 +5,26 @@ import FavoritesMenuItemButton from "./FavoritesMenuItemButton";
 
 function FavoritesMenuItem({
   favorited,
-  id,
+  vaultId,
+  address,
+  ticker,
   image,
-  name,
   secondary,
   onActivate,
   onFavoriteUpdate,
+  disabled,
 }) {
   const theme = useTheme();
 
   const handleActivationClick = useCallback(() => {
-    onActivate(id);
-  }, [id, onActivate]);
+    if (!disabled) {
+      onActivate(vaultId);
+    }
+  }, [vaultId, onActivate]);
 
   const handleFavoriteClick = useCallback(() => {
-    onFavoriteUpdate(id, !favorited);
-  }, [onFavoriteUpdate, id, favorited]);
+    onFavoriteUpdate(vaultId, address, ticker, !favorited);
+  }, [onFavoriteUpdate, vaultId, favorited]);
 
   return (
     <div
@@ -37,6 +41,7 @@ function FavoritesMenuItem({
           min-width: 0;
         `}
         onClick={handleActivationClick}
+        disabled={disabled}
       >
         <div
           css={`
@@ -71,7 +76,7 @@ function FavoritesMenuItem({
                 color: ${theme.surfaceContent};
               `}
             >
-              {name}
+              {ticker}
             </div>
             {secondary && (
               <div
@@ -93,14 +98,15 @@ function FavoritesMenuItem({
   );
 }
 
-FavoritesMenuItem.propTypes = {
-  favorited: PropTypes.bool,
-  id: PropTypes.string.isRequired,
-  image: PropTypes.node,
-  name: PropTypes.string.isRequired,
-  onActivate: PropTypes.func.isRequired,
-  onFavoriteUpdate: PropTypes.func.isRequired,
-  secondary: PropTypes.string,
-};
+// FavoritesMenuItem.propTypes = {
+//   favorited: PropTypes.bool,
+//   vaultId: PropTypes.string.isRequired,
+//   image: PropTypes.node,
+//   name: PropTypes.string.isRequired,
+//   onActivate: PropTypes.func.isRequired,
+//   onFavoriteUpdate: PropTypes.func.isRequired,
+//   secondary: PropTypes.string,
+//   disabled: PropTypes.bool,
+// };
 
 export default FavoritesMenuItem;

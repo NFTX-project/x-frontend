@@ -36,10 +36,9 @@ export const getRecommendedFunds = (networkType, max = -1) => {
   }
 
   const recommended = [];
-  console.log(KnownFunds[networkType]);
   for (const [address, fund] of KnownFunds[networkType]) {
     if (fund.recommended) {
-      recommended.push({ address, name: fund.domain });
+      recommended.push({ address, ticker: fund.ticker, vaultId: fund.vaultId });
       if (recommended.length === max) {
         break;
       }
@@ -51,5 +50,5 @@ export const getRecommendedFunds = (networkType, max = -1) => {
 
 export const getKnownFunds = (networkType, address) => {
   if (!KnownFunds[networkType]) return null;
-  return KnownFunds[networkType].get(address.toLowerCase()) || null;
+  return KnownFunds[networkType].get(address) || null;
 };

@@ -12,7 +12,7 @@ import XStore from "../../contracts/XStore.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
 function XStoreReadPanel() {
   const { account } = useWallet();

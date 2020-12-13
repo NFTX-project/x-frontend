@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   DropDown,
   TextInput,
@@ -12,14 +12,25 @@ import Nftx from "../../contracts/NFTX.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
-function ManageFundPanel({ vaultId, closePanel }) {
+function ManageFundPanel({
+  vaultId,
+  onContinue,
+  isFinalized,
+  manager,
+  isClosed,
+}) {
   const { account } = useWallet();
 
-  // const { addFavorite } = useFavoriteNFTs();
+  const injected = window.ethereum;
+  const provider =
+    (injected && injected.chainId === "0x1") || injected.isFrame
+      ? injected
+      : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
 
-  const { current: web3 } = useRef(new Web3(window.ethereum));
+  const { current: web3 } = useRef(new Web3(provider));
+  const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
 
   const [newName, setNewName] = useState("");
   const [newSymbol, setNewSymbol] = useState("");
@@ -34,7 +45,14 @@ function ManageFundPanel({ vaultId, closePanel }) {
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
-  const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
+  const [nftxAdmin, setNftxAdmin] = useState(null);
+
+  useEffect(() => {
+    nftx.methods
+      .owner()
+      .call({ from: account })
+      .then((retVal) => setNftxAdmin(retVal));
+  });
 
   const handleChangeTokenName = () => {
     nftx.methods
@@ -49,7 +67,6 @@ function ManageFundPanel({ vaultId, closePanel }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
       });
   };
 
@@ -66,7 +83,6 @@ function ManageFundPanel({ vaultId, closePanel }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
       });
   };
 
@@ -83,12 +99,10 @@ function ManageFundPanel({ vaultId, closePanel }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
       });
   };
 
   const handleSetNegateEligibility = () => {
-    console.log("here");
     nftx.methods
       .setNegateEligibility(vaultId, shouldNegate)
       .send(
@@ -101,7 +115,6 @@ function ManageFundPanel({ vaultId, closePanel }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
       });
   };
 
@@ -162,7 +175,9 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Change Token Name"}
             wide={true}
-            disabled={!account}
+            disabled={
+              isClosed || (account !== manager && account !== nftxAdmin)
+            }
             onClick={handleChangeTokenName}
             css={`
               margin-top: 5px;
@@ -183,7 +198,9 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Change Token Symbol"}
             wide={true}
-            disabled={!account}
+            disabled={
+              isClosed || (account !== manager && account !== nftxAdmin)
+            }
             onClick={handleChangeTokenSymbol}
             css={`
               margin-top: 5px;
@@ -213,7 +230,9 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Set NFT Eligibility"}
             wide={true}
-            disabled={!account}
+            disabled={
+              isClosed || (account !== manager && account !== nftxAdmin)
+            }
             onClick={handleSetIsEligible}
             css={`
               margin-top: 5px;
@@ -234,7 +253,9 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Negate Eligibility"}
             wide={true}
-            disabled={!account}
+            disabled={
+              isClosed || (account !== manager && account !== nftxAdmin)
+            }
             onClick={handleSetNegateEligibility}
             css={`
               margin-top: 5px;
@@ -246,7 +267,9 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Finalize Fund"}
             wide={true}
-            disabled={!account}
+            disabled={
+              isClosed || (account !== manager && account !== nftxAdmin)
+            }
             onClick={handleFinalize}
             css={`
               margin-top: 5px;
@@ -258,7 +281,9 @@ function ManageFundPanel({ vaultId, closePanel }) {
           <Button
             label={"Close Fund"}
             wide={true}
-            disabled={!account}
+            disabled={
+              isClosed || (account !== manager && account !== nftxAdmin)
+            }
             onClick={handleClose}
             css={`
               margin-top: 5px;
@@ -322,7 +347,7 @@ function ManageFundPanel({ vaultId, closePanel }) {
             `}
           />
         </div>
-        <Button label="Return to Page" wide={true} onClick={closePanel} />
+        <Button label="Return to Page" wide={true} onClick={onContinue} />
       </div>
     );
   }

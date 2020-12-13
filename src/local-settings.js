@@ -102,11 +102,13 @@ export function getEnsRegistryAddress() {
 }
 
 export function getEthNetworkType() {
-  return getLocalSetting(ETH_NETWORK_TYPE) || "rinkeby";
+  return getLocalSetting(ETH_NETWORK_TYPE) || "main";
 }
 
 export function getIpfsGateway() {
-  return getLocalSetting(IPFS_GATEWAY) || 'https://ipfs.eth.aragon.network/ipfs'
+  return (
+    getLocalSetting(IPFS_GATEWAY) || "https://ipfs.eth.aragon.network/ipfs"
+  );
 }
 
 export function getPortisDappId() {

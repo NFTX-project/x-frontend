@@ -77,6 +77,7 @@ function TopBar({ status, solid }) {
             label="Settings"
             size="medium"
             onClick={handleSettingsClick}
+            disabled={false}
           />
         </div>
       </div>

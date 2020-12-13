@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import { useTheme } from "@aragon/ui";
 import FavoritesMenuItem from "./FavoritesMenuItem";
 
-function FavoritesMenu({ items, onActivate, onFavoriteUpdate }) {
+function FavoritesMenu({ items, onActivate, onFavoriteUpdate, disabled }) {
+  console.log("ITEMS", items);
   const theme = useTheme();
-
   return (
     <ul
       css={`
@@ -16,7 +16,7 @@ function FavoritesMenu({ items, onActivate, onFavoriteUpdate }) {
     >
       {items.map((item) => (
         <li
-          key={item.id}
+          key={item.vaultId}
           css={`
             & + & {
               border-top: 1px solid ${theme.border};
@@ -25,12 +25,14 @@ function FavoritesMenu({ items, onActivate, onFavoriteUpdate }) {
         >
           <FavoritesMenuItem
             favorited={item.favorited}
-            id={item.id}
+            vaultId={item.vaultId}
             image={item.image}
-            name={item.name}
             onActivate={onActivate}
             onFavoriteUpdate={onFavoriteUpdate}
             secondary={item.secondary}
+            disabled={disabled}
+            address={item.address}
+            ticker={item.ticker}
           />
         </li>
       ))}
@@ -42,9 +44,8 @@ FavoritesMenu.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
       favorited: PropTypes.bool,
-      id: PropTypes.string,
+      vaultId: PropTypes.number,
       image: PropTypes.node,
-      name: PropTypes.node,
       secondary: PropTypes.node,
     }).isRequired
   ),
@@ -54,6 +55,8 @@ FavoritesMenu.propTypes = {
 
   // when the item itself gets clicked
   onActivate: PropTypes.func.isRequired,
+
+  disabled: PropTypes.bool,
 };
 
 export default FavoritesMenu;

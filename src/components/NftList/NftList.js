@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   DataView,
@@ -20,6 +20,8 @@ function NftList() {
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
+
+  const [tableEntries, setTableEntries] = useState([]);
 
   const {
     favoriteNFTs,
@@ -46,9 +48,29 @@ function NftList() {
     { name: "JOYWORLD", address: "0x50BBddbF12A97B2BfbCC7B728Eb08Dc40d123FAd" },
   ];
 
+  useEffect(() => {
+    fetchTableEntries();
+  }, []);
+
+  const fetchTableEntries = () => {
+    setTableEntries(
+      favoriteNFTs.concat(
+        entries.filter(
+          (e) => !favoriteNFTs.find((f) => f.address === e.address)
+        )
+      )
+    );
+  };
+
   const handleClickCreate = () => {
     setPanelTitle("Create NFT");
-    setInnerPanel(<CreateNftPanel closePanel={() => setPanelOpened(false)} />);
+    setInnerPanel(
+      <CreateNftPanel
+        onContinue={() => {
+          window.location.reload();
+        }}
+      />
+    );
     setPanelOpened(true);
   };
 
@@ -57,7 +79,10 @@ function NftList() {
     setInnerPanel(
       <MintNftPanel
         contractAddress={address}
-        closePanel={() => setPanelOpened(false)}
+        onContinue={() => {
+          fetchTableEntries();
+          setPanelOpened(false);
+        }}
       />
     );
     setPanelOpened(true);
@@ -68,7 +93,10 @@ function NftList() {
     setInnerPanel(
       <TransferNftPanel
         contractAddress={address}
-        closePanel={() => setPanelOpened(false)}
+        onContinue={() => {
+          fetchTableEntries();
+          setPanelOpened(false);
+        }}
       />
     );
     setPanelOpened(true);
@@ -81,12 +109,9 @@ function NftList() {
         secondary={<Button label="Create NFT" onClick={handleClickCreate} />}
       />
       <DataView
+        status="loading"
         fields={["Name", "Contract Address", ""]}
-        entries={favoriteNFTs.concat(
-          entries.filter(
-            (e) => !favoriteNFTs.find((f) => f.address === e.address)
-          )
-        )}
+        entries={tableEntries}
         renderEntry={({ name, supply, address }) => {
           return [
             <div>{name}</div>,

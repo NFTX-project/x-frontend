@@ -4,12 +4,17 @@ import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import HashField from "../HashField/HashField";
 import Nftx from "../../contracts/NFTX.json";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
 function NftxEvents() {
   const { account } = useWallet();
+  const injected = window.ethereum;
+  const provider =
+    injected && injected.chainId === "0x1"
+      ? injected
+      : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
 
-  const { current: web3 } = useRef(new Web3(window.ethereum));
+  const { current: web3 } = useRef(new Web3(provider));
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
 
   const [events, setEvents] = useState([]);
@@ -24,30 +29,10 @@ function NftxEvents() {
       });
   }, []);
 
-  /* useEffect(() => {
-    const acc = [];
-    let count = { num: 0 };
-    console.log("AAAAAAAAA");
-    for (let i = 0; i < events.length; i++) {
-      console.log("BBBB", i);
-      const event = events[i];
-      const prevAnswer = acc.find(
-        (elem) => elem.blockNumber == event.blockNumber
-      );
-      web3.eth.getBlock(7664378).then(({ timestamp }) => {
-        console.log("CCCCCC");
-        acc[i] = timestamp + "000";
-        count.num = count.num + 1;
-        if (count.num === events.length) {
-          setEventTimes(acc);
-        }
-      });
-    }
-  }, [events]); */
-
   return (
     <div>
       <DataView
+        status="loading"
         fields={["Name", "Tx Hash", "Block #", ""]}
         entries={events}
         entriesPerPage={5}

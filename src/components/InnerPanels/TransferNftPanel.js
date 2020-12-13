@@ -13,7 +13,7 @@ import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 
-function TransferNftPanel({ contractAddress, closePanel }) {
+function TransferNftPanel({ contractAddress, onContinue }) {
   const { account } = useWallet();
 
   const { addFavorite } = useFavoriteNFTs();
@@ -143,7 +143,7 @@ function TransferNftPanel({ contractAddress, closePanel }) {
             `}
           />
         </div>
-        <Button label="Return to List" wide={true} onClick={closePanel} />
+        <Button label="Return to List" wide={true} onClick={onContinue} />
       </div>
     );
   }

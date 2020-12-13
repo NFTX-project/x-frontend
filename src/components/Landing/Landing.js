@@ -4,8 +4,11 @@ import { network } from "../../environment";
 import WelcomeAction from "../WelcomeAction/WelcomeAction";
 import Suggestions from "./Suggestions/Suggestions";
 import { useSuggestedFunds } from "../../suggested-funds";
-import CreateD1PanelA from "../CreateD1Panel/CreateD1PanelA";
+// import CreateD1PanelA from "../CreateD1Panel/CreateD1PanelA";
 import CreateD2Panel from "../CreateD2Panel/CreateD2Panel";
+import CreateErc20Panel from "../InnerPanels/CreateErc20Panel";
+import CreateFundPanel from "../InnerPanels/CreateFundPanel";
+import { useFavoriteFunds } from "../../contexts/FavoriteFundsContext";
 
 import actionCreate from "./assets/action-create.png";
 import actionOpen from "./assets/action-open.png";
@@ -28,6 +31,14 @@ function Landing({ selectorNetworks }) {
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
+
+  const {
+    favoriteFunds,
+    removeFavoriteByAddress,
+    addFavorite,
+  } = useFavoriteFunds();
+
+  console.log("suggestedFunds", suggestedFunds);
 
   const handleCreate = useCallback(
     (degree) => {
@@ -52,9 +63,41 @@ function Landing({ selectorNetworks }) {
       goToCreate()
     } */
       setPanelTitle(
-        degree === 1 ? "Create a D1 Fund (Step 1/3)" : "Create a D2 Fund"
+        degree === 1 ? "Create a D1 Fund (Step 1/2)" : "Create a D2 Fund"
       );
-      setInnerPanel(degree === 1 ? <CreateD1PanelA /> : <CreateD2Panel />);
+      setInnerPanel(
+        degree === 1 ? (
+          <CreateErc20Panel
+            onContinue={(tokenAddress, tokenSymbol) => {
+              setPanelOpened(false);
+              setTimeout(() => {
+                setPanelTitle("Create a D1 Fund (Step 2/2)");
+                setInnerPanel(
+                  <CreateFundPanel
+                    tokenAddress={tokenAddress}
+                    onContinue={(vaultId) => {
+                      addFavorite({
+                        ticker: tokenSymbol,
+                        address: tokenAddress,
+                        vaultId: vaultId,
+                      });
+                      setPanelOpened(false);
+                      setTimeout(() => {
+                        if (window.location.hash !== "/") {
+                          window.location.hash = "/";
+                        }
+                      }, 400);
+                    }}
+                  />
+                );
+                setPanelOpened(true);
+              }, 500);
+            }}
+          />
+        ) : (
+          <CreateD2Panel />
+        )
+      );
       setPanelOpened(true);
     },
     [
@@ -74,7 +117,8 @@ function Landing({ selectorNetworks }) {
             <DropDown
               items={selectorNetworksSorted.map((network) => network.name)}
               placeholder={selectorNetworksSorted[0].name}
-              onChange={() => console.log("changed")}
+              onChange={() => console.log("TODO")}
+              disabled={false}
               wide
             />
             <WelcomeAction

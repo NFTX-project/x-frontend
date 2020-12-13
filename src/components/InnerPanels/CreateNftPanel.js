@@ -13,10 +13,10 @@ import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 
-function CreateNftPanel({ closePanel }) {
+function CreateNftPanel({ onContinue }) {
   const { account } = useWallet();
 
-  const { addFavorite } = useFavoriteNFTs();
+  // const { addFavorite } = useFavoriteNFTs();
 
   const { current: web3 } = useRef(new Web3(window.ethereum));
 
@@ -47,13 +47,12 @@ function CreateNftPanel({ closePanel }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
       });
   };
 
   const handleViewNFT = () => {
-    addFavorite({ name: name, address: txReceipt.contractAddress });
-    closePanel();
+    // addFavorite({ name: name, address: txReceipt.contractAddress });
+    onContinue(name, txReceipt.contractAddress);
   };
 
   if (!txHash) {
@@ -158,11 +157,7 @@ function CreateNftPanel({ closePanel }) {
             `}
           />
         </div>
-        <Button
-          label="View Updated NFT List"
-          wide={true}
-          onClick={handleViewNFT}
-        />
+        <Button label="Reload Page" wide={true} onClick={handleViewNFT} />
       </div>
     );
   }

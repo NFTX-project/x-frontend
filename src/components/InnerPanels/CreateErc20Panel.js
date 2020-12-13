@@ -11,7 +11,7 @@ import { useWallet } from "use-wallet";
 import erc20 from "../../contracts/XToken.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
 function CreateErc20Panel({ onContinue }) {
   const { account } = useWallet();
@@ -43,7 +43,6 @@ function CreateErc20Panel({ onContinue }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);
-        console.log(receipt);
       });
   };
 

@@ -113,10 +113,6 @@ function useGlobalPreferences() {
   const location = useLocation();
   const { search } = location;
 
-  /* useEffect(() => {
-    console.log("changed window.location");
-  }, [hash, location]); */
-
   const [, section = "", subsection = ""] = search.split("/");
 
   const handleNavigation = useCallback(

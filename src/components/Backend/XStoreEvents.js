@@ -4,12 +4,17 @@ import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import HashField from "../HashField/HashField";
 import XStore from "../../contracts/XStore.json";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
 function XStoreEvents() {
   const { account } = useWallet();
+  const injected = window.ethereum;
+  const provider =
+    injected && injected.chainId === "0x1"
+      ? injected
+      : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
 
-  const { current: web3 } = useRef(new Web3(window.ethereum));
+  const { current: web3 } = useRef(new Web3(provider));
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
 
   const [events, setEvents] = useState([]);
@@ -20,11 +25,15 @@ function XStoreEvents() {
       .getPastEvents("allEvents", { fromBlock: 7664346, toBlock: "latest" })
       .then((result) => {
         if (result.length > 25) {
-          const _events = result.slice(result.length - 25, result.length).reverse();
+          const _events = result
+            .slice(result.length - 25, result.length)
+            .reverse();
           setEvents(_events);
         } else {
-          const _events = result.reverse().slice(0, Math.min(25, result.length));
-        setEvents(_events);
+          const _events = result
+            .reverse()
+            .slice(0, Math.min(25, result.length));
+          setEvents(_events);
         }
       });
   }, []);
@@ -32,6 +41,7 @@ function XStoreEvents() {
   return (
     <div>
       <DataView
+        status="loading"
         fields={["Name", "Tx Hash", "Block #", ""]}
         entries={events}
         entriesPerPage={5}

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { Box } from "@aragon/ui";
-import FavoritesMenu from "../../FavoritesMenu/FavoritesMenu";
+import FavoritesMenu from "./FavoritesMenu/FavoritesMenu";
 import FundIcon from "../../FundIcon/FundIcon";
 import { useFavoriteFunds } from "../../../contexts/FavoriteFundsContext";
 import { network } from "../../../environment";
@@ -11,29 +11,24 @@ import { addressesEqual } from "../../../web3-utils";
 function Suggestions({ suggestedFunds }) {
   const {
     isAddressFavorited,
-    removeFavoriteByAddress,
+    removeFavoriteByVaultId,
     addFavorite,
   } = useFavoriteFunds();
 
   const updateFavorite = useCallback(
-    (address, favorite) => {
-      const org = suggestedFunds.find((org) =>
-        addressesEqual(org.address, address)
-      );
-
-      // Can’t find the org
-      if (!org) {
-        return;
-      }
-
+    (vaultId, address, ticker, favorite) => {
       if (favorite) {
-        addFavorite(org);
+        addFavorite({ vaultId, address, ticker });
       } else {
-        removeFavoriteByAddress(org.address);
+        removeFavoriteByVaultId(vaultId);
       }
     },
-    [addFavorite, removeFavoriteByAddress, suggestedFunds]
+    [addFavorite, removeFavoriteByVaultId, suggestedFunds]
   );
+
+  const goToFund = (vaultId) => {
+    window.location.hash = `/fund/${vaultId}`;
+  };
 
   const openOrg = useCallback(
     (address) => {
@@ -53,24 +48,28 @@ function Suggestions({ suggestedFunds }) {
     <Box heading="Popular Funds" padding={0}>
       <FavoritesMenu
         items={suggestedFunds.map((fund) => {
+          console.log("MAP", fund);
           const knownOrg = getKnownFunds(network.type, fund.address);
           return {
             favorited: isAddressFavorited(fund.address),
-            id: fund.address,
+            vaultId: fund.vaultId,
             image: <FundIcon fundAddress={fund.address} />,
-            name: knownOrg ? knownOrg.name : fund.name || fund.address,
+            name: knownOrg ? knownOrg.ticker : fund.name || fund.address,
             secondary: knownOrg ? knownOrg.template : "",
+            ticker: fund.ticker,
+            address: fund.address,
           };
         })}
-        onActivate={openOrg}
+        onActivate={goToFund}
         onFavoriteUpdate={updateFavorite}
+        disabled={false}
       />
     </Box>
   );
 }
 
 Suggestions.propTypes = {
-  suggestedOrgs: PropTypes.array.isRequired,
+  suggestedFunds: PropTypes.array.isRequired,
 };
 
 export default Suggestions;

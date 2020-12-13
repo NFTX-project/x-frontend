@@ -9,17 +9,21 @@ import {
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import Nftx from "../../contracts/NFTX.json";
+// import NftxV2 from "../../contracts/NFTXv2.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
-import addresses from "../../addresses/rinkeby.json";
+import addresses from "../../addresses/mainnet.json";
 
 function ManageFundPanel({ closePanel }) {
   const { account } = useWallet();
+  const injected = window.ethereum;
+  const provider =
+    injected && (injected.chainId === "0x1" || injected.isFrame)
+      ? injected
+      : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
 
-  // const { addFavorite } = useFavoriteNFTs();
-
-  const { current: web3 } = useRef(new Web3(window.ethereum));
+  const { current: web3 } = useRef(new Web3(provider));
 
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
 
@@ -78,7 +82,6 @@ function ManageFundPanel({ closePanel }) {
                     .send({ from: account })
                     .then((receipt) => {
                       setTxReceipt(receipt);
-                      console.log("receipt", receipt);
                     });
                 }}
                 css={`
