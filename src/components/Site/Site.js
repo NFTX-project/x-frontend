@@ -146,7 +146,7 @@ function Site({ selectorNetworks }) {
               Substack
             </a>
             <a
-              href="https://rinkeby.client.aragon.org/#/nftx/"
+              href="https://client.aragon.org/#/nftx/"
               target="_blank"
               rel="noreferrer"
             >

@@ -70,67 +70,78 @@ function Backend() {
   return (
     <div>
       <Header primary="Contracts" />
-      <DataView
-        fields={["Name", "Address", "Proxy"]}
-        entries={[
-          {
-            name: "NFTX",
-            address: addresses.nftxProxy,
-            proxy: true,
-          },
-          {
-            name: "XStore",
-            address: addresses.xStore,
-          },
-        ]}
-        renderEntry={({ name, address, proxy }) => {
-          return [
-            <div>{name}</div>,
-            <AddressField address={address} autofocus={false} />,
-            <div>{proxy ? <IconCircleCheck /> : <IconCircleMinus />}</div>,
-          ];
-        }}
-        renderEntryActions={(entry, index) => {
-          return (
-            <ContextMenu>
-              <ContextMenuItem
-                onClick={
-                  entry.name === "NFTX" ? handleReadNftx : handleReadXStore
-                }
-              >
-                Read...
-              </ContextMenuItem>
-              <ContextMenuItem
-                onClick={
-                  entry.name === "NFTX" ? handleWriteNftx : handleWriteXStore
-                }
-              >
-                Write...
-              </ContextMenuItem>
-            </ContextMenu>
-          );
-        }}
-        renderEntryExpansion={(entry, index) => {
-          return entry.name === "NFTX" ? (
-            <div
-              css={`
-                padding: 15px 0;
-              `}
-            >
-              Implementation address:{" "}
-              <span
+      <div
+        css={`
+          th:nth-of-type(1) {
+            min-width: 8%;
+          }
+          th:nth-of-type(2) {
+            min-width: 12%;
+          }
+        `}
+      >
+        <DataView
+          fields={["Name", "Address", "Proxy"]}
+          entries={[
+            {
+              name: "NFTX",
+              address: addresses.nftxProxy,
+              proxy: true,
+            },
+            {
+              name: "XStore",
+              address: addresses.xStore,
+            },
+          ]}
+          renderEntry={({ name, address, proxy }) => {
+            return [
+              <div>{name}</div>,
+              <AddressField address={address} autofocus={false} />,
+              <div>{proxy ? <IconCircleCheck /> : <IconCircleMinus />}</div>,
+            ];
+          }}
+          renderEntryActions={(entry, index) => {
+            return (
+              <ContextMenu>
+                <ContextMenuItem
+                  onClick={
+                    entry.name === "NFTX" ? handleReadNftx : handleReadXStore
+                  }
+                >
+                  Read...
+                </ContextMenuItem>
+                <ContextMenuItem
+                  onClick={
+                    entry.name === "NFTX" ? handleWriteNftx : handleWriteXStore
+                  }
+                >
+                  Write...
+                </ContextMenuItem>
+              </ContextMenu>
+            );
+          }}
+          renderEntryExpansion={(entry, index) => {
+            return entry.name === "NFTX" ? (
+              <div
                 css={`
-                  margin-left: 10px;
-                  font-size: 14px;
-                  font-family: aragon-ui-monospace, monospace;
+                  padding: 15px 0;
                 `}
               >
-                0x3A2f04fAa1d39AcB088BecE5C2D6B00E81AFe868
-              </span>
-            </div>
-          ) : null;
-        }}
-      />
+                Implementation address:{" "}
+                <span
+                  css={`
+                    margin-left: 10px;
+                    font-size: 14px;
+                    font-family: aragon-ui-monospace, monospace;
+                  `}
+                >
+                  0x3A2f04fAa1d39AcB088BecE5C2D6B00E81AFe868
+                </span>
+              </div>
+            ) : null;
+          }}
+        />
+      </div>
       <SidePanel
         title={panelTitle}
         opened={panelOpened}
@@ -144,14 +155,30 @@ function Backend() {
           margin-top: 20px;
         `}
       />
-      <NftxEvents />
+      <div
+        css={`
+          th:first-of-type {
+            min-width: 20%;
+          }
+        `}
+      >
+        <NftxEvents />
+      </div>
       <Header
         primary="XStore Events"
         css={`
           margin-top: 20px;
         `}
       />
-      <XStoreEvents />
+      <div
+        css={`
+          th:first-of-type {
+            min-width: 20%;
+          }
+        `}
+      >
+        <XStoreEvents />
+      </div>
     </div>
   );
 }
