@@ -148,6 +148,11 @@ function D1FundList() {
       vaultId: 0,
     },
     {
+      ticker: "PUNK-FEMALE",
+      address: "0x27Ffed7E5926Fb2795fC85aAab558243F280A8a2",
+      vaultId: 15,
+    },
+    {
       ticker: "PUNK-ATTR-4",
       address: "0x49706a576bb823cdE3180C930F9947d59e2deD4D",
       vaultId: 1,
