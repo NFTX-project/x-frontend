@@ -664,7 +664,7 @@ function D1FundView() {
                   value: manager,
                 });
               }
-              if (!isClosed) {
+              if (!isClosed && !negateElig) {
                 arr.push({
                   key: "Requests",
                   value: flipElig
