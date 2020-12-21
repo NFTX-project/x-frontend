@@ -182,11 +182,11 @@ function Site({ selectorNetworks }) {
               GitHub
             </a>
             <a
-              href="https://nftx.substack.com/"
+              href="https://discord.gg/hytQVM5ZxR"
               target="_blank"
               rel="noreferrer"
             >
-              Substack
+              Discord
             </a>
             <a
               href="https://client.aragon.org/#/nftx/"
