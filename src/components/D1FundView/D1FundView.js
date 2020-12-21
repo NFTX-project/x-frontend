@@ -17,7 +17,7 @@ import Nftx from "../../contracts/NFTX.json";
 import XToken from "../../contracts/XToken.json";
 import IErc721Plus from "../../contracts/IERC721Plus.json";
 import addresses from "../../addresses/mainnet.json";
-import ManageFund from "../InnerPanels/ManageFundPanel";
+
 import ManageFundPanel from "../InnerPanels/ManageFundPanel";
 import MintFundPanel from "../InnerPanels/MintFundPanel";
 import MintRequestPanel from "../InnerPanels/MintRequestPanel";
@@ -95,9 +95,9 @@ function D1FundView() {
       xTokenAddress,
       totalSupply,
       negateElig,
-      eligibilities,
-      holdings,
-      pending,
+      /* eligibilities, */
+      /* holdings, */
+      /* pending, */
       fundName,
       fundSymbol,
       nftName,
@@ -681,12 +681,22 @@ function D1FundView() {
                   key: "Pending",
                   value: pending.length === 0 ? "<empty>" : pending.join(", "),
                 });
+              } else if (pending === null || allowMintReqs === null) {
+                arr.push({
+                  key: "Pending",
+                  value: "Loading...",
+                });
               }
               if (holdings) {
                 arr.push({
                   key: "Holdings",
                   value:
                     holdings.length === 0 ? "<empty>" : holdings.join(", "),
+                });
+              } else {
+                arr.push({
+                  key: "Holdings",
+                  value: "Loading...",
                 });
               }
               if (eligibilities && negateElig !== null) {
@@ -697,6 +707,16 @@ function D1FundView() {
                       ? "<empty>"
                       : eligibilities.join(", "),
                 });
+              } else {
+                arr.push({
+                  key:
+                    negateElig === null
+                      ? "Eligibilities"
+                      : negateElig
+                      ? "Denylist"
+                      : "Allowlist",
+                  value: "Loading...",
+                });
               }
               return arr;
             })()}
@@ -704,9 +724,24 @@ function D1FundView() {
               <div
                 css={`
                   padding-right: 15px;
+                  & > div {
+                    display: inline-block;
+                  }
                 `}
               >
-                {key}
+                <div>{key}</div>
+                <div>
+                  {(() => {
+                    return [
+                      "Holdings",
+                      "Pending",
+                      "Allowlist",
+                      "Denylist",
+                    ].includes(key) && value.length > 100
+                      ? `(${value.split(", ").length})`
+                      : "";
+                  })()}
+                </div>
               </div>,
               <div
                 css={`

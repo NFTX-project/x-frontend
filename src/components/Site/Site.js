@@ -2,7 +2,14 @@ import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Route, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useWallet } from "use-wallet";
-import { BREAKPOINTS, useTheme, SidePanel, Split, DropDown } from "@aragon/ui";
+import {
+  BREAKPOINTS,
+  useTheme,
+  SidePanel,
+  Split,
+  DropDown,
+  IconExternal,
+} from "@aragon/ui";
 import throttle from "lodash.throttle";
 
 import TopBar from "../TopBar/TopBar";
@@ -13,6 +20,7 @@ import NftList from "../NftList/NftList";
 import D1FundList from "../D1FundList/D1FundList";
 import Backend from "../Backend/Backend";
 import D1FundView from "../D1FundView/D1FundView";
+import Bounties from "../Bounties/Bounties";
 
 function Site({ selectorNetworks }) {
   const theme = useTheme();
@@ -66,7 +74,39 @@ function Site({ selectorNetworks }) {
           >
             <RoundButton text="Landing" link="/landing" />
             <RoundButton text="D1 Funds" link="/" />
-            <RoundButton text="Backend" link="/backend" />
+            <RoundButton text="Bounties" link="/bounties" />
+            <a
+              href="https://nftx.gitbook.io/nftx/"
+              target="_blank"
+              css={`
+                text-decoration: none;
+                margin: 0 10px;
+              `}
+            >
+              <RoundButton
+                text={
+                  <div
+                    css={`
+                      position: relative;
+                      padding-left: 1px;
+                      padding-right: 26px;
+                    `}
+                  >
+                    DOCS
+                    <div
+                      css={`
+                        display: inline-block;
+                        position: absolute;
+                        right: -5px;
+                        bottom: -5px;
+                      `}
+                    >
+                      <IconExternal />
+                    </div>
+                  </div>
+                }
+              />
+            </a>
           </div>
           <div
             css={`
@@ -88,6 +128,9 @@ function Site({ selectorNetworks }) {
             </Route>
             <Route path="/fund">
               <D1FundView />
+            </Route>
+            <Route path="/bounties">
+              <Bounties />
             </Route>
           </div>
           <div

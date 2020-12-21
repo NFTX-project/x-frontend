@@ -16,16 +16,27 @@ function RoundButton({ text, link }) {
         color: ${theme.tagIdentifierContent};
         text-transform: uppercase;
         border: 1px solid
-          ${location.pathname === link
+          ${location.pathname === link ||
+          (link === "/" && location.pathname.includes(`/fund/`))
             ? theme.tagIdentifierContent
             : "rgba(0,0,0,0)"};
         padding: 4px 15px;
         border-radius: 20px;
         box-sizing: content-box;
         pointer-events: none;
+        min-width: 68px;
+        display: flex;
+        justify-content: center;
       `}
     >
-      {text}
+      <div
+        css={`
+          transform: translateY(1px);
+        `}
+      >
+        {" "}
+        {text}
+      </div>
     </div>
   );
   if (link) {

@@ -45,6 +45,10 @@ function ManageFundPanel({
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
+  useEffect(() => {
+    console.log("txError", txError);
+  }, [txError]);
+
   const [nftxAdmin, setNftxAdmin] = useState(null);
 
   useEffect(() => {
@@ -87,15 +91,23 @@ function ManageFundPanel({
   };
 
   const handleSetIsEligible = () => {
+    console.log("inside handleSetIsEligible() !!!!! ");
     nftx.methods
-      .setIsEligible(vaultId, JSON.parse(nftIds), areEligible)
+      .setIsEligible(
+        vaultId,
+        JSON.parse(nftIds),
+        areEligible.toLowerCase().includes("true")
+      )
       .send(
         {
           from: account,
         },
         (error, txHash) => {}
       )
-      .on("error", (error) => setTxError(error))
+      .on("error", (error) => {
+        console.log("error", error);
+        setTxError(error);
+      })
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setTxReceipt(receipt);

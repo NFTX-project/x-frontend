@@ -343,6 +343,10 @@ function D1FundList() {
     setPanelOpened(true);
   }; */
 
+  const cleanNum = (num, exp = 1) => {
+    return Math.trunc(parseFloat(num) * Math.pow(10, exp)) / Math.pow(10, exp);
+  };
+
   return (
     <div
       css={`
@@ -417,7 +421,10 @@ function D1FundList() {
             cells.splice(
               6,
               0,
-              <div>{chainData[vaultId] && chainData[vaultId].myBalance}</div>
+              <div>
+                {chainData[vaultId] &&
+                  cleanNum(chainData[vaultId].myBalance, 2)}
+              </div>
             );
           }
           return cells;

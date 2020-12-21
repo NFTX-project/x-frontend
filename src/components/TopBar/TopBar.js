@@ -28,9 +28,8 @@ function TopBar({ status, solid }) {
           left: 0;
           right: 0;
           height: ${8 * GU}px;
-          background: ${theme.surface.alpha(solid ? 0.8 : 0)};
+          background: ${theme.surface.alpha(solid ? 0.93 : 0)};
           transition: background 150ms ease-in-out;
-          backdrop-filter: blur(6px);
         `}
       >
         <div
@@ -77,7 +76,7 @@ function TopBar({ status, solid }) {
             label="Settings"
             size="medium"
             onClick={handleSettingsClick}
-            disabled={false}
+            disabled={true}
           />
         </div>
       </div>
