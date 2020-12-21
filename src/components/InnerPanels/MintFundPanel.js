@@ -341,10 +341,7 @@ function MintFundPanel({
                   ) {
                     if (allowMintRequests) {
                       return (
-                        <Button
-                          label="Approve Transfer"
-                          onClick={() => handleApprove(tokenId)}
-                        />
+                        <Button label="Request Mint" onClick={onMakeRequest} />
                       );
                     } else {
                       return "Not eligible";

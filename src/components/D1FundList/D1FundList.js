@@ -278,8 +278,8 @@ function D1FundList() {
           fetchData();
           setPanelOpened(false);
         }}
-        allowFundRequests={
-          eligPrefsArr[vaultId] && eligPrefsArr[vaultId].allowFundRequests
+        allowMintRequests={
+          eligPrefsArr[vaultId] && eligPrefsArr[vaultId].allowMintRequests
         }
         onMakeRequest={() => {
           setPanelOpened(false);
