@@ -679,7 +679,10 @@ function D1FundView() {
               if ((pending && pending.length > 0) || allowMintReqs) {
                 arr.push({
                   key: "Pending",
-                  value: pending.length === 0 ? "<empty>" : pending.join(", "),
+                  value:
+                    !pending || pending.length === 0
+                      ? "<empty>"
+                      : pending.join(", "),
                 });
               } else if (pending === null || allowMintReqs === null) {
                 arr.push({
