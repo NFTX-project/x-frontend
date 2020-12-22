@@ -411,6 +411,14 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
             `}
           />
         </div>
+        <div
+          css={`
+            margin-bottom: 20px;
+          `}
+        >
+          Approval may take 24-48 hours. If you have questions please visit our
+          Discord server.
+        </div>
         <Button label="Return to List" wide={true} onClick={handleViewNFT} />
         {isApprovedForAll && approveOrUnapproveAllBtn}
       </div>
