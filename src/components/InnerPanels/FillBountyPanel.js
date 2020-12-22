@@ -276,8 +276,8 @@ function FillBountyPanel({
 
         <a
           href={
-            `https://rinkeby.client.aragon.org/#/nftx/` +
-            `0xbc43db7dddabd068732025107a0026fe758770d2` +
+            `https://client.aragon.org/#/nftx/` +
+            `0x5566b3e5fc300a1b28c214b49a5950c34d00eb33` +
             `/vesting/${account}/`
           }
           target="_blank"
