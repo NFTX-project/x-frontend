@@ -126,7 +126,7 @@ function FillBountyPanel({
     setTxReceipt(null);
     setTxIsApproval(true);
     xToken.methods
-      .approve(addresses.nftxProxy, web3.utils.toWei(amount))
+      .approve(addresses.bounties, web3.utils.toWei(amount))
       .send(
         {
           from: account,
