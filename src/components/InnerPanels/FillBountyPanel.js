@@ -34,7 +34,7 @@ function FillBountyPanel({
   const { account } = useWallet();
   const injected = window.ethereum;
   const provider =
-    injected && injected.chainId === "0x4"
+    injected && injected.chainId === "0x1"
       ? injected
       : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
 
