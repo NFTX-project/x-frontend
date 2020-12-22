@@ -12,6 +12,7 @@ import {
   IconLock,
   IconTime,
   SidePanel,
+  Info,
 } from "@aragon/ui";
 import FillBountyPanel from "../InnerPanels/FillBountyPanel";
 import addresses from "../../addresses/mainnet.json";
@@ -139,6 +140,18 @@ function Bounties() {
 
   return (
     <div className="xtokens-wrapper" css={``}>
+      <div
+        css={`
+          margin-top: 10px;
+        `}
+      >
+        <Info>
+          We are experiencing some issues with the KITTY funds. It may be a few
+          days or more before they are working. FYI, Pranksy has offered to
+          cover the KITTY-FOUNDER bounty, but the others are still potentially
+          up for grabs (after a fix is deployed).
+        </Info>
+      </div>
       <Header
         primary={"Bounties"}
         secondary={
