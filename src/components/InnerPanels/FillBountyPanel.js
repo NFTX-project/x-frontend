@@ -87,7 +87,7 @@ function FillBountyPanel({
   const fetchAllowance = () => {
     if (account)
       xToken.methods
-        .allowance(account, addresses.nftxProxy)
+        .allowance(account, addresses.bounties)
         .call({ from: account })
         .then((retVal) => setAllowance(retVal));
   };
