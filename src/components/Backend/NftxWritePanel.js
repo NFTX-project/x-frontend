@@ -8,7 +8,8 @@ import {
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import Nftx from "../../contracts/NFTX.json";
+// import Nftx from "../../contracts/NFTX.json";
+import NftxV3 from "../../contracts/NFTXv3.json";
 // import NftxV2 from "../../contracts/NFTXv2.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
@@ -25,7 +26,7 @@ function ManageFundPanel({ closePanel }) {
 
   const { current: web3 } = useRef(new Web3(provider));
 
-  const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
+  const nftx = new web3.eth.Contract(NftxV3.abi, addresses.nftxProxy);
 
   const [funcParams, setFuncParams] = useState(JSON.parse("[[]]"));
 
@@ -45,7 +46,7 @@ function ManageFundPanel({ closePanel }) {
           }
         `}
       >
-        {Nftx.abi
+        {NftxV3.abi
           .filter(
             (item) =>
               item.type === "function" && !item.stateMutability.includes("view")
@@ -78,7 +79,14 @@ function ManageFundPanel({ closePanel }) {
                 wide={true}
                 disabled={!account}
                 onClick={() => {
-                  nftx.methods[func.name](...funcParams[i])
+                  const _funcParams = JSON.parse(JSON.stringify(funcParams[i]));
+                  console.log("FUNCPARAMS", _funcParams);
+                  _funcParams.forEach((str, i) => {
+                    if (str.startsWith("[") && str.endsWith("]")) {
+                      _funcParams[i] = JSON.parse(str);
+                    }
+                  });
+                  nftx.methods[func.name](..._funcParams)
                     .send({ from: account })
                     .then((receipt) => {
                       setTxReceipt(receipt);
