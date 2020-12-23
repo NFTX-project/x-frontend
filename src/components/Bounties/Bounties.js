@@ -147,9 +147,9 @@ function Bounties() {
       >
         <Info>
           We are experiencing some issues with the KITTY funds. It may be a few
-          days or more before they are working. FYI, Pranksy has offered to
-          cover the KITTY-FOUNDER bounty, but the others are still potentially
-          up for grabs (after a fix is deployed).
+          days or more before they are working. We still plan to include KITTY
+          bounties as part of the community raise and will be sure to give
+          everyone at least 24 hours warning before a fix is deployed.
         </Info>
       </div>
       <Header

@@ -15,6 +15,7 @@ import {
   IconCircleCheck,
   IconCircleMinus,
   FloatIndicator,
+  Info,
 } from "@aragon/ui";
 import { useFavoriteFunds } from "../../contexts/FavoriteFundsContext";
 import MintFundPanel from "../InnerPanels/MintFundPanel";
@@ -353,6 +354,18 @@ function D1FundList() {
         padding-bottom: 10px;
       `}
     >
+      <div
+        css={`
+          margin-top: 10px;
+        `}
+      >
+        <Info>
+          We are experiencing some issues with the KITTY funds. It may be a few
+          days or more before they are working. We still plan to include KITTY
+          bounties as part of the community raise and will be sure to give
+          everyone at least 24 hours warning before a fix is deployed.
+        </Info>
+      </div>
       <Header
         primary="D1 Funds"
         secondary={
