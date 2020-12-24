@@ -146,10 +146,13 @@ function Bounties() {
         `}
       >
         <Info>
-          We are experiencing some issues with the KITTY funds. It may be a few
-          days or more before they are working. We still plan to include KITTY
-          bounties as part of the community raise and will be sure to give
-          everyone at least 24 hours warning before a fix is deployed.
+          UPDATE: The KITTY funds should be working now. Any tokenIDs which were
+          not approved before launch will need to "request" their mint
+          operations. The bounty cap (currently at 50k NFTX) will be reset back
+          to 0, so that everyone can have a fair shot at filling the KITTY-GEN-0
+          and KITTY-GEN-0-F bounties after the Dao has approved all the mint
+          requests (which will happen in the next couple days, preceded by a
+          formal update).
         </Info>
       </div>
       <Header

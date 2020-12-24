@@ -182,7 +182,7 @@ function Site({ selectorNetworks }) {
               GitHub
             </a>
             <a
-              href="https://discord.gg/5ygF8rxdYR"
+              href="https://discord.gg/hytQVM5ZxR"
               target="_blank"
               rel="noreferrer"
             >

@@ -12,6 +12,7 @@ import { useWallet } from "use-wallet";
 import Nftx from "../../contracts/NFTX.json";
 import XStore from "../../contracts/XStore.json";
 import IErc721 from "../../contracts/IERC721.json";
+import KittyCore from "../../contracts/KittyCore.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
@@ -45,6 +46,11 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
 
   const [doneRequesting, setDoneRequesting] = useState(false);
 
+  const isKittyAddr = (address) => {
+    const kittyAddr = "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d";
+    return address.toLowerCase() === kittyAddr.toLowerCase();
+  };
+
   useEffect(() => {
     xStore.methods
       .nftAddress(vaultId)
@@ -72,13 +78,15 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
   }, [tokenIdsArr]);
 
   const fetchIsApprovedAll = () => {
-    const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
-    nft.methods
-      .isApprovedForAll(account, addresses.nftxProxy)
-      .call({ from: account })
-      .then((retVal) => {
-        setIsApprovedForAll(retVal);
-      });
+    if (!isKittyAddr(nftAddress)) {
+      const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
+      nft.methods
+        .isApprovedForAll(account, addresses.nftxProxy)
+        .call({ from: account })
+        .then((retVal) => {
+          setIsApprovedForAll(retVal);
+        });
+    }
   };
 
   const updateNftOwnerData = () => {
@@ -139,7 +147,8 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
   const fetchApproval = (nftExistenceArr, nftOwnershipArr) =>
     new Promise((resolve, reject) => {
       if (nftOwnershipArr.length > 0) {
-        const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
+        const abi = isKittyAddr(nftAddress) ? KittyCore.abi : IErc721.abi;
+        const nft = new web3.eth.Contract(abi, nftAddress);
         const newNftApprovalArr = [];
         let count = 0;
         tokenIdsArr.forEach((tokenId, index) => {
@@ -155,17 +164,29 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
           } else if (isApprovedForAll) {
             finish(true);
           } else {
-            nft.methods
-              .getApproved(tokenId)
-              .call({ from: account })
-              .then((retVal) => {
-                console.log("xx-returnval", retVal);
-                finish(retVal);
-              })
-              .catch((error) => {
-                console.log("error", error);
-                finish(false);
-              });
+            if (isKittyAddr(nftAddress)) {
+              nft.methods
+                .kittyIndexToApproved(tokenId)
+                .call({ from: account })
+                .then((retVal) => {
+                  finish(retVal);
+                })
+                .catch((error) => {
+                  console.log("error", error);
+                  finish(false);
+                });
+            } else {
+              nft.methods
+                .getApproved(tokenId)
+                .call({ from: account })
+                .then((retVal) => {
+                  finish(retVal);
+                })
+                .catch((error) => {
+                  console.log("error", error);
+                  finish(false);
+                });
+            }
           }
         });
       }
@@ -244,7 +265,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
     <Button
       label={isApprovedForAll ? "Unapprove All" : "Approve All"}
       wide={true}
-      disabled={!account}
+      disabled={!account || !nftAddress || isKittyAddr(nftAddress)}
       onClick={() => handleSetApproveAll(!isApprovedForAll)}
       css={`
         margin-top: 15px;
@@ -359,7 +380,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
             </div>
           ))}
         </div>
-        {approveOrUnapproveAllBtn}
+        {nftAddress && !isKittyAddr(nftAddress) && approveOrUnapproveAllBtn}
       </div>
     );
   } else if (txHash && !txReceipt) {
@@ -419,7 +440,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
           Approval may take 24-48 hours. If you have questions please visit our
           Discord server.
         </div>
-        <Button label="Return to List" wide={true} onClick={handleViewNFT} />
+        <Button label="Return to Page" wide={true} onClick={handleViewNFT} />
         {isApprovedForAll && approveOrUnapproveAllBtn}
       </div>
     );
