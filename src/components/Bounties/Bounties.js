@@ -85,7 +85,7 @@ function Bounties() {
           };
           count.num = count.num + 1;
           if (count.num === tickers.length) {
-            console.log("bounties", bounties);
+            // console.log("bounties", );
             setEntries(bounties);
           }
         });

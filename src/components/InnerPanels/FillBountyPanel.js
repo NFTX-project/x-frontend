@@ -5,6 +5,7 @@ import {
   Button,
   AddressField,
   IconCheck,
+  Info,
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
@@ -154,6 +155,22 @@ function FillBountyPanel({
         parseFloat(willGive) <= web3.utils.fromWei(allowance))
     );
   };
+
+  if (bountyId === 11 || bountyId === 12) {
+    return (
+      <div
+        css={`
+          margin-top: 20px;
+        `}
+      >
+        <Info>
+          This bounty is currently paused and will be re-enabled after the
+          bounty cap has been set back to zero. The earliest this will happen is
+          Dec 26.
+        </Info>
+      </div>
+    );
+  }
 
   if (!doneRedeeming && (!txHash || (txIsApproval && txReceipt))) {
     return (
