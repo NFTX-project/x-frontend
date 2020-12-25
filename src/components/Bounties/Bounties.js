@@ -154,6 +154,16 @@ function Bounties() {
           requests (which will happen in the next couple days, preceded by a
           formal update).
         </Info>
+        <Info
+          mode="warning"
+          css={`
+            margin-top: 10px;
+          `}
+        >
+          JOY reward rate will likely be increased soon. Some payout caps will
+          probably be increased as well. Please check back on Dec 26 for more
+          details.
+        </Info>
       </div>
       <Header
         primary={"Bounties"}
