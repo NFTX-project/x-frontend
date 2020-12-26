@@ -146,23 +146,12 @@ function Bounties() {
         `}
       >
         <Info>
-          UPDATE: The KITTY funds should be working now. Any tokenIDs which were
-          not approved before launch will need to "request" their mint
-          operations. The bounty cap (currently at 50k NFTX) will be reset back
-          to 0, so that everyone can have a fair shot at filling the KITTY-GEN-0
-          and KITTY-GEN-0-F bounties after the Dao has approved all the mint
-          requests (which will happen in the next couple days, preceded by a
-          formal update).
-        </Info>
-        <Info
-          mode="warning"
-          css={`
-            margin-top: 10px;
-          `}
-        >
-          JOY reward rate will likely be increased soon. Some payout caps will
-          probably be increased as well. Please check back on Dec 26 for more
-          details.
+          UPDATE (Dec 26): The bounty per-tx-cap has been set back to zero and
+          will begin increasing at 11am PST on Dec 29. It will increase over the
+          span of an hour until a maximum of 50,000 NFTX at 12pm PST. Please
+          have all KITTY-GEN-0 and KITTY-GEN-0-F requests in by 10am PST on Dec
+          28 (the day before), as requests take at least 24 hours to be
+          processed by the Dao.
         </Info>
       </div>
       <Header
