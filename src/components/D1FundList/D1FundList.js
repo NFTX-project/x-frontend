@@ -354,20 +354,6 @@ function D1FundList() {
         padding-bottom: 10px;
       `}
     >
-      <div
-        css={`
-          margin-top: 10px;
-        `}
-      >
-        <Info>
-          UPDATE (Dec 26): The bounty per-tx-cap has been set back to zero and
-          will begin increasing at 11am PST on Dec 29. It will increase over the
-          span of an hour until a maximum of 50,000 NFTX at 12pm PST. Please
-          have all KITTY-GEN-0 and KITTY-GEN-0-F requests in by 10am PST on Dec
-          28 (the day before), as requests take at least 24 hours to be
-          processed by the Dao.
-        </Info>
-      </div>
       <Header
         primary="D1 Funds"
         secondary={
