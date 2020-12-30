@@ -238,30 +238,63 @@ function D1FundView() {
   };
 
   const fetchEvents = () => {
-    xStore
-      .getPastEvents("allEvents", { fromBlock: 7664346, toBlock: "latest" })
-      .then((events) => {
-        setStoreEvents(
-          events
-            .filter((event) => event.returnValues.vaultId === vaultId)
-            .map((event) => {
-              event.contract = "XStore";
-              return event;
-            })
-        );
-      });
-    nftx
-      .getPastEvents("allEvents", { fromBlock: 7664346, toBlock: "latest" })
-      .then((events) => {
-        setNftxEvents(
-          events
-            .filter((event) => event.returnValues.vaultId === vaultId)
-            .map((event) => {
-              event.contract = "NFTX";
-              return event;
-            })
-        );
-      });
+    const eventsAcc = {
+      store: [],
+      nftx: [],
+      storeResCount: 0,
+      nftxResCount: 0,
+    };
+    web3.eth.getBlockNumber((error, currentBlock) => {
+      const initialBlock = 11442000;
+      let startBlock = initialBlock;
+      while (startBlock < currentBlock) {
+        let endBlock =
+          startBlock + 50000 > currentBlock ? currentBlock : startBlock + 50000;
+        xStore
+          .getPastEvents("allEvents", {
+            fromBlock: startBlock,
+            toBlock: endBlock,
+          })
+          .then((events) => {
+            const _events = events
+              .filter((event) => event.returnValues.vaultId === vaultId)
+              .map((event) => {
+                event.contract = "XStore";
+                return event;
+              });
+            eventsAcc.store = eventsAcc.store.concat(_events);
+            eventsAcc.storeResCount += 1;
+            if (
+              eventsAcc.storeResCount >=
+              (currentBlock - initialBlock) / 50000
+            ) {
+              setStoreEvents(eventsAcc.store);
+            }
+          });
+        nftx
+          .getPastEvents("allEvents", {
+            fromBlock: startBlock,
+            toBlock: endBlock,
+          })
+          .then((events) => {
+            const _events = events
+              .filter((event) => event.returnValues.vaultId === vaultId)
+              .map((event) => {
+                event.contract = "NFTX";
+                return event;
+              });
+            eventsAcc.nftx = eventsAcc.nftx.concat(_events);
+            eventsAcc.nftxResCount += 1;
+            if (
+              eventsAcc.storeResCount >=
+              (currentBlock - initialBlock) / 50000
+            ) {
+              setNftxEvents(eventsAcc.nftx);
+            }
+          });
+        startBlock = endBlock;
+      }
+    });
   };
 
   const parseHoldings = () => {
