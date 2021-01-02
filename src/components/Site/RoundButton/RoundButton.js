@@ -1,6 +1,5 @@
 import React from "react";
 import { useLocation, Link } from "react-router-dom";
-import PropTypes from "prop-types";
 import { useTheme } from "@aragon/ui";
 
 function RoundButton({ text, link }) {
@@ -56,10 +55,5 @@ function RoundButton({ text, link }) {
     return button;
   }
 }
-
-RoundButton.propTypes = {
-  text: PropTypes.string,
-  link: PropTypes.string,
-};
 
 export default RoundButton;

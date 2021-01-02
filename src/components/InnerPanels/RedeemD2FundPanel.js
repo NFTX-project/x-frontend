@@ -17,13 +17,13 @@ import XStore from "../../contracts/XStore.json";
 import Nftx from "../../contracts/NFTX.json";
 import XToken from "../../contracts/XToken.json";
 
-function RedeemFundPanel({ vaultId, address, ticker, onContinue }) {
+function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
   const { account } = useWallet();
   const injected = window.ethereum;
   const provider =
     injected && injected.chainId === "0x1"
       ? injected
-      : "wss://mainnet.infura.io/ws/v3/b35e1df04241408281a8e7a4e3cd555c";
+      : "wss://eth-mainnet.ws.alchemyapi.io/v2/fL1uiXELcu8QeuLAxoCNmnbf_XuVlHBD";
 
   const { current: web3 } = useRef(new Web3(provider));
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
@@ -206,4 +206,4 @@ function RedeemFundPanel({ vaultId, address, ticker, onContinue }) {
   }
 }
 
-export default RedeemFundPanel;
+export default RedeemD2FundPanel;

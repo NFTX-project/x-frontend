@@ -15,7 +15,7 @@ import {
 import XStore from "../../contracts/XStore.json";
 import Nftx from "../../contracts/NFTX.json";
 import XToken from "../../contracts/XToken.json";
-import IErc721Plus from "../../contracts/IERC721Plus.json";
+import Erc20 from "../../contracts/ERC20.json";
 import addresses from "../../addresses/mainnet.json";
 
 import ManageFundPanel from "../InnerPanels/ManageFundPanel";
@@ -25,7 +25,7 @@ import RedeemD1FundPanel from "../InnerPanels/RedeemD1FundPanel";
 
 const zeroAddress = "0x0000000000000000000000000000000000000000";
 
-function D1FundView() {
+function D2FundView() {
   const location = useLocation();
   const [vaultId, setVaultId] = useState(null);
   const [invalidVid, setInvalidVid] = useState(false);
@@ -41,26 +41,17 @@ function D1FundView() {
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
 
-  const [storeEvents, setStoreEvents] = useState(null);
-  const [nftxEvents, setNftxEvents] = useState(null);
-
   const [isFinalized, setIsFinalized] = useState(null);
   const [manager, setManager] = useState(null);
   const [isClosed, setIsClosed] = useState(null);
-  const [allowMintReqs, setAllowMintReqs] = useState(null);
-  const [flipElig, setFlipElig] = useState(null);
-  const [nftAddress, setNftAddress] = useState(null);
+  const [assetAddress, setAssetAddress] = useState(null);
   const [xTokenAddress, setXTokenAddress] = useState(null);
   const [totalSupply, setTotalSupply] = useState(null);
   const [balance, setBalance] = useState(null);
-  const [negateElig, setNegateElig] = useState(null);
-  const [eligibilities, setEligibilities] = useState(null);
-  const [holdings, setHoldings] = useState(null);
-  const [pending, setPending] = useState(null);
   const [fundName, setFundName] = useState(null);
   const [fundSymbol, setFundSymbol] = useState(null);
-  const [nftName, setNftName] = useState(null);
-  const [nftSymbol, setNftSymbol] = useState(null);
+  const [assetName, setAssetName] = useState(null);
+  const [assetSymbol, setAssetSymbol] = useState(null);
 
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
@@ -70,18 +61,12 @@ function D1FundView() {
     setIsFinalized(null);
     setManager(null);
     setIsClosed(null);
-    setAllowMintReqs(null);
-    setFlipElig(null);
     setTotalSupply(null);
     setBalance(null);
-    setNegateElig(null);
-    setEligibilities(null);
-    setHoldings(null);
-    setPending(null);
     setFundSymbol(null);
     setFundSymbol(null);
-    setNftName(null);
-    setNftSymbol(null);
+    setAssetName(null);
+    setAssetSymbol(null);
   };
 
   const ready = () => {
@@ -89,19 +74,13 @@ function D1FundView() {
       isFinalized,
       manager,
       isClosed,
-      allowMintReqs,
-      flipElig,
-      nftAddress,
+      assetAddress,
       xTokenAddress,
       totalSupply,
-      negateElig,
-      /* eligibilities, */
-      /* holdings, */
-      /* pending, */
       fundName,
       fundSymbol,
-      nftName,
-      nftSymbol,
+      assetName,
+      assetSymbol,
     ].includes(null);
   };
 
@@ -125,23 +104,11 @@ function D1FundView() {
 
   const makeFetchCalls = () => {
     fetchXTokenAddress();
-    fetchNftAddress();
+    fetchAssetAddress();
     fetchIsFinalized();
     fetchManager();
     fetchIsClosed();
-    fetchAllowMintReqs();
-    fetchFlipElig();
-    fetchNegateEligibility();
-    fetchEvents();
   };
-
-  useEffect(() => {
-    if (storeEvents) {
-      parseHoldings();
-      parseEligibilities();
-      parseRequests();
-    }
-  }, [storeEvents]);
 
   useEffect(() => {
     if (xTokenAddress) {
@@ -168,24 +135,26 @@ function D1FundView() {
   }, [xTokenAddress]);
 
   useEffect(() => {
-    if (nftAddress) {
-      const nft = new web3.eth.Contract(IErc721Plus.abi, nftAddress);
-      nft.methods
+    if (assetAddress) {
+      console.log("assetAddress", assetAddress);
+      const asset = new web3.eth.Contract(Erc20.abi, assetAddress);
+      console.log("asset", asset);
+      asset.methods
         .name()
         .call({ from: account })
-        .then((retVal) => setNftName(retVal));
-      nft.methods
+        .then((retVal) => setAssetName(retVal));
+      asset.methods
         .symbol()
         .call({ from: account })
-        .then((retVal) => setNftSymbol(retVal));
+        .then((retVal) => setAssetSymbol(retVal));
     }
-  }, [nftAddress]);
+  }, [assetAddress]);
 
-  const fetchNftAddress = () => {
+  const fetchAssetAddress = () => {
     xStore.methods
-      .nftAddress(vaultId)
+      .d2AssetAddress(vaultId)
       .call({ from: account })
-      .then((retVal) => setNftAddress(retVal));
+      .then((retVal) => setAssetAddress(retVal));
   };
 
   const fetchIsFinalized = () => {
@@ -209,219 +178,11 @@ function D1FundView() {
       .then((retVal) => setIsClosed(retVal));
   };
 
-  const fetchAllowMintReqs = () => {
-    xStore.methods
-      .allowMintRequests(vaultId)
-      .call({ from: account })
-      .then((retVal) => setAllowMintReqs(retVal));
-  };
-
-  const fetchFlipElig = () => {
-    xStore.methods
-      .flipEligOnRedeem(vaultId)
-      .call({ from: account })
-      .then((retVal) => setFlipElig(retVal));
-  };
-
   const fetchXTokenAddress = () => {
     xStore.methods
       .xTokenAddress(vaultId)
       .call({ from: account })
       .then((retVal) => setXTokenAddress(retVal));
-  };
-
-  const fetchNegateEligibility = () => {
-    xStore.methods
-      .negateEligibility(vaultId)
-      .call({ from: account })
-      .then((retVal) => setNegateElig(retVal));
-  };
-
-  const fetchEvents = () => {
-    const eventsAcc = {
-      store: [],
-      nftx: [],
-      storeResCount: 0,
-      nftxResCount: 0,
-    };
-    web3.eth.getBlockNumber((error, currentBlock) => {
-      const initialBlock = 11442000;
-      let startBlock = initialBlock;
-      while (startBlock < currentBlock) {
-        let endBlock =
-          startBlock + 50000 > currentBlock ? currentBlock : startBlock + 50000;
-        xStore
-          .getPastEvents("allEvents", {
-            fromBlock: startBlock,
-            toBlock: endBlock,
-          })
-          .then((events) => {
-            const _events = events
-              .filter((event) => event.returnValues.vaultId === vaultId)
-              .map((event) => {
-                event.contract = "XStore";
-                return event;
-              });
-            eventsAcc.store = eventsAcc.store.concat(_events);
-            eventsAcc.storeResCount += 1;
-            if (
-              eventsAcc.storeResCount >=
-              (currentBlock - initialBlock) / 50000
-            ) {
-              setStoreEvents(eventsAcc.store);
-            }
-          });
-        nftx
-          .getPastEvents("allEvents", {
-            fromBlock: startBlock,
-            toBlock: endBlock,
-          })
-          .then((events) => {
-            const _events = events
-              .filter((event) => event.returnValues.vaultId === vaultId)
-              .map((event) => {
-                event.contract = "NFTX";
-                return event;
-              });
-            eventsAcc.nftx = eventsAcc.nftx.concat(_events);
-            eventsAcc.nftxResCount += 1;
-            if (
-              eventsAcc.storeResCount >=
-              (currentBlock - initialBlock) / 50000
-            ) {
-              setNftxEvents(eventsAcc.nftx);
-            }
-          });
-        startBlock = endBlock;
-      }
-    });
-  };
-
-  const parseHoldings = () => {
-    const _holdings = {};
-    storeEvents
-      .filter(
-        (event) =>
-          event.event === "HoldingsAdded" || event.event === "HoldingsRemoved"
-      )
-      .forEach((event) => {
-        const { blockNumber, returnValues } = event;
-        const { id } = returnValues;
-        if (!_holdings[id] || _holdings[id].blockNumber < blockNumber) {
-          _holdings[id] = { blockNumber: blockNumber, name: event.event };
-        } else if (_holdings[id].blockNumber === blockNumber) {
-          _holdings[id].collision = true;
-        }
-      });
-    let remainingCalls = 0;
-    const finish = () => {
-      if (remainingCalls === 0) {
-        setHoldings(
-          Object.keys(_holdings).filter(
-            (key) => _holdings[key].name === "HoldingsAdded"
-          )
-        );
-      }
-    };
-    Object.keys(_holdings).forEach((key) => {
-      if (_holdings[key].collision) {
-        remainingCalls += 1;
-        xStore.methods
-          .holdingsContains(vaultId, key)
-          .call({ from: account })
-          .then((retVal) => {
-            _holdings[key].name = "HoldingsAdded";
-            remainingCalls -= 1;
-            finish();
-          });
-      }
-    });
-    finish();
-  };
-
-  const parseRequests = () => {
-    const _pending = {};
-    storeEvents
-      .filter((event) => event.event === "RequesterSet")
-      .forEach((event) => {
-        const { blockNumber, returnValues } = event;
-        const { id, requester } = returnValues;
-        if (!_pending[id] || _pending[id].blockNumber < blockNumber) {
-          _pending[id] = { blockNumber: blockNumber, requester: requester };
-        } else if (
-          _pending[id].blockNumber === blockNumber &&
-          _pending[id].requester !== requester
-        ) {
-          _pending[id].collision = true;
-        }
-      });
-    let remainingCalls = 0;
-    const finish = () => {
-      if (remainingCalls === 0) {
-        setPending(
-          Object.keys(_pending).filter(
-            (key) => _pending[key].requester !== zeroAddress
-          )
-        );
-      }
-    };
-    Object.keys(_pending).forEach((key) => {
-      if (_pending[key].collision) {
-        remainingCalls += 1;
-        xStore.methods
-          .requester(vaultId, key)
-          .call({ from: account })
-          .then((retVal) => {
-            _pending[key].requester = retVal;
-            remainingCalls -= 1;
-            finish();
-          });
-      }
-    });
-    finish();
-  };
-
-  const parseEligibilities = () => {
-    const _eligibilities = {};
-    storeEvents
-      .filter((event) => event.event === "IsEligibleSet")
-      .forEach((event) => {
-        const { blockNumber, returnValues } = event;
-        const { id, _bool } = returnValues;
-        if (
-          !_eligibilities[id] ||
-          _eligibilities[id].blockNumber < blockNumber
-        ) {
-          _eligibilities[id] = { blockNumber: blockNumber, bool: _bool };
-        } else if (
-          _eligibilities[id].blockNumber === blockNumber &&
-          _eligibilities[id].bool !== _bool
-        ) {
-          _eligibilities[id].collision = true;
-        }
-      });
-    let remainingCalls = 0;
-    const finish = () => {
-      if (remainingCalls === 0) {
-        setEligibilities(
-          Object.keys(_eligibilities).filter((key) => _eligibilities[key].bool)
-        );
-      }
-    };
-    Object.keys(_eligibilities).forEach((key) => {
-      if (_eligibilities[key].collision) {
-        remainingCalls += 1;
-        xStore.methods
-          .isEligible(vaultId, key)
-          .call({ from: account })
-          .then((retVal) => {
-            _eligibilities[key].bool = retVal;
-            remainingCalls -= 1;
-            finish();
-          });
-      }
-    });
-    finish();
   };
 
   const handleClickManage = () => {
@@ -449,7 +210,7 @@ function D1FundView() {
           makeFetchCalls();
           setPanelOpened(false);
         }}
-        allowMintRequests={allowMintReqs}
+        allowMintRequests={false}
         onMakeRequest={() => {
           setPanelOpened(false);
           setTimeout(() => {
@@ -626,18 +387,10 @@ function D1FundView() {
                 <ContextMenu>
                   <ContextMenuItem
                     onClick={() => {
-                      if (flipElig) {
-                        handleMintRequest(vaultId, fundSymbol);
-                      } else {
-                        handleMint(vaultId, fundSymbol);
-                      }
+                      handleMint(vaultId, fundSymbol);
                     }}
                   >
-                    {flipElig
-                      ? "Mint Request"
-                      : allowMintReqs
-                      ? "Mint / Request"
-                      : "Mint"}
+                    {"Mint"}
                   </ContextMenuItem>
                   <ContextMenuItem
                     onClick={() => handleRedeem(entry.vaultId, entry.ticker)}
@@ -670,19 +423,19 @@ function D1FundView() {
                     : "",
                 },
               ];
-              if (![nftName, nftSymbol, nftAddress].includes(null)) {
+              if (![assetName, assetSymbol, assetAddress].includes(null)) {
                 arr.splice(0, 0, {
-                  key: "NFT",
+                  key: "BPT",
                   value: {
-                    name: nftName,
-                    symbol: nftSymbol,
-                    address: nftAddress,
+                    name: assetName,
+                    symbol: assetSymbol,
+                    address: assetAddress,
                   },
                 });
               }
               if (![fundName, fundSymbol, xTokenAddress].includes(null)) {
                 arr.splice(0, 0, {
-                  key: "ERC20",
+                  key: "Fund",
                   value: {
                     name: fundName,
                     symbol: fundSymbol,
@@ -697,7 +450,7 @@ function D1FundView() {
                   value: manager,
                 });
               }
-              if (!isClosed && !negateElig) {
+              /* if (!isClosed && !negateElig) {
                 arr.push({
                   key: "Requests",
                   value: flipElig
@@ -753,7 +506,7 @@ function D1FundView() {
                       : "Allowlist",
                   value: "Loading...",
                 });
-              }
+              } */
               return arr;
             })()}
             renderEntry={({ key, value }) => [
@@ -804,7 +557,7 @@ function D1FundView() {
                     key
                   ) && value.length === 1 ? (
                     `[ ${value} ]`
-                  ) : ["ERC20", "NFT"].includes(key) ? (
+                  ) : ["Fund", "BPT"].includes(key) ? (
                     <div>
                       <div
                         css={`
@@ -860,4 +613,4 @@ function D1FundView() {
   );
 }
 
-export default D1FundView;
+export default D2FundView;

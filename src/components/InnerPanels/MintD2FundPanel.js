@@ -11,14 +11,20 @@ import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import Nftx from "../../contracts/NFTX.json";
 import XStore from "../../contracts/XStore.json";
-import IErc721 from "../../contracts/IERC721.json";
 import KittyCore from "../../contracts/KittyCore.json";
+import IErc721 from "../../contracts/IERC721.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 import addresses from "../../addresses/mainnet.json";
 
-function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
+function MintD2FundPanel({
+  vaultId,
+  ticker,
+  onContinue,
+  onMakeRequest,
+  allowMintRequests,
+}) {
   const { account } = useWallet();
   const injected = window.ethereum;
   const provider =
@@ -38,13 +44,14 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
 
   const [nftData, setNftData] = useState([]);
   const [nftEligData, setNftEligData] = useState([]);
+  const [negateElig, setNegateElig] = useState(null);
 
   const [txIsApproval, setTxIsApproval] = useState(false);
   const [txHash, setTxHash] = useState(null);
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
-  const [doneRequesting, setDoneRequesting] = useState(false);
+  const [doneMinting, setDoneMinting] = useState(false);
 
   const isKittyAddr = (address) => {
     const kittyAddr = "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d";
@@ -57,6 +64,10 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
       .call({ from: account })
       .then((retVal) => {
         setNftAddress(retVal);
+        xStore.methods
+          .negateEligibility(vaultId)
+          .call({ from: account })
+          .then((retVal) => setNegateElig(retVal));
       });
   }, []);
 
@@ -192,13 +203,13 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
       }
     });
 
-  const handleRequest = () => {
+  const handleMint = () => {
     setTxIsApproval(false);
     setTxHash(null);
     setTxReceipt(null);
     const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
     nftx.methods
-      .requestMint(vaultId, tokenIdsArr)
+      .mint(vaultId, tokenIdsArr, "0")
       .send(
         {
           from: account,
@@ -208,7 +219,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
       .on("error", (error) => setTxError(error))
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
-        setDoneRequesting(true);
+        setDoneMinting(true);
         setTxReceipt(receipt);
         console.log(receipt);
       });
@@ -265,7 +276,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
     <Button
       label={isApprovedForAll ? "Unapprove All" : "Approve All"}
       wide={true}
-      disabled={!account || !nftAddress || isKittyAddr(nftAddress)}
+      disabled={!account}
       onClick={() => handleSetApproveAll(!isApprovedForAll)}
       css={`
         margin-top: 15px;
@@ -278,7 +289,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
     />
   );
 
-  if (!doneRequesting && (!txHash || (txIsApproval && txReceipt))) {
+  if (!doneMinting && (!txHash || (txIsApproval && txReceipt))) {
     return (
       <div
         css={`
@@ -297,7 +308,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
           `}
         />
         <Button
-          label={`Request ${
+          label={`Mint ${
             nftData.length > 0 ? nftData.length + " " : ""
           }${ticker}`}
           wide={true}
@@ -310,7 +321,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
                 (!elem.approval && !isApprovedForAll)
             ).length > 0
           }
-          onClick={handleRequest}
+          onClick={handleMint}
         />
         <div
           css={`
@@ -345,13 +356,17 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
                     return "";
                   } else if (!nftData[index].existence) {
                     return "DNE";
-                  } else if (nftEligData[index]) {
-                    return (
-                      <Button
-                        label="Mint now"
-                        onClick={() => onMintNow(tokenId)}
-                      />
-                    );
+                  } else if (
+                    (nftEligData[index] === false && !negateElig) ||
+                    (nftEligData[index] && negateElig)
+                  ) {
+                    if (allowMintRequests) {
+                      return (
+                        <Button label="Request Mint" onClick={onMakeRequest} />
+                      );
+                    } else {
+                      return "Not eligible";
+                    }
                   } else if (!nftData[index].ownership) {
                     return "Not owner";
                   } else if (!nftData[index].approval && !isApprovedForAll) {
@@ -423,7 +438,7 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
         >
           {txIsApproval
             ? "Unapproval was successful"
-            : `${ticker} requested successfully`}
+            : `${ticker} minted successfully`}
 
           <IconCheck
             css={`
@@ -432,14 +447,6 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
             `}
           />
         </div>
-        <div
-          css={`
-            margin-bottom: 20px;
-          `}
-        >
-          Approval may take 24-48 hours. If you have questions please visit our
-          Discord server.
-        </div>
         <Button label="Return to Page" wide={true} onClick={handleViewNFT} />
         {isApprovedForAll && approveOrUnapproveAllBtn}
       </div>
@@ -447,4 +454,4 @@ function MintRequestPanel({ vaultId, ticker, onContinue, onMintNow }) {
   }
 }
 
-export default MintRequestPanel;
+export default MintD2FundPanel;

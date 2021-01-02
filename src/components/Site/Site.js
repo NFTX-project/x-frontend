@@ -16,16 +16,14 @@ import TopBar from "../TopBar/TopBar";
 import Welcome from "../Welcome/Welcome";
 import RoundButton from "./RoundButton/RoundButton";
 import Landing from "../Landing/Landing";
-import NftList from "../NftList/NftList";
+import NftFundList from "../NftFundList/NftFundList";
 import D1FundList from "../D1FundList/D1FundList";
 import Backend from "../Backend/Backend";
-import D1FundView from "../D1FundView/D1FundView";
+import FundView from "../FundView/FundView";
 import Bounties from "../Bounties/Bounties";
 
 function Site({ selectorNetworks }) {
   const theme = useTheme();
-
-  // const { account, balance, isContract: isContractAccount } = useWallet();
 
   const [solidTopBar, setSolidTopBar] = useState(false);
 
@@ -75,6 +73,7 @@ function Site({ selectorNetworks }) {
             <RoundButton text="Landing" link="/landing" />
             <RoundButton text="D1 Funds" link="/" />
             <RoundButton text="Bounties" link="/bounties" />
+
             <a
               href="https://nftx.gitbook.io/nftx/"
               target="_blank"
@@ -127,10 +126,13 @@ function Site({ selectorNetworks }) {
               <Backend />
             </Route>
             <Route path="/fund">
-              <D1FundView />
+              <FundView />
             </Route>
             <Route path="/bounties">
               <Bounties />
+            </Route>
+            <Route path="/funds">
+              <NftFundList />
             </Route>
           </div>
           <div
