@@ -72,7 +72,7 @@ function Site({ selectorNetworks }) {
           >
             <RoundButton text="Landing" link="/landing" />
             <RoundButton text="D1 Funds" link="/" />
-            <RoundButton text="Bounties" link="/bounties" />
+            
 
             <a
               href="https://nftx.gitbook.io/nftx/"
