@@ -67,8 +67,6 @@ function Backend() {
     setPanelOpened(true);
   };
 
-  return { test: "abc" };
-
   return (
     <div>
       <Header primary="Contracts" />
