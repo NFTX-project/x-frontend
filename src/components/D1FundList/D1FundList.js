@@ -44,7 +44,6 @@ function D1FundList() {
   const { current: web3 } = useRef(new Web3(provider));
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
-
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);

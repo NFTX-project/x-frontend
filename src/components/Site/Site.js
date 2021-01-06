@@ -72,7 +72,6 @@ function Site({ selectorNetworks }) {
           >
             <RoundButton text="Landing" link="/landing" />
             <RoundButton text="D1 Funds" link="/" />
-            
 
             <a
               href="https://nftx.gitbook.io/nftx/"
@@ -182,6 +181,9 @@ function Site({ selectorNetworks }) {
               rel="noreferrer"
             >
               GitHub
+            </a>
+            <a href="https://blog.nftx.org/" target="_blank" rel="noreferrer">
+              Blog
             </a>
             <a
               href="https://discord.gg/hytQVM5ZxR"
