@@ -116,7 +116,10 @@ function ManageFundPanel({
 
   const handleSetNegateEligibility = () => {
     nftx.methods
-      .setNegateEligibility(vaultId, shouldNegate)
+      .setNegateEligibility(
+        vaultId,
+        shouldNegate.toLowerCase().includes("true")
+      )
       .send(
         {
           from: account,
