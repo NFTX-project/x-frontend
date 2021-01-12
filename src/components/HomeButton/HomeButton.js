@@ -11,6 +11,7 @@ function HomeButton({ onClick, ...props }) {
         position: absolute;
         top: ${1 * GU}px;
         left: ${1 * GU}px;
+        padding-left: 5px;
         display: flex;
         align-items: center;
         justify-content: center;
