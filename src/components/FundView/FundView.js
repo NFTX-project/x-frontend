@@ -48,7 +48,7 @@ function FundView() {
   if (invalidVid) {
     return <div>Invalid Fund ID</div>;
   } else if (!degree) {
-    return <div>Loading</div>;
+    return <div></div>;
   } else if (degree === 1) {
     return <D1FundView />;
   } else {
