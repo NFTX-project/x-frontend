@@ -17,7 +17,7 @@ import XStore from "../../contracts/XStore.json";
 import Nftx from "../../contracts/NFTX.json";
 import XToken from "../../contracts/XToken.json";
 
-function RedeemD1FundPanel({ vaultId, address, ticker, onContinue }) {
+function RedeemD1FundPanel({ fundData, ticker, onContinue }) {
   const { account } = useWallet();
   const injected = window.ethereum;
   const provider =
@@ -28,7 +28,7 @@ function RedeemD1FundPanel({ vaultId, address, ticker, onContinue }) {
   const { current: web3 } = useRef(new Web3(provider));
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
-  const xToken = new web3.eth.Contract(XToken.abi, address);
+  const xToken = new web3.eth.Contract(XToken.abi, fundData.fundToken.address);
 
   const [amount, setAmount] = useState("");
 
@@ -58,7 +58,7 @@ function RedeemD1FundPanel({ vaultId, address, ticker, onContinue }) {
     setTxHash(null);
     setTxReceipt(null);
     nftx.methods
-      .redeem(vaultId, amount)
+      .redeem(fundData.vaultId, amount)
       .send(
         {
           from: account,
@@ -131,7 +131,7 @@ function RedeemD1FundPanel({ vaultId, address, ticker, onContinue }) {
               <Button
                 label={`Approve ${
                   !isNaN(parseInt(amount)) ? parseInt(amount) : ""
-                } ${ticker}`}
+                } ${fundData.fundToken.symbol}`}
                 wide={true}
                 disabled={!amount || !account}
                 onClick={handleApprove}
@@ -140,9 +140,9 @@ function RedeemD1FundPanel({ vaultId, address, ticker, onContinue }) {
         </div>
 
         <Button
-          label={`Redeem ${
-            !isNaN(parseInt(amount)) ? parseInt(amount) : ""
-          } ${ticker}`}
+          label={`Redeem ${!isNaN(parseInt(amount)) ? parseInt(amount) : ""} ${
+            fundData.fundToken.symbol
+          }`}
           wide={true}
           disabled={!amount || !account || !isApproved()}
           onClick={handleRedeem}
