@@ -38,8 +38,6 @@ function Landing({ selectorNetworks }) {
     addFavorite,
   } = useFavoriteFunds();
 
-  console.log("suggestedFunds", suggestedFunds);
-
   const handleCreate = useCallback(
     (degree) => {
       /* // reset the creation state

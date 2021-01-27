@@ -5,6 +5,8 @@ import {
   Button,
   AddressField,
   IconCheck,
+  Info,
+  IconExternal,
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
@@ -16,8 +18,10 @@ import addresses from "../../addresses/mainnet.json";
 import XStore from "../../contracts/XStore.json";
 import Nftx from "../../contracts/NFTX.json";
 import XToken from "../../contracts/XToken.json";
+import balancerPools from "../../addresses/balancePools.json";
 
-function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
+function RedeemD2FundPanel({ fundData, balances, onContinue }) {
+  console.log("fundData", fundData);
   const { account } = useWallet();
   const injected = window.ethereum;
   const provider =
@@ -28,18 +32,32 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
   const { current: web3 } = useRef(new Web3(provider));
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
-  const xToken = new web3.eth.Contract(XToken.abi, address);
+  const xToken = new web3.eth.Contract(XToken.abi, fundData.fundToken.address);
 
   const [amount, setAmount] = useState("");
 
   const [allowance, setAllowance] = useState(null);
   const [doneRedeeming, setDoneRedeeming] = useState(false);
-  const [nftIdsArr, setNftIdsArr] = useState(null);
+  const [amountRedeemed, setAmountRedeemed] = useState([]);
+  // const [nftIdsArr, setNftIdsArr] = useState(null);
 
   const [txIsApproval, setTxIsApproval] = useState(null);
   const [txHash, setTxHash] = useState(null);
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
+
+  const truncateDecimal = (inputStr, maxLength = 6) => {
+    if (!inputStr.includes(".")) {
+      return inputStr;
+    } else {
+      const arr = inputStr.split(".");
+      if (arr[1].length > maxLength) {
+        const shortStr = arr[1].substring(0, maxLength);
+        arr[1] = shortStr;
+      }
+      return arr.join(".");
+    }
+  };
 
   useEffect(() => {
     fetchAllowance();
@@ -58,7 +76,7 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
     setTxHash(null);
     setTxReceipt(null);
     nftx.methods
-      .redeem(vaultId, amount)
+      .redeem(fundData.vaultId, web3.utils.toWei(amount))
       .send(
         {
           from: account,
@@ -68,8 +86,6 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
       .on("error", (error) => setTxError(error))
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
-        receipt.events["Redeem"] &&
-          setNftIdsArr(receipt.events["Redeem"].returnValues.nftIds);
         setDoneRedeeming(true);
         setTxReceipt(receipt);
         console.log(receipt);
@@ -97,26 +113,83 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
       });
   };
 
-  const isApproved = () =>
-    allowance &&
-    !isNaN(parseInt(amount)) &&
-    parseInt(amount) <= web3.utils.fromWei(allowance);
+  const isApproved = () => {
+    return (
+      allowance &&
+      !isNaN(parseFloat(amount)) &&
+      parseFloat(amount) <= web3.utils.fromWei(allowance)
+    );
+  };
 
   if (!doneRedeeming && (!txHash || (txIsApproval && txReceipt))) {
     return (
       <div
         css={`
           margin-top: 20px;
+          height: 100%;
+          position: relative;
         `}
       >
+        <Info
+          css={`
+            margin-bottom: 15px;
+          `}
+        >
+          {`Every 1 ${fundData.fundToken.symbol} can redeem 1000 `}
+          {balancerPools[fundData.asset.address] ? (
+            <a
+              href={`https://pools.balancer.exchange/#/pool/${
+                balancerPools[fundData.asset.address]
+              }/`}
+              target="_blank"
+              css={`
+                text-decoration: none;
+                border-bottom: 1px solid;
+              `}
+            >
+              {fundData.asset.symbol}{" "}
+              <IconExternal
+                css={`
+                  position: absolute;
+                  top: 12px;
+                  transform: translateX(1px) scale(0.8);
+                `}
+              />
+            </a>
+          ) : (
+            fundData.asset.symbol
+          )}
+        </Info>
         <TextInput
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          placeholder="Amount (e.g. 1)"
+          placeholder="Amount of PUNK to send (e.g. 0.24)"
           wide={true}
           css={`
             margin-bottom: 10px;
           `}
+          adornment={
+            <div
+              css={`
+                transform: translate(-8px, -3px);
+                font-size: 14px;
+                cursor: pointer;
+              `}
+              onClick={() => {
+                const balanceData = balances.find((elem) => {
+                  return (
+                    elem.contract_address.toLowerCase() ===
+                    fundData.fundToken.address.toLowerCase()
+                  );
+                });
+                const _balance = (balanceData && balanceData.balance) || "0";
+                setAmount(truncateDecimal(web3.utils.fromWei(_balance), 24));
+              }}
+            >
+              MAX
+            </div>
+          }
+          adornmentPosition="end"
         />
         <div
           css={`
@@ -130,10 +203,10 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
             ) : (
               <Button
                 label={`Approve ${
-                  !isNaN(parseInt(amount)) ? parseInt(amount) : ""
-                } ${ticker}`}
+                  !isNaN(parseFloat(amount)) ? parseFloat(amount) : ""
+                } ${fundData.fundToken.symbol}`}
                 wide={true}
-                disabled={!amount || !account}
+                disabled={!amount || !account || parseFloat(amount) === 0}
                 onClick={handleApprove}
               />
             ))()}
@@ -141,8 +214,8 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
 
         <Button
           label={`Redeem ${
-            !isNaN(parseInt(amount)) ? parseInt(amount) : ""
-          } ${ticker}`}
+            !isNaN(parseFloat(amount)) ? parseFloat(amount) * 1000 : ""
+          } ${fundData.asset.symbol}`}
           wide={true}
           disabled={!amount || !account || !isApproved()}
           onClick={handleRedeem}
@@ -179,7 +252,7 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
         <div
           css={`
             margin-top: 28px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
           `}
         >
           Redemption was successful
@@ -189,16 +262,6 @@ function RedeemD2FundPanel({ vaultId, address, ticker, onContinue }) {
               color: #5ac994;
             `}
           />
-        </div>
-        <div
-          css={`
-            background: rgba(53, 43, 78, 0.7);
-            padding: 6px 8px 3px;
-            border-radius: 3px;
-            margin-bottom: 15px;
-          `}
-        >
-          {nftIdsArr.length === 0 ? "<empty>" : nftIdsArr.join(", ")}
         </div>
         <Button label="Return To Page" wide={true} onClick={onContinue} />
       </div>

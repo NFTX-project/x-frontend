@@ -48,7 +48,6 @@ function Suggestions({ suggestedFunds }) {
     <Box heading="Popular Funds" padding={0}>
       <FavoritesMenu
         items={suggestedFunds.map((fund) => {
-          console.log("MAP", fund);
           const knownOrg = getKnownFunds(network.type, fund.address);
           return {
             favorited: isAddressFavorited(fund.address),

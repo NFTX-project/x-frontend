@@ -1,0 +1,97 @@
+[
+  {
+    "vaultId": 0,
+    "verified": true,
+    "amm": true
+  },
+  {
+    "vaultId": 1,
+    "verified": true,
+    "amm": true
+  },
+  {
+    "vaultId": 2,
+    "verified": true,
+    "amm": true
+  },
+  {
+    "vaultId": 3,
+    "verified": true,
+    "amm": true
+  },
+  {
+    "vaultId": 4,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 5,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 6,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 7,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 8,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 9,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 10,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 11,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 12,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 13,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 14,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 15,
+    "verified": true,
+    "amm": true
+  },
+  {
+    "vaultId": 16,
+    "verified": true,
+    "amm": true
+  },
+  {
+    "vaultId": 17,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 18,
+    "verified": true,
+    "amm": false
+  }
+]

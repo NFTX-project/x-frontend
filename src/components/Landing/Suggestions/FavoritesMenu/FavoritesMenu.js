@@ -4,7 +4,6 @@ import { useTheme } from "@aragon/ui";
 import FavoritesMenuItem from "./FavoritesMenuItem";
 
 function FavoritesMenu({ items, onActivate, onFavoriteUpdate, disabled }) {
-  console.log("ITEMS", items);
   const theme = useTheme();
   return (
     <ul

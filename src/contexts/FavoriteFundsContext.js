@@ -116,6 +116,7 @@ class FavoriteFundsProvider extends React.Component {
           favoriteFunds,
           addFavorite: this.addFavorite,
           isAddressFavorited: this.isAddressFavorited,
+          isVaultIdFavorited: this.isVaultIdFavorited,
           removeFavoriteByVaultId: this.removeFavoriteByVaultId,
           updateFavoriteFunds: this.updateFavoriteFunds,
         }}

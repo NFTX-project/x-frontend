@@ -6,6 +6,8 @@ import {
   AddressField,
   IconCheck,
   IconCircleCheck,
+  IconExternal,
+  Info,
 } from "@aragon/ui";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
@@ -13,18 +15,15 @@ import Nftx from "../../contracts/NFTX.json";
 import XStore from "../../contracts/XStore.json";
 import KittyCore from "../../contracts/KittyCore.json";
 import IErc721 from "../../contracts/IERC721.json";
+import IErc20 from "../../contracts/IERC20.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
 import addresses from "../../addresses/mainnet.json";
+import balancerPools from "../../addresses/balancePools.json";
+import bn from "bn.js";
 
-function MintD2FundPanel({
-  vaultId,
-  ticker,
-  onContinue,
-  onMakeRequest,
-  allowMintRequests,
-}) {
+function MintD2FundPanel({ fundData, balances, onContinue }) {
   const { account } = useWallet();
   const injected = window.ethereum;
   const provider =
@@ -35,25 +34,41 @@ function MintD2FundPanel({
   const { current: web3 } = useRef(new Web3(provider));
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);
   const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
+  const bpt = new web3.eth.Contract(IErc20.abi, fundData.asset.address);
 
-  const [tokenIds, setTokenIds] = useState("");
-  const [tokenIdsArr, setTokenIdsArr] = useState([]);
+  // const [tokenIds, setTokenIds] = useState("");
+  // const [tokenIdsArr, setTokenIdsArr] = useState([]);
+  const [amount, setAmount] = useState("");
 
-  const [nftAddress, setNftAddress] = useState("");
-  const [isApprovedForAll, setIsApprovedForAll] = useState(false);
+  // const [nftAddress, setNftAddress] = useState("");
+  // const [isApprovedForAll, setIsApprovedForAll] = useState(false);
 
-  const [nftData, setNftData] = useState([]);
-  const [nftEligData, setNftEligData] = useState([]);
-  const [negateElig, setNegateElig] = useState(null);
+  // const [nftData, setNftData] = useState([]);
+  // const [nftEligData, setNftEligData] = useState([]);
+  // const [negateElig, setNegateElig] = useState(null);
 
   const [txIsApproval, setTxIsApproval] = useState(false);
   const [txHash, setTxHash] = useState(null);
   const [txReceipt, setTxReceipt] = useState(null);
   const [txError, setTxError] = useState(null);
 
+  const [allowance, setAllowance] = useState(null);
   const [doneMinting, setDoneMinting] = useState(false);
 
-  const isKittyAddr = (address) => {
+  /* const truncateDecimal = (inputStr, maxLength = 6) => {
+    if (!inputStr.includes(".")) {
+      return inputStr;
+    } else {
+      const arr = inputStr.split(".");
+      if (arr[1].length > maxLength) {
+        const shortStr = arr[1].substring(0, maxLength);
+        arr[1] = shortStr;
+      }
+      return arr.join(".");
+    }
+  }; */
+
+  /* const isKittyAddr = (address) => {
     const kittyAddr = "0x06012c8cf97BEaD5deAe237070F9587f8E7A266d";
     return address.toLowerCase() === kittyAddr.toLowerCase();
   };
@@ -69,147 +84,33 @@ function MintD2FundPanel({
           .call({ from: account })
           .then((retVal) => setNegateElig(retVal));
       });
-  }, []);
+  }, []); */
 
   useEffect(() => {
-    if (nftAddress && account) {
-      fetchIsApprovedAll();
-    }
-  }, [nftAddress, account]);
+    fetchAllowance();
+  }, [account]);
 
-  useEffect(() => {
-    let arr = [...tokenIds.matchAll(/\d+/g)];
-    var uniq = [...new Set(arr.map((str) => parseInt(str)))];
-    setTokenIdsArr(uniq);
-  }, [tokenIds]);
-
-  useEffect(() => {
-    updateNftOwnerData();
-    updateNftEligData();
-  }, [tokenIdsArr]);
-
-  const fetchIsApprovedAll = () => {
-    if (!isKittyAddr(nftAddress)) {
-      const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
-      nft.methods
-        .isApprovedForAll(account, addresses.nftxProxy)
+  const fetchAllowance = () => {
+    if (account)
+      bpt.methods
+        .allowance(account, addresses.nftxProxy)
         .call({ from: account })
-        .then((retVal) => {
-          setIsApprovedForAll(retVal);
-        });
-    }
+        .then((retVal) => setAllowance(retVal));
   };
-
-  const updateNftOwnerData = () => {
-    if (tokenIdsArr.length > 0) {
-      const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
-      const nftExistenceArr = [];
-      const nftOwnershipArr = [];
-      let count = 0;
-      tokenIdsArr.forEach((tokenId, index) => {
-        const finish = (retVal) => {
-          nftExistenceArr[index] = retVal !== "DNE";
-          nftOwnershipArr[index] = retVal === account;
-          count += 1;
-          if (count === tokenIdsArr.length) {
-            fetchApproval(nftExistenceArr, nftOwnershipArr).then(
-              (nftApprovalArr) => {
-                const _nftData = nftExistenceArr.map((elem, _index) => ({
-                  tokenId: tokenId,
-                  existence: elem,
-                  ownership: nftOwnershipArr[_index],
-                  approval: nftApprovalArr[_index],
-                }));
-                setNftData(_nftData);
-              }
-            );
-          }
-        };
-        nft.methods
-          .ownerOf(tokenId)
-          .call({ from: account })
-          .then((retVal) => finish(retVal))
-          .catch((error) => finish("DNE"));
-      });
-    } else {
-      setNftData([]);
-    }
-  };
-
-  const updateNftEligData = () => {
-    if (tokenIdsArr.length > 0) {
-      const nftEligArr = [];
-      let count = 0;
-      tokenIdsArr.forEach((tokenId, index) => {
-        xStore.methods
-          .isEligible(vaultId, tokenId)
-          .call({ from: account })
-          .then((retVal) => {
-            nftEligArr[index] = retVal;
-            count += 1;
-            if (count === tokenIdsArr.length) {
-              setNftEligData(nftEligArr);
-            }
-          });
-      });
-    }
-  };
-
-  const fetchApproval = (nftExistenceArr, nftOwnershipArr) =>
-    new Promise((resolve, reject) => {
-      if (nftOwnershipArr.length > 0) {
-        const abi = isKittyAddr(nftAddress) ? KittyCore.abi : IErc721.abi;
-        const nft = new web3.eth.Contract(abi, nftAddress);
-        const newNftApprovalArr = [];
-        let count = 0;
-        tokenIdsArr.forEach((tokenId, index) => {
-          const finish = (retVal) => {
-            newNftApprovalArr[index] = retVal === addresses.nftxProxy;
-            count += 1;
-            if (count === nftOwnershipArr.length) {
-              resolve(newNftApprovalArr);
-            }
-          };
-          if (!nftExistenceArr[index] || !nftOwnershipArr[index]) {
-            finish(false);
-          } else if (isApprovedForAll) {
-            finish(true);
-          } else {
-            if (isKittyAddr(nftAddress)) {
-              nft.methods
-                .kittyIndexToApproved(tokenId)
-                .call({ from: account })
-                .then((retVal) => {
-                  finish(retVal);
-                })
-                .catch((error) => {
-                  console.log("error", error);
-                  finish(false);
-                });
-            } else {
-              nft.methods
-                .getApproved(tokenId)
-                .call({ from: account })
-                .then((retVal) => {
-                  finish(retVal);
-                })
-                .catch((error) => {
-                  console.log("error", error);
-                  finish(false);
-                });
-            }
-          }
-        });
-      }
-    });
 
   const handleMint = () => {
     setTxIsApproval(false);
     setTxHash(null);
     setTxReceipt(null);
+    window._bn = bn;
+    window._amount = amount;
     const nftx = new web3.eth.Contract(Nftx.abi, addresses.nftxProxy);
+    const numerator = new bn(web3.utils.toWei(amount));
+    const denominator = new bn(1000);
+    const _amountToMint = numerator.div(denominator).toString();
+    console.log("_amountToMint", _amountToMint);
     nftx.methods
-      .mint(vaultId, tokenIdsArr, "0")
+      .mint(fundData.vaultId, [], _amountToMint)
       .send(
         {
           from: account,
@@ -225,69 +126,30 @@ function MintD2FundPanel({
       });
   };
 
-  const handleViewNFT = () => {
-    onContinue();
-  };
-
   const handleApprove = (tokenId) => {
     setTxHash(null);
     setTxReceipt(null);
     setTxIsApproval(true);
-    const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
+    const nft = new web3.eth.Contract(IErc721.abi, fundData.asset.address);
     nft.methods
       .approve(addresses.nftxProxy, tokenId)
       .send({ from: account }, (error, txHash) => {})
       .on("error", (error) => setTxError(error))
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
-        fetchIsApprovedAll();
-        setNftData([]);
+        fetchAllowance();
         setTxReceipt(receipt);
-        updateNftOwnerData();
         console.log(receipt);
       });
   };
 
-  const handleSetApproveAll = (isApproved) => {
-    setTxHash(null);
-    setTxReceipt(null);
-    setTxIsApproval(true);
-    const nft = new web3.eth.Contract(IErc721.abi, nftAddress);
-    nft.methods
-      .setApprovalForAll(addresses.nftxProxy, isApproved)
-      .send(
-        {
-          from: account,
-        },
-        (error, txHash) => {}
-      )
-      .on("error", (error) => setTxError(error))
-      .on("transactionHash", (txHash) => setTxHash(txHash))
-      .on("receipt", (receipt) => {
-        fetchIsApprovedAll();
-        setNftData([]);
-        setTxReceipt(receipt);
-        updateNftOwnerData();
-        console.log(receipt);
-      });
+  const isApproved = () => {
+    return (
+      allowance &&
+      !isNaN(parseInt(amount)) &&
+      parseInt(amount) <= web3.utils.fromWei(allowance)
+    );
   };
-
-  const approveOrUnapproveAllBtn = (
-    <Button
-      label={isApprovedForAll ? "Unapprove All" : "Approve All"}
-      wide={true}
-      disabled={!account}
-      onClick={() => handleSetApproveAll(!isApprovedForAll)}
-      css={`
-        margin-top: 15px;
-        bottom: 0;
-        ${isApprovedForAll ||
-        nftData.filter((elem) => elem.ownership && !elem.approval).length < 2
-          ? "position: absolute;"
-          : ""}
-      `}
-    />
-  );
 
   if (!doneMinting && (!txHash || (txIsApproval && txReceipt))) {
     return (
@@ -298,104 +160,101 @@ function MintD2FundPanel({
           position: relative;
         `}
       >
+        <Info
+          css={`
+            margin-bottom: 15px;
+          `}
+        >
+          {`Every 1 ${fundData.fundToken.symbol} requires 1000 `}
+          {balancerPools[fundData.asset.address] ? (
+            <a
+              href={`https://pools.balancer.exchange/#/pool/${
+                balancerPools[fundData.asset.address]
+              }/`}
+              target="_blank"
+              css={`
+                text-decoration: none;
+                border-bottom: 1px solid;
+              `}
+            >
+              {fundData.asset.symbol}{" "}
+              <IconExternal
+                css={`
+                  position: absolute;
+                  top: 12px;
+                  transform: translateX(1px) scale(0.8);
+                `}
+              />
+            </a>
+          ) : (
+            fundData.asset.symbol
+          )}
+        </Info>
         <TextInput
-          value={tokenIds}
-          onChange={(event) => setTokenIds(event.target.value)}
-          placeholder="Token IDs (e.g. [7,42,88])"
+          value={amount}
+          onChange={(event) => setAmount(event.target.value)}
+          /* placeholder="Token IDs (e.g. [7,42,88])" */
+          placeholder="Amount of PUNK-CORE to send (e.g. 210.4)"
           wide={true}
           css={`
             margin-bottom: 10px;
           `}
-        />
-        <Button
-          label={`Mint ${
-            nftData.length > 0 ? nftData.length + " " : ""
-          }${ticker}`}
-          wide={true}
-          disabled={
-            nftData.length === 0 ||
-            nftData.filter(
-              (elem) =>
-                !elem.existence ||
-                !elem.ownership ||
-                (!elem.approval && !isApprovedForAll)
-            ).length > 0
+          adornment={
+            <div
+              css={`
+                transform: translate(-8px, -3px);
+                font-size: 14px;
+                cursor: pointer;
+              `}
+              onClick={() => {
+                const balanceData = balances.find((elem) => {
+                  return (
+                    elem.contract_address.toLowerCase() ===
+                    fundData.asset.address.toLowerCase()
+                  );
+                });
+                const _balance = (balanceData && balanceData.balance) || "0";
+                setAmount(web3.utils.fromWei(_balance));
+                console.log("_balance", _balance);
+                console.log(
+                  "web3.utils.fromWei(_balance)",
+                  web3.utils.fromWei(_balance)
+                );
+              }}
+            >
+              MAX
+            </div>
           }
-          onClick={handleMint}
+          adornmentPosition="end"
         />
         <div
           css={`
-            margin-top: 15px;
+            margin-top: 5px;
+            margin-bottom: 10px;
           `}
         >
-          {tokenIdsArr.map((tokenId, index) => (
-            <div
-              key={tokenId}
-              css={`
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                height: 60px;
-                position: relative;
-              `}
-            >
-              <div
-                css={`
-                  padding: 0 5px;
-                `}
-              >
-                ID #{tokenId}
-              </div>
-              <div
-                css={`
-                  padding: 0 5px;
-                `}
-              >
-                {(() => {
-                  if (!nftData[index]) {
-                    return "";
-                  } else if (!nftData[index].existence) {
-                    return "DNE";
-                  } else if (
-                    (nftEligData[index] === false && !negateElig) ||
-                    (nftEligData[index] && negateElig)
-                  ) {
-                    if (allowMintRequests) {
-                      return (
-                        <Button label="Request Mint" onClick={onMakeRequest} />
-                      );
-                    } else {
-                      return "Not eligible";
-                    }
-                  } else if (!nftData[index].ownership) {
-                    return "Not owner";
-                  } else if (!nftData[index].approval && !isApprovedForAll) {
-                    return (
-                      <Button
-                        label="Approve Transfer"
-                        onClick={() => handleApprove(tokenId)}
-                      />
-                    );
-                  } else {
-                    return <IconCircleCheck />;
-                  }
-                })()}
-              </div>
-              <div
-                className="line"
-                css={`
-                  position: absolute;
-                  bottom: 0;
-                  width: 96%;
-                  border-bottom: 1px dotted white;
-                  margin-left: 2%;
-                  opacity: 0.4;
-                `}
-              ></div>
-            </div>
-          ))}
+          {(() =>
+            isApproved() ? (
+              <Button label={`Approved`} wide={true} disabled={true} />
+            ) : (
+              <Button
+                label={`Approve ${
+                  !isNaN(parseFloat(amount)) ? parseFloat(amount) : ""
+                } ${fundData.asset.symbol}`}
+                wide={true}
+                disabled={!amount || !account}
+                onClick={handleApprove}
+              />
+            ))()}
         </div>
-        {nftAddress && !isKittyAddr(nftAddress) && approveOrUnapproveAllBtn}
+        <Button
+          label={`Mint ${
+            isNaN(parseFloat(amount)) ? "" : parseFloat(amount) / 1000 + " "
+          }${fundData.fundToken.symbol}`}
+          wide={true}
+          disabled={isNaN(amount) || amount === "" || parseFloat(amount) === 0}
+          onClick={handleMint}
+        />
       </div>
     );
   } else if (txHash && !txReceipt) {
@@ -438,7 +297,7 @@ function MintD2FundPanel({
         >
           {txIsApproval
             ? "Unapproval was successful"
-            : `${ticker} minted successfully`}
+            : `${fundData.fundToken.symbol} minted successfully`}
 
           <IconCheck
             css={`
@@ -447,8 +306,7 @@ function MintD2FundPanel({
             `}
           />
         </div>
-        <Button label="Return to Page" wide={true} onClick={handleViewNFT} />
-        {isApprovedForAll && approveOrUnapproveAllBtn}
+        <Button label="Return to Page" wide={true} onClick={onContinue} />
       </div>
     );
   }
