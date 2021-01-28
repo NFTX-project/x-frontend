@@ -51,11 +51,7 @@ class FavoriteFundsProvider extends React.Component {
   };
 
   isVaultIdFavorited = (vaultId) => {
-    return (
-      this.state.favoriteFunds.findIndex((fund) =>
-        addressesEqual(fund.vaultId, vaultId)
-      ) > -1
-    );
+    return this.state.favoriteFunds.find((fund) => fund.vaultId === vaultId);
   };
 
   addFavorite = ({ vaultId, address, ticker }) => {
