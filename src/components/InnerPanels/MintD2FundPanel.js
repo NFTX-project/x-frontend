@@ -126,13 +126,13 @@ function MintD2FundPanel({ fundData, balances, onContinue }) {
       });
   };
 
-  const handleApprove = (tokenId) => {
+  const handleApprove = () => {
     setTxHash(null);
     setTxReceipt(null);
     setTxIsApproval(true);
     const nft = new web3.eth.Contract(IErc721.abi, fundData.asset.address);
     nft.methods
-      .approve(addresses.nftxProxy, tokenId)
+      .approve(addresses.nftxProxy, web3.utils.toWei(amount))
       .send({ from: account }, (error, txHash) => {})
       .on("error", (error) => setTxError(error))
       .on("transactionHash", (txHash) => setTxHash(txHash))
