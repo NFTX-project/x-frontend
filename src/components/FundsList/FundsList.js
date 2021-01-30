@@ -193,14 +193,18 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
           const fundSymbol = fundToken.symbol;
           const fundAddress = entry.fundToken.address;
           const cells = [
-            <Link
-              css={`
-                text-decoration: none;
-              `}
-              to={`fund/${vaultId}`}
-            >
-              {fundSymbol}
-            </Link>,
+            hideInspectButton ? (
+              <div>{fundSymbol}</div>
+            ) : (
+              <Link
+                css={`
+                  text-decoration: none;
+                `}
+                to={`fund/${vaultId}`}
+              >
+                {fundSymbol}
+              </Link>
+            ),
             <div>TBD</div>,
             <div>{web3.utils.fromWei(fundToken.totalSupply)}</div>,
             <div>{entry.isD2Vault ? "D2" : "D1"}</div>,
