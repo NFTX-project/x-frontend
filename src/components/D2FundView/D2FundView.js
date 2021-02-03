@@ -341,7 +341,7 @@ function D2FundView({ fundsData, balances }) {
                 css={`
                   margin: 15px 0;
                   max-height: 190px;
-                  overflow: scroll;
+                  overflow: auto;
                 `}
               >
                 <div
