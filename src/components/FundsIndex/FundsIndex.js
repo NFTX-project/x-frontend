@@ -28,6 +28,7 @@ import Web3 from "web3";
 import FundsList from "../FundsList/FundsList";
 
 function FundsIndex({ fundsData, balances, getSelection, setSelection }) {
+  console.log("balances2", balances);
   const {
     isVaultIdFavorited,
     removeFavoriteByVaultId,

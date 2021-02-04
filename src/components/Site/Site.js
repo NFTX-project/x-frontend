@@ -63,6 +63,7 @@ function Site({ selectorNetworks }) {
           username: "ckey_61fb094bfc714946b98607c7d06",
         },
       });
+      console.log("response.data.data.items", response.data.data.items);
       setBalances(response.data.data.items);
     }
   };
@@ -100,7 +101,7 @@ function Site({ selectorNetworks }) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const checkAndFetchNewData = async () => {
-    // console.log("checking for new data...");
+    console.log("checking for new data...");
     if (eventsCount === null) {
       fetchFundsData();
       axios({
@@ -136,9 +137,9 @@ function Site({ selectorNetworks }) {
     checkAndFetchNewData();
     const interval = setInterval(async () => {
       checkAndFetchNewData();
-    }, 3000);
+    }, 5000);
     return () => clearInterval(interval);
-  }, [eventsCount]);
+  }, []);
 
   // check for balances
 

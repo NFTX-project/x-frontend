@@ -11,6 +11,7 @@ import D2FundView from "../D2FundView/D2FundView";
 import { Button, DataView, textStyle } from "@aragon/ui";
 
 function FundView({ fundsData, balances }) {
+  console.log("balances1b", balances);
   const { account } = useWallet();
   const injected = window.ethereum;
   const provider =

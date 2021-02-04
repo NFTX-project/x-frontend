@@ -37,6 +37,7 @@ import Web3Utils from "web3-utils";
 import fundInfo from "../../data/fundInfo.json";
 
 function FundsList({ fundsListData, balances, hideInspectButton }) {
+  console.log("balances3", balances);
   const {
     isVaultIdFavorited,
     removeFavoriteByVaultId,
@@ -55,6 +56,23 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
   const [panelTitle, setPanelTitle] = useState("");
   const [panelOpened, setPanelOpened] = useState(false);
   const [innerPanel, setInnerPanel] = useState(<div></div>);
+
+  const truncateDecimal = (inputStr) => {
+    if (!inputStr.includes(".")) {
+      return inputStr;
+    } else {
+      const arr = inputStr.split(".");
+      if (arr[1].length > 2) {
+        const shortStr = arr[1].substring(0, 2);
+        if (shortStr === "00" && arr[0] === "0") {
+          arr[1] = arr[1].substring(0, 3);
+        } else {
+          arr[1] = shortStr;
+        }
+      }
+      return arr.join(".");
+    }
+  };
 
   const fundData = (vaultId) =>
     fundsListData.find((fund) => fund.vaultId === vaultId);
@@ -207,7 +225,9 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
               </Link>
             ),
             <div>TBD</div>,
-            <div>{web3.utils.fromWei(fundToken.totalSupply)}</div>,
+            <div>
+              {truncateDecimal(web3.utils.fromWei(fundToken.totalSupply))}
+            </div>,
             <div>{entry.isD2Vault ? "D2" : "D1"}</div>,
             <div>
               <div
@@ -257,22 +277,7 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
                 elem.contract_address.toLowerCase() ===
                 entry.fundToken.address.toLowerCase()
             );
-            const truncateDecimal = (inputStr) => {
-              if (!inputStr.includes(".")) {
-                return inputStr;
-              } else {
-                const arr = inputStr.split(".");
-                if (arr[1].length > 2) {
-                  const shortStr = arr[1].substring(0, 2);
-                  if (shortStr === "00" && arr[0] === "0") {
-                    arr[1] = arr[1].substring(0, 3);
-                  } else {
-                    arr[1] = shortStr;
-                  }
-                }
-                return arr.join(".");
-              }
-            };
+
             cells.splice(
               5,
               0,

@@ -25,6 +25,7 @@ import FundsList from "../FundsList/FundsList";
 const zeroAddress = "0x0000000000000000000000000000000000000000";
 
 function D1FundView({ fundsData, balances }) {
+  console.log("balances2", balances);
   const location = useLocation();
   const [vaultId, setVaultId] = useState(null);
   const [invalidVid, setInvalidVid] = useState(false);
