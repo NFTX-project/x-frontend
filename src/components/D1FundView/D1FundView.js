@@ -3,14 +3,11 @@ import { useLocation, Link } from "react-router-dom";
 import { useWallet } from "use-wallet";
 import Web3 from "web3";
 import {
-  Header,
   Button,
   DataView,
   textStyle,
   AddressField,
   SidePanel,
-  ContextMenu,
-  ContextMenuItem,
 } from "@aragon/ui";
 import XStore from "../../contracts/XStore.json";
 import Nftx from "../../contracts/NFTX.json";
@@ -37,7 +34,7 @@ function D1FundView({ fundsData, balances }) {
   const provider =
     injected && injected.chainId === "0x1"
       ? injected
-      : "wss://eth-mainnet.ws.alchemyapi.io/v2/fL1uiXELcu8QeuLAxoCNmnbf_XuVlHBD";
+      : `wss://eth-mainnet.ws.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`;
 
   const { current: web3 } = useRef(new Web3(provider));
   const xStore = new web3.eth.Contract(XStore.abi, addresses.xStore);

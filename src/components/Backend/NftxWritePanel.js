@@ -22,7 +22,7 @@ function ManageFundPanel({ closePanel }) {
   const provider =
     injected && (injected.chainId === "0x1" || injected.isFrame)
       ? injected
-      : "wss://eth-mainnet.ws.alchemyapi.io/v2/fL1uiXELcu8QeuLAxoCNmnbf_XuVlHBD";
+      : `wss://eth-mainnet.ws.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`;
 
   const { current: web3 } = useRef(new Web3(provider));
 
@@ -84,6 +84,12 @@ function ManageFundPanel({ closePanel }) {
                   _funcParams.forEach((str, i) => {
                     if (str.startsWith("[") && str.endsWith("]")) {
                       _funcParams[i] = JSON.parse(str);
+                    }
+                    if (str === "false") {
+                      _funcParams[i] = false;
+                    }
+                    if (str === "true") {
+                      _funcParams[i] = true;
                     }
                   });
                   nftx.methods[func.name](..._funcParams)

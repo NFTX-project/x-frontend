@@ -70,6 +70,7 @@ function Site({ selectorNetworks }) {
   const fetchFundsData = async () => {
     // console.log("fetching funds data...");
     const cleanFundsData = (inputData) => {
+      console.log("inputDaata", inputData);
       const data = inputData.map((elem) => {
         const _fundInfo = fundInfo.find(
           (fund) => fund.vaultId === elem.vaultId
@@ -84,6 +85,9 @@ function Site({ selectorNetworks }) {
       const punk = data[16];
       data.splice(16, 1);
       data.splice(0, 0, punk);
+      /* const mask = data[20];
+      data.splice(20, 1);
+      data.splice(19, 0, mask); */
       return data;
     };
     const response = await axios({

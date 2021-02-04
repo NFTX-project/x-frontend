@@ -23,7 +23,7 @@ function Bounties() {
   const provider =
     injected && injected.chainId === "0x1"
       ? injected
-      : "wss://eth-mainnet.ws.alchemyapi.io/v2/fL1uiXELcu8QeuLAxoCNmnbf_XuVlHBD";
+      : `wss://eth-mainnet.ws.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`;
 
   const { current: web3 } = useRef(new Web3(provider));
 
