@@ -135,10 +135,10 @@ function Site({ selectorNetworks }) {
   // keep checking for new fund data
   useEffect(() => {
     checkAndFetchNewData();
-    /* const interval = setInterval(async () => {
+    const interval = setInterval(async () => {
       checkAndFetchNewData();
-    }, 5000);
-    return () => clearInterval(interval); */
+    }, 20000);
+    return () => clearInterval(interval);
   }, []);
 
   // check for balances
