@@ -239,12 +239,12 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
                 `}
               >
                 {isFinalized ? <IconCircleCheck /> : <IconCircleMinus />}{" "}
-                {getFundInfo(vaultId).verified ? (
+                {getFundInfo(vaultId) && getFundInfo(vaultId).verified ? (
                   <IconCircleCheck />
                 ) : (
                   <IconCircleMinus />
                 )}{" "}
-                {getFundInfo(vaultId).amm ? (
+                {getFundInfo(vaultId) && getFundInfo(vaultId).amm ? (
                   <IconCircleCheck />
                 ) : (
                   <IconCircleMinus />

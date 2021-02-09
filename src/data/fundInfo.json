@@ -102,6 +102,6 @@
   {
     "vaultId": 20,
     "verified": true,
-    "amm": false
+    "amm": true
   }
 ]
