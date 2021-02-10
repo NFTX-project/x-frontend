@@ -92,7 +92,7 @@ function Site({ selectorNetworks }) {
       return data;
     };
     const response = await axios({
-      url: "https://nftx.herokuapp.com/funds-data",
+      url: "https://nftx.xyz/funds-data",
       method: "get",
     });
     const _fundsData = cleanFundsData(response.data);
@@ -105,12 +105,12 @@ function Site({ selectorNetworks }) {
     if (eventsCount === null) {
       fetchFundsData();
       axios({
-        url: "https://nftx.herokuapp.com/events-count",
+        url: "https://nftx.xyz/events-count",
         method: "get",
       }).then((response) => setEventsCount(response.data));
     } else {
       const response = await axios({
-        url: "https://nftx.herokuapp.com/events-count",
+        url: "https://nftx.xyz/events-count",
         method: "get",
       });
       if (response.data !== eventsCount) {
