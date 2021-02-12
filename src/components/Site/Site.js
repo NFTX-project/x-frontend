@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { Route } from "react-router-dom";
-import { BREAKPOINTS, useTheme, IconExternal } from "@aragon/ui";
+import { BREAKPOINTS, useTheme, IconExternal, Info } from "@aragon/ui";
 import { useWallet } from "use-wallet";
 import throttle from "lodash.throttle";
 import axios from "axios";
@@ -207,6 +207,7 @@ function Site({ selectorNetworks }) {
               />
             </a>
           </div>
+
           <div
             css={`
               max-width: 950px;
@@ -215,6 +216,11 @@ function Site({ selectorNetworks }) {
               margin-bottom: 25px;
             `}
           >
+            <Info>
+              Frontend data may be outdated. We are working on a fix now. In the
+              mean time we suggest users double check values via Etherescan if
+              concerned.
+            </Info>
             <Route path="/dashboard">
               <Landing selectorNetworks={selectorNetworks} />
             </Route>
