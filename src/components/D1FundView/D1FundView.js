@@ -8,6 +8,8 @@ import {
   textStyle,
   AddressField,
   SidePanel,
+  Info,
+  IconExternal,
 } from "@aragon/ui";
 import XStore from "../../contracts/XStore.json";
 import Nftx from "../../contracts/NFTX.json";
@@ -297,13 +299,16 @@ function D1FundView({ fundsData, balances }) {
                       : (fundData.requests || []).join(", "),
                 });
               }
-              arr.push({
-                key: "Holdings",
-                value:
-                  (fundData.holdings || []).length === 0
-                    ? "<empty>"
-                    : (fundData.holdings || []).join(", "),
-              });
+              if (vaultId !== 21) {
+                arr.push({
+                  key: "Holdings",
+                  value:
+                    (fundData.holdings || []).length === 0
+                      ? "<empty>"
+                      : (fundData.holdings || []).join(", "),
+                });
+              }
+
               if (
                 (fundData.eligibilities || []).length > 0 ||
                 !fundData.negateEligibility
@@ -411,6 +416,15 @@ function D1FundView({ fundsData, balances }) {
           />
         </div>
       </div>
+      {vaultId === 21 && (
+        <Info title="Notice">
+          There is an issue fetching tokenIDs. We are working on a fix and, in
+          the mean time, you can view the CryptoCubes in this fund{" "}
+          <a href="https://opensea.io/accounts/NFTX/cryptocubes">via OpenSea</a>
+          .
+        </Info>
+      )}
+
       <SidePanel
         title={panelTitle}
         opened={panelOpened}

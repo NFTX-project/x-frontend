@@ -206,7 +206,7 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
           return fields;
         })()}
         entries={fundsListData || []}
-        entriesPerPage={20}
+        entriesPerPage={25}
         renderEntry={(entry) => {
           const { vaultId, fundToken, isFinalized } = entry;
           const fundSymbol = fundToken.symbol;
