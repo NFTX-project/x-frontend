@@ -421,7 +421,9 @@ function D1FundView({ fundsData, balances }) {
           There is an issue fetching tokenIDs. We are working on a fix and, in
           the mean time, you can view the CryptoCubes in this fund{" "}
           <a href="https://opensea.io/accounts/NFTX/cryptocubes">via OpenSea</a>
-          .
+          .<br /> Please note, also, that CryptoCube numbers differ from their
+          tokenIDs. Every CryptoCube's number is saved as a property and is
+          viewable on OpenSea as well.
         </Info>
       )}
 
