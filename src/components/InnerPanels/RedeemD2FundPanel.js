@@ -9,6 +9,7 @@ import {
   IconExternal,
 } from "@aragon/ui";
 import Web3 from "web3";
+import axios from "axios";
 import { useWallet } from "use-wallet";
 import erc721 from "../../contracts/ERC721Public.json";
 import Loader from "react-loader-spinner";
@@ -87,6 +88,9 @@ function RedeemD2FundPanel({ fundData, balances, onContinue }) {
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
         setDoneRedeeming(true);
+        axios.get(
+          "https://purgecache.simplethings.workers.dev/__purge_cache?zone=0d06080714818598b845f30e54535880"
+        );
         setTxReceipt(receipt);
         console.log(receipt);
       });

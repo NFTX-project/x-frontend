@@ -6,6 +6,7 @@ import {
   AddressField,
   IconCheck,
 } from "@aragon/ui";
+import axios from "axios";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import erc721 from "../../contracts/ERC721Public.json";
@@ -71,6 +72,9 @@ function RedeemD1FundPanel({ fundData, ticker, onContinue }) {
         receipt.events["Redeem"] &&
           setNftIdsArr(receipt.events["Redeem"].returnValues.nftIds);
         setDoneRedeeming(true);
+        axios.get(
+          "https://purgecache.simplethings.workers.dev/__purge_cache?zone=0d06080714818598b845f30e54535880"
+        );
         setTxReceipt(receipt);
         console.log(receipt);
       });

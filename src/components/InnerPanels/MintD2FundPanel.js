@@ -9,6 +9,7 @@ import {
   IconExternal,
   Info,
 } from "@aragon/ui";
+import axios from "axios";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
 import Nftx from "../../contracts/NFTX.json";
@@ -120,6 +121,9 @@ function MintD2FundPanel({ fundData, balances, onContinue }) {
       .on("error", (error) => setTxError(error))
       .on("transactionHash", (txHash) => setTxHash(txHash))
       .on("receipt", (receipt) => {
+        axios.get(
+          "https://purgecache.simplethings.workers.dev/__purge_cache?zone=0d06080714818598b845f30e54535880"
+        );
         setDoneMinting(true);
         setTxReceipt(receipt);
         console.log(receipt);
