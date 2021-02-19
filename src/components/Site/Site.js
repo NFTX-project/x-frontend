@@ -175,7 +175,7 @@ function Site({ selectorNetworks }) {
             <RoundButton text="Homepage" link="/" />
             <RoundButton text="Tutorial" link="/tutorial" />
             <a
-              href="https://nftx.gitbook.io/nftx/"
+              href="https://docs.nftx.org"
               target="_blank"
               css={`
                 text-decoration: none;
@@ -192,6 +192,38 @@ function Site({ selectorNetworks }) {
                     `}
                   >
                     DOCS
+                    <div
+                      css={`
+                        display: inline-block;
+                        position: absolute;
+                        right: -5px;
+                        bottom: -5px;
+                      `}
+                    >
+                      <IconExternal />
+                    </div>
+                  </div>
+                }
+              />
+            </a>
+            <a
+              href="https://gallery.nftx.org"
+              target="_blank"
+              css={`
+                text-decoration: none;
+                margin: 0 10px;
+              `}
+            >
+              <RoundButton
+                text={
+                  <div
+                    css={`
+                      position: relative;
+                      padding-left: 1px;
+                      padding-right: 26px;
+                    `}
+                  >
+                    Gallery
                     <div
                       css={`
                         display: inline-block;
