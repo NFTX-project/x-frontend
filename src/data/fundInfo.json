@@ -96,7 +96,7 @@
   },
   {
     "vaultId": 19,
-    "verified": false,
+    "verified": true,
     "amm": false
   },
   {
