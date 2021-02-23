@@ -426,6 +426,16 @@ function D1FundView({ fundsData, balances }) {
           viewable on OpenSea as well.
         </Info>
       )}
+      {vaultId === 22 && (
+        <Info title="Notice">
+          There is an issue fetching tokenIDs. We are working on a fix and, in
+          the mean time, you can view the items in this fund{" "}
+          <a href="https://opensea.io/accounts/NFTX/bullrunbabes">
+            via OpenSea
+          </a>
+          .
+        </Info>
+      )}
 
       <SidePanel
         title={panelTitle}
