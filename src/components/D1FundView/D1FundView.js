@@ -430,7 +430,7 @@ function D1FundView({ fundsData, balances }) {
         <Info title="Notice">
           There is an issue fetching tokenIDs. We are working on a fix and, in
           the mean time, you can view the items in this fund{" "}
-          <a href="https://opensea.io/accounts/NFTX/bullrunbabes">
+          <a href="https://opensea.io/accounts/NFTX/bullrunbabestoken">
             via OpenSea
           </a>
           .
