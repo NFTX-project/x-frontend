@@ -9,7 +9,7 @@ import {
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
 // import Nftx from "../../contracts/NFTX.json";
-import NftxV3 from "../../contracts/NFTXv3.json";
+import NftxV6 from "../../contracts/NFTXv6.json";
 // import NftxV2 from "../../contracts/NFTXv2.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
@@ -26,7 +26,7 @@ function ManageFundPanel({ closePanel }) {
 
   const { current: web3 } = useRef(new Web3(provider));
 
-  const nftx = new web3.eth.Contract(NftxV3.abi, addresses.nftxProxy);
+  const nftx = new web3.eth.Contract(NftxV6.abi, addresses.nftxProxy);
 
   const [funcParams, setFuncParams] = useState(JSON.parse("[[]]"));
 
@@ -46,7 +46,7 @@ function ManageFundPanel({ closePanel }) {
           }
         `}
       >
-        {NftxV3.abi
+        {NftxV6.abi
           .filter(
             (item) =>
               item.type === "function" && !item.stateMutability.includes("view")
