@@ -85,10 +85,10 @@ function ManageFundPanel({ closePanel }) {
                     if (str.startsWith("[") && str.endsWith("]")) {
                       _funcParams[i] = JSON.parse(str);
                     }
-                    if (str === "false") {
+                    if (str.trim().toLowerCase() === "false") {
                       _funcParams[i] = false;
                     }
-                    if (str === "true") {
+                    if (str.trim().toLowerCase() === "true") {
                       _funcParams[i] = true;
                     }
                   });
