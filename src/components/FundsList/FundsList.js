@@ -226,7 +226,9 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
             ),
             <div>TBD</div>,
             <div>
-              {truncateDecimal(web3.utils.fromWei(fundToken.totalSupply))}
+              {truncateDecimal(
+                web3.utils.fromWei(fundToken.totalSupply.toString())
+              )}
             </div>,
             <div>{entry.isD2Vault ? "D2" : "D1"}</div>,
             <div>

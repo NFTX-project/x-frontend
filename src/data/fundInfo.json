@@ -85,11 +85,6 @@
     "amm": true
   },
   {
-    "vaultId": 17,
-    "verified": true,
-    "amm": false
-  },
-  {
     "vaultId": 18,
     "verified": true,
     "amm": false

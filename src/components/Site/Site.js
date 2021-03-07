@@ -59,6 +59,10 @@ function Site({ selectorNetworks }) {
       const response = await axios({
         url: `https://api.covalenthq.com/v1/1/address/${account}/balances_v2/`,
         method: "get",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        },
         auth: {
           username: "ckey_61fb094bfc714946b98607c7d06",
         },
@@ -71,7 +75,6 @@ function Site({ selectorNetworks }) {
   const fetchFundsData = async () => {
     // console.log("fetching funds data...");
     const cleanFundsData = (inputData) => {
-      console.log("inputDaata", inputData);
       const data = inputData.map((elem) => {
         const _fundInfo = fundInfo.find(
           (fund) => fund.vaultId === elem.vaultId
@@ -91,40 +94,28 @@ function Site({ selectorNetworks }) {
       data.splice(19, 0, mask); */
       return data;
     };
-    const response = await axios({
+    /* const response = await axios({
       url: "https://nftx.xyz/funds-data",
       method: "get",
+    }); */
+    const response2 = await axios({
+      url: "https://nftx.ethereumdb.com/v1/vaults/",
+      method: "get",
     });
-    const _fundsData = cleanFundsData(response.data);
+    const _fundsData = cleanFundsData(response2.data);
     setFundsData(_fundsData);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const checkAndFetchNewData = async () => {
-    console.log("checking for new data...");
-    if (eventsCount === null) {
-      fetchFundsData();
-      axios({
-        url: "https://nftx.xyz/events-count",
-        method: "get",
-      }).then((response) => setEventsCount(response.data));
-    } else {
-      const response = await axios({
-        url: "https://nftx.xyz/events-count",
-        method: "get",
-      });
-      if (response.data !== eventsCount) {
-        setEventsCount(response.data);
-        fetchFundsData();
-        fetchBalances();
-      }
-    }
+    fetchFundsData();
+    fetchBalances();
   };
 
   // get balances data from CovalentHQ
   useEffect(() => {
     fetchBalances();
-    console.log("TODO: get balance updates using websocket");
+    // console.log("TODO: get balance updates using websocket");
     // https://www.covalenthq.com/docs/api/#post-/v1/{chainId}/address/{address}/register/
     const interval = setInterval(async () => {
       fetchBalances();
