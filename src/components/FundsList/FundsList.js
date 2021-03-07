@@ -37,7 +37,6 @@ import Web3Utils from "web3-utils";
 import fundInfo from "../../data/fundInfo.json";
 
 function FundsList({ fundsListData, balances, hideInspectButton }) {
-  console.log("balances3", balances);
   const {
     isVaultIdFavorited,
     removeFavoriteByVaultId,

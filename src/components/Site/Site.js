@@ -67,7 +67,6 @@ function Site({ selectorNetworks }) {
           username: "ckey_61fb094bfc714946b98607c7d06",
         },
       });
-      console.log("response.data.data.items", response.data.data.items);
       setBalances(response.data.data.items);
     }
   };
