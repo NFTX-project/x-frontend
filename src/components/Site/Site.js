@@ -238,11 +238,6 @@ function Site({ selectorNetworks }) {
               margin-bottom: 25px;
             `}
           >
-            <Info>
-              Frontend data may be outdated. We are working on a fix now. In the
-              mean time we suggest users double check values via Etherescan if
-              concerned.
-            </Info>
             <Route path="/dashboard">
               <Landing selectorNetworks={selectorNetworks} />
             </Route>

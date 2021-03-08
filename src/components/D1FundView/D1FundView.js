@@ -299,15 +299,13 @@ function D1FundView({ fundsData, balances }) {
                       : (fundData.requests || []).join(", "),
                 });
               }
-              if (vaultId !== 21) {
-                arr.push({
-                  key: "Holdings",
-                  value:
-                    (fundData.holdings || []).length === 0
-                      ? "<empty>"
-                      : (fundData.holdings || []).join(", "),
-                });
-              }
+              arr.push({
+                key: "Holdings",
+                value:
+                  (fundData.holdings || []).length === 0
+                    ? "<empty>"
+                    : (fundData.holdings || []).join(", "),
+              });
 
               if (
                 (fundData.eligibilities || []).length > 0 ||
@@ -416,26 +414,6 @@ function D1FundView({ fundsData, balances }) {
           />
         </div>
       </div>
-      {vaultId === 21 && (
-        <Info title="Notice">
-          There is an issue fetching tokenIDs. We are working on a fix and, in
-          the mean time, you can view the CryptoCubes in this fund{" "}
-          <a href="https://opensea.io/accounts/NFTX/cryptocubes">via OpenSea</a>
-          .<br /> Please note, also, that CryptoCube numbers differ from their
-          tokenIDs. Every CryptoCube's number is saved as a property and is
-          viewable on OpenSea as well.
-        </Info>
-      )}
-      {vaultId === 22 && (
-        <Info title="Notice">
-          There is an issue fetching tokenIDs. We are working on a fix and, in
-          the mean time, you can view the items in this fund{" "}
-          <a href="https://opensea.io/accounts/NFTX/bullrunbabestoken">
-            via OpenSea
-          </a>
-          .
-        </Info>
-      )}
 
       <SidePanel
         title={panelTitle}

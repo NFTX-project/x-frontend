@@ -210,6 +210,7 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
           const { vaultId, fundToken, isFinalized } = entry;
           const fundSymbol = fundToken.symbol;
           const fundAddress = entry.fundToken.address;
+          console.log("entry", entry);
           const cells = [
             hideInspectButton ? (
               <div>{fundSymbol}</div>
@@ -223,7 +224,10 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
                 {fundSymbol}
               </Link>
             ),
-            <div>TBD</div>,
+            <div>
+              {(entry.priceEth && truncateDecimal(entry.priceEth.toString())) ||
+                "TBD"}
+            </div>,
             <div>
               {truncateDecimal(
                 web3.utils.fromWei(fundToken.totalSupply.toString())
