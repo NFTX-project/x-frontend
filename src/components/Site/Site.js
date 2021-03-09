@@ -265,26 +265,13 @@ function Site({ selectorNetworks }) {
             <Route path="/bounties"></Route>
           </div>
           <div
-            className="footer-filler"
-            css={`
-              width: 100%;
-              text-align: center;
-              line-height: 5;
-              opacity: 0;
-              pointer-events: none;
-            `}
-          >
-            filler
-          </div>
-          <div
             className="footer"
             css={`
-              position: absolute;
-              bottom: 0;
               width: 100%;
               font-size: 18px;
               text-align: center;
               line-height: 3.5;
+              padding-bottom: 40px;
               & > a {
                 display: inline-block;
                 padding: 0 18px;
@@ -298,6 +285,13 @@ function Site({ selectorNetworks }) {
               }
             `}
           >
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLScnaUGFuz6-iyLTCeLhcLcFfxAdpPhGzGfxDtET7qgBIJO_xg/viewform"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Gallery Request Form
+            </a>
             <a
               href="https://twitter.com/NFTX_"
               target="_blank"
