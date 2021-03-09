@@ -308,8 +308,12 @@ function D1FundView({ fundsData, balances }) {
               });
 
               if (
-                (fundData.eligibilities || []).length > 0 ||
-                !fundData.negateEligibility
+                ((fundData.eligibilities || []).length > 0 ||
+                  !fundData.negateEligibility) &&
+                fundData.asset.address !==
+                  "0x059EDD72Cd353dF5106D2B9cC5ab83a52287aC3a" &&
+                fundData.asset.address !==
+                  "0xa7d8d9ef8D8Ce8992Df33D8b8CF4Aebabd5bD270"
               ) {
                 arr.push({
                   key: fundData.negateEligibility ? "Denylist" : "Allowlist",
