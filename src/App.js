@@ -76,14 +76,7 @@ export default function WrapAppWithProvider() {
           `}
         >
           <Main theme={nftxTheme}>
-            <>
-              <div style={{ backgroundImage: 'linear-gradient(to right, #ff6d41, #ec4899)', color: '#fafafa', fontSize: '0.75rem', lineHeight: '1rem'}}>
-                <div style={{ textAlign: 'center', padding: '0.25rem 1rem', fontSize: '0.8rem', lineHeight: '1rem' }}>
-                  <b>{'Our devs are hard at work building a new and improved app experience. Stay tuned! 🦧 🕳️'}</b>
-                </div>
-              </div>
-              <App />
-            </>
+            <App />
           </Main>
         </div>
       </UseWalletProvider>
