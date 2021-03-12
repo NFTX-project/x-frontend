@@ -10,10 +10,11 @@ import {
 import axios from "axios";
 import Web3 from "web3";
 import { useWallet } from "use-wallet";
-import Nftx from "../../contracts/NFTX.json";
+import Nftx from "../../contracts/NFTXv7.json";
 import XStore from "../../contracts/XStore.json";
 import KittyCore from "../../contracts/KittyCore.json";
 import IErc721 from "../../contracts/IERC721.json";
+import IErc1155 from "../../contracts/IERC1155.json";
 import Loader from "react-loader-spinner";
 import HashField from "../HashField/HashField";
 import { useFavoriteNFTs } from "../../contexts/FavoriteNFTsContext";
@@ -58,6 +59,20 @@ function MintD1FundPanel({
     return address.toLowerCase() === kittyAddr.toLowerCase();
   };
 
+  const [is1155, setIs1155] = useState(false);
+
+  useEffect(() => {
+    if (nftx) {
+      nftx.methods
+        .isVault1155(fundData.vaultId)
+        .call()
+        .then((retVal) => {
+          // console.log("1155", retVal);
+          setIs1155(retVal);
+        });
+    }
+  }, [fundData.vaultId, nftx]);
+
   /* useEffect(() => {
     xStore.methods
       .nftAddress(vaultId)
@@ -90,7 +105,10 @@ function MintD1FundPanel({
 
   const fetchIsApprovedAll = () => {
     if (!isKittyAddr(fundData.asset.address)) {
-      const nft = new web3.eth.Contract(IErc721.abi, fundData.asset.address);
+      const nft = new web3.eth.Contract(
+        is1155 ? IErc1155.abi : IErc721.abi,
+        fundData.asset.address
+      );
       nft.methods
         .isApprovedForAll(account, addresses.nftxProxy)
         .call({ from: account })
@@ -102,14 +120,15 @@ function MintD1FundPanel({
 
   const updateNftOwnerData = () => {
     if (tokenIdsArr.length > 0) {
-      const nft = new web3.eth.Contract(IErc721.abi, fundData.asset.address);
       const nftExistenceArr = [];
       const nftOwnershipArr = [];
       let count = 0;
       tokenIdsArr.forEach((tokenId, index) => {
         const finish = (retVal) => {
-          nftExistenceArr[index] = retVal !== "DNE";
-          nftOwnershipArr[index] = retVal === account;
+          nftExistenceArr[index] = is1155 || retVal !== "DNE";
+          nftOwnershipArr[index] = is1155
+            ? parseInt(retVal) > 0
+            : retVal === account;
           count += 1;
           if (count === tokenIdsArr.length) {
             fetchApproval(nftExistenceArr, nftOwnershipArr).then(
@@ -125,11 +144,27 @@ function MintD1FundPanel({
             );
           }
         };
-        nft.methods
-          .ownerOf(tokenId)
-          .call({ from: account })
-          .then((retVal) => finish(retVal))
-          .catch((error) => finish("DNE"));
+        if (is1155) {
+          const nft = new web3.eth.Contract(
+            IErc1155.abi,
+            fundData.asset.address
+          );
+          nft.methods
+            .balanceOf(account, tokenId)
+            .call({ from: account })
+            .then((retVal) => finish(retVal))
+            .catch((error) => finish("DNE"));
+        } else {
+          const nft = new web3.eth.Contract(
+            IErc721.abi,
+            fundData.asset.address
+          );
+          nft.methods
+            .ownerOf(tokenId)
+            .call({ from: account })
+            .then((retVal) => finish(retVal))
+            .catch((error) => finish("DNE"));
+        }
       });
     } else {
       setNftData([]);
@@ -368,7 +403,9 @@ function MintD1FundPanel({
                   } else if (!nftData[index].ownership) {
                     return "Not owner";
                   } else if (!nftData[index].approval && !isApprovedForAll) {
-                    return (
+                    return is1155 ? (
+                      "Not approved"
+                    ) : (
                       <Button
                         label="Approve Transfer"
                         onClick={() => handleApprove(tokenId)}
