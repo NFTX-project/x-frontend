@@ -70,7 +70,7 @@ function FundsIndex({ fundsData, balances, getSelection, setSelection }) {
       .filter(
         (elem) =>
           /* (elem.verified && elem.isFinalized) || */
-          elem.verified || isVaultIdFavorited(elem.vaultId)
+         /* elem.verified ||*/ isVaultIdFavorited(elem.vaultId)
       );
     return _visibleFunds;
   };
