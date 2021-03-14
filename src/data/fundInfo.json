@@ -174,4 +174,16 @@
     "verified": true,
     "amm": false
   }
+  ,
+  {
+    "vaultId": 47,
+    "verified": true,
+    "amm": false
+  }
+  ,
+  {
+    "vaultId": 50,
+    "verified": true,
+    "amm": false
+  }
 ]
