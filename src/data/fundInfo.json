@@ -225,5 +225,10 @@
     "vaultId": 63,
     "verified": true,
     "amm": true
+  },
+  {
+    "vaultId": 67,
+    "verified": true,
+    "amm": false
   }
 ]
