@@ -227,7 +227,17 @@
     "amm": true
   },
   {
+    "vaultId": 64,
+    "verified": true,
+    "amm": true
+  },
+  {
     "vaultId": 67,
+    "verified": true,
+    "amm": false
+  },
+  {
+    "vaultId": 68,
     "verified": true,
     "amm": false
   }
