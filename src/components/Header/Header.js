@@ -5,6 +5,7 @@ import { textStyle, useTheme, GU } from "@aragon/ui";
 function Header({
   title,
   subtitle,
+  calltoaction,
   topSpacing = 10 * GU,
   bottomSpacing = 7 * GU,
 }) {
@@ -36,6 +37,17 @@ function Header({
           {subtitle}
         </div>
       )}
+      {calltoaction && (
+        <div
+          css={`
+            ${textStyle("title4")};
+            color: ${theme.contentSecondary};
+          `}
+        >
+          {calltoaction}
+          <a href='https://app.nftx.org'>Try it out</a>!
+        </div>
+      )}
     </header>
   );
 }
@@ -43,6 +55,7 @@ function Header({
 Header.propTypes = {
   title: PropTypes.node.isRequired,
   subtitle: PropTypes.node,
+  calltoaction: PropTypes.node,
   topSpacing: PropTypes.number.isRequired,
   bottomSpacing: PropTypes.number.isRequired,
 };

@@ -7,6 +7,7 @@ function WelcomeAction({
   illustration,
   onActivate,
   subtitle,
+  calltoaction,
   title,
 }) {
   const theme = useTheme();
@@ -62,6 +63,18 @@ function WelcomeAction({
               {subtitle}
             </p>
           )}
+
+          {calltoaction && (
+            <p
+              css={`
+                ${textStyle("body2")};
+                color: ${theme.surfaceContentSecondary};
+              `}
+            >
+              {calltoaction}
+              <a href='https://app.nftx.org'>Try it out</a>!
+            </p>
+          )}
         </div>
       </section>
     </Card>
@@ -73,6 +86,7 @@ WelcomeAction.propTypes = {
   illustration: PropTypes.node.isRequired,
   onActivate: PropTypes.func.isRequired,
   subtitle: PropTypes.node,
+  calltoaction: PropTypes.node,
   title: PropTypes.node.isRequired,
 };
 
