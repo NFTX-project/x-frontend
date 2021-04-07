@@ -36,6 +36,16 @@ function Header({
           {subtitle}
         </div>
       )}
+      {calltoaction && (
+        <div
+          css={`
+            ${textStyle("title4")};
+            color: ${theme.contentSecondary};
+          `}
+        >
+          {calltoaction}
+        </div>
+      )}
     </header>
   );
 }
@@ -43,6 +53,7 @@ function Header({
 Header.propTypes = {
   title: PropTypes.node.isRequired,
   subtitle: PropTypes.node,
+  calltoaction: PropTypes.node,
   topSpacing: PropTypes.number.isRequired,
   bottomSpacing: PropTypes.number.isRequired,
 };
