@@ -5,6 +5,7 @@ import { textStyle, useTheme, GU } from "@aragon/ui";
 function Header({
   title,
   subtitle,
+  calltoaction,
   topSpacing = 10 * GU,
   bottomSpacing = 7 * GU,
 }) {
