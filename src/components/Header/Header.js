@@ -40,12 +40,12 @@ function Header({
       {calltoaction && (
         <div
           css={`
-            ${textStyle("title4")};
-            color: ${theme.contentSecondary};
+            ${textStyle("title2")};
+            color: #FFFFFF;
           `}
         >
           {calltoaction}
-          <a href='https://app.nftx.org'>Try it out</a>!
+          <a style='color:#FA297F; font-weight: 600;' href='https://app.nftx.org'>Try it out</a>!
         </div>
       )}
     </header>
