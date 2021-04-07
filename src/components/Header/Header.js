@@ -45,7 +45,7 @@ function Header({
           `}
         >
           {calltoaction}
-          <a href='https://app.nftx.org'> Try it out</a>!
+          <a href='https://app.nftx.org'>Try it out</a>!
         </div>
       )}
     </header>

@@ -72,7 +72,7 @@ function WelcomeAction({
               `}
             >
               {calltoaction}
-              <a href='https://app.nftx.org'> Try it out</a>!
+              <a href='https://app.nftx.org'>Try it out</a>!
             </p>
           )}
         </div>
