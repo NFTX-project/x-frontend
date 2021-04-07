@@ -63,6 +63,7 @@ function WelcomeAction({
               {subtitle}
             </p>
           )}
+
           {calltoaction && (
             <p
               css={`
@@ -71,6 +72,7 @@ function WelcomeAction({
               `}
             >
               {calltoaction}
+              <a href='https://app.nftx.org'> Try it out</a>!
             </p>
           )}
         </div>
