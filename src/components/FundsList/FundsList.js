@@ -78,62 +78,62 @@ function FundsList({ fundsListData, balances, hideInspectButton }) {
 
   const handleMint = (vaultId, ticker) => {
     if (!fundData(vaultId)) return;
-    // quickest and easiest way?
-    return window.location.href = `https://app.nftx.org/mint/${vaultId}`;
+    // quickest and easiest way is to enable the return window.location and comment out the rest of the function.
+//     return window.location.href = `https://app.nftx.org/mint/${vaultId}`;
 
-    // setPanelTitle(`${ticker} ▸ Mint`);
-    // if (fundData(vaultId).isD2Vault) {
-    //   setInnerPanel(
-    //     <MintD2FundPanel
-    //       fundData={fundData(vaultId)}
-    //       balances={balances}
-    //       onContinue={() => {
-    //         setPanelOpened(false);
-    //       }}
-    //     />
-    //   );
-    // } else {
-    //   setInnerPanel(
-    //     <MintD1FundPanel
-    //       fundData={fundData(vaultId)}
-    //       balances={balances}
-    //       onContinue={() => {
-    //         setPanelOpened(false);
-    //       }}
-    //       allowMintRequests={fundData(vaultId).allowMintRequests}
-    //       onMakeRequest={() => {
-    //         setPanelOpened(false);
-    //         setTimeout(() => {
-    //           handleMintRequest(vaultId, ticker);
-    //         }, 500);
-    //       }}
-    //     />
-    //   );
-    // }
+    setPanelTitle(`${ticker} ▸ Mint`);
+    if (fundData(vaultId).isD2Vault) {
+      setInnerPanel(
+        <MintD2FundPanel
+          fundData={fundData(vaultId)}
+          balances={balances}
+          onContinue={() => {
+            setPanelOpened(false);
+          }}
+        />
+      );
+    } else {
+      setInnerPanel(
+        <MintD1FundPanel
+          fundData={fundData(vaultId)}
+          balances={balances}
+          onContinue={() => {
+            setPanelOpened(false);
+          }}
+          allowMintRequests={fundData(vaultId).allowMintRequests}
+          onMakeRequest={() => {
+            setPanelOpened(false);
+            setTimeout(() => {
+              handleMintRequest(vaultId, ticker);
+            }, 500);
+          }}
+        />
+      );
+    }
 
-    // setPanelOpened(true);
+    setPanelOpened(true);
   };
 
   const handleMintRequest = (vaultId, ticker) => {
     if (!fundData(vaultId)) return;
     // quickest and easiest way?
-    return window.location.href = `https://app.nftx.org/mint/${vaultId}`;
-    // setPanelTitle(`${ticker} ▸ Request`);
-    // setInnerPanel(
-    //   <MintRequestPanel
-    //     fundData={fundData(vaultId)}
-    //     onContinue={() => {
-    //       setPanelOpened(false);
-    //     }}
-    //     onMintNow={() => {
-    //       setPanelOpened(false);
-    //       setTimeout(() => {
-    //         handleMint(vaultId, ticker);
-    //       }, 500);
-    //     }}
-    //   />
-    // );
-    // setPanelOpened(true);
+    // return window.location.href = `https://app.nftx.org/mint/${vaultId}`;
+    setPanelTitle(`${ticker} ▸ Request`);
+    setInnerPanel(
+      <MintRequestPanel
+        fundData={fundData(vaultId)}
+        onContinue={() => {
+          setPanelOpened(false);
+        }}
+        onMintNow={() => {
+          setPanelOpened(false);
+          setTimeout(() => {
+            handleMint(vaultId, ticker);
+          }, 500);
+        }}
+      />
+    );
+    setPanelOpened(true);
   };
 
   const handleRedeem = (vaultId) => {
