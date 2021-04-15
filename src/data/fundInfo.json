@@ -41,12 +41,12 @@
   },
   {
     "vaultId": 8,
-    "verified": true,
+    "verified": false,
     "amm": false
   },
   {
     "vaultId": 9,
-    "verified": true,
+    "verified": false,
     "amm": false
   },
   {
