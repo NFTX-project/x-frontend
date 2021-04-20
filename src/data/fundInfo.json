@@ -36,17 +36,17 @@
   },
   {
     "vaultId": 7,
-    "verified": false,
-    "amm": false
+    "verified": true,
+    "amm": true
   },
   {
     "vaultId": 8,
-    "verified": false,
-    "amm": false
+    "verified": true,
+    "amm": true
   },
   {
     "vaultId": 9,
-    "verified": false,
+    "verified": true,
     "amm": false
   },
   {
