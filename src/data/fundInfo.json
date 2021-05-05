@@ -44,11 +44,11 @@
     "verified": true,
     "amm": true
   },
-  {
-    "vaultId": 9,
-    "verified": true,
-    "amm": false
-  },
+  //{
+  //  "vaultId": 9,
+  //  "verified": true,
+  //  "amm": false
+  // },
   {
     "vaultId": 10,
     "verified": true,
@@ -164,11 +164,11 @@
     "verified": true,
     "amm": false
   },
-  {
-    "vaultId": 42,
-    "verified": true,
-    "amm": false
-  },
+  //{
+  //  "vaultId": 42,
+  //  "verified": true,
+  //  "amm": false
+  //},
   {
     "vaultId": 44,
     "verified": true,
